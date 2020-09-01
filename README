@@ -1,3 +1,9 @@
 To begin, we have the euler equations in 1D Cartesian (Completed)
+
+(I) 5 unknowns (mass density, velocity, pressure, energy density, and temperature) ==> 5 equations:
+
+      (a) 1. Continuity 2. Momentum 3. Energy Density 4. Temperature-Energy relation 5. Pressure-Temperature relations
+      
+
 We will move to cylindrical coordinates in 2D (In Process)
 Then add to the streamer Code (Not yet)
