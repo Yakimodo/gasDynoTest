@@ -15,7 +15,7 @@ def InitialConditions(x, N):
 
   for i in range(1, N+1):
     rho.append( np.sin(2*np.pi*x[i] / (xmax - xmin)))#rho.append(np.exp(-beta * (i - 0.5)**2))
-    engyDens.append(np.exp(-(x[N/2] - x)**2)) #Energy Density Gaussian
+    engyDens.append(np.exp(-(x[N/2] - x[i])**2)) #Energy Density Gaussian
     if (i < 60 ):
 #      rho.append(0.)
       vel.append(-0.5)
@@ -40,7 +40,7 @@ def Temp(Ndens, engyDens, rho, vel, N):
 def PowerDeposition(N,dt):
   Q = []
   for i in range(1,N+1):
-    Q.append(i*dt*1.5)
+    Q.append(i*dt*100)
   return Q
 
 def Upwind(a, dx, N):

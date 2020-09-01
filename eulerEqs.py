@@ -57,17 +57,25 @@ for t in range(0,T_end):
   rho = fl.fill_ghosts(rho, ng, N)
   vel = fl.fill_ghosts(vel, ng, N)
   engyDens = fl.fill_ghosts(engyDens, ng, N)
+#  Pressure = fl.fill_ghosts(Pressure, ng, N)
   rho1 = rho
   Qt = fl.PowerDeposition(N, dt)
 
+  print(len(rho))
+  print(len(vel))
+  print(len(engyDens))
 ###---initializing temperature-------###
   if (t == 0):
     temp = fl.Temp(Ndens, engyDens, rho, vel, N) #initialize temperature
   temp = fl.fill_ghosts(temp, ng, N)
+  print(len(temp))
 
 ###----intializaing momentum------###
+  mom = []
   for i in range(len(vel)):
     mom.append(rho[i] * vel[i])
+  print(len(mom))
+  print(len(Pressure))
 
   gradP = fl.Upwind(Pressure, dx, N)
   Qr_cont, Ql_cont = fl.states(rho, dx, dt, vel, 'SuperBee', N)
@@ -92,25 +100,28 @@ for t in range(0,T_end):
      rho_new.append(rho[i] - (dt/dx) * (Flux_cont[i] - Flux_cont[i+1]))
      mom_new.append(mom[i] - (dt/dx) * (Flux_mom[i] - Flux_mom[i+1]) - dt * gradP[i])
      rho_new1.append(rho1[i] * (1 - 2*(dt/dx)*vel[i]) + (dt/dx)*(vel[i]*rho1[i-1] + rho1[i]*vel[i-1]))
-     engyDens_new.append(engyDens[i] - (dt/dx)*(Flux_engyDens[i] - Flux_engyDens[i+1]) + dt*Qt)
+     engyDens_new.append(engyDens[i] - (dt/dx)*(Flux_engyDens[i] - Flux_engyDens[i+1]) + dt*Qt[i])
 
 ##---accounting for ghosts---##
   rho_new.insert(0, rho_new[N-2])
-  rho_new1.insert(0, rho_new[N-2])
+  rho_new1.insert(0, rho_new1[N-2])
   rho = rho_new
   rho1 = rho_new1
   engyDens_new.insert(0, engyDens_new[N-2])
+  engyDens = engyDens_new
   mom_new.insert(0, mom_new[N-2])
-  mom = mom_new
+#  mom = mom_new
 
 ##---updating temperature-----##
-  temp = fl.Temp(N, engyDens, rho, vel)
+  temp = fl.Temp(Ndens, engyDens, rho, vel, N-1)
 
+  temp.insert(0, temp[N-2])
 ##---updating pressure------##
-  Pressure = []
-  for i in range(N-1):
-    Pressure.append(Ndens * kB * temp[i])
-
+  Pressure_new = []
+  for i in range(N):
+    Pressure_new.append(Ndens * kB * temp[i])
+  Pressure_new.insert(0, Pressure[N-2])
+  Pressure = Pressure_new
 
 ##---velocity matters----##
   vel = vel[1:-1]
@@ -147,6 +158,22 @@ for t in range(0,T_end):
     plt.pause(0.0001)
     plt.legend()
   
+    plt.figure(4)
+    plt.clf()
+    plt.title('Time $t$ = ' + str(t*dt) + ' ns')
+    plt.plot(x[1:-1], temp) #, label = str((n-1) * 0.1) + ' ns')
+#    plt.axhline(y=1, color='r', linestyle='--')
+#    plt.axis((0, 2*np.pi))
+    plt.pause(0.0001)
+    plt.legend()
 
+    plt.figure(5)
+    plt.clf()
+    plt.title('Time $t$ = ' + str(t*dt) + ' ns')
+    plt.plot(x[1:], Pressure) #, label = str((n-1) * 0.1) + ' ns')
+#    plt.axhline(y=1, color='r', linestyle='--')
+#    plt.axis((0, 2*np.pi))
+    plt.pause(0.0001)
+    plt.legend()
 
 
