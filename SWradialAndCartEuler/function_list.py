@@ -1,9 +1,8 @@
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 kB = 1.38e-23
 gamma = 1.4 #air == 7/5
-beta = 0.2
+beta = .20
 
 def initialConditions(sim_type, sim_details, xc, N, q):
   ##--Initial Conditions----
@@ -30,14 +29,22 @@ def initialConditions(sim_type, sim_details, xc, N, q):
     for i in range(N):
 
       if (sim_details == 'SmallDisturbance'):
-        height.append(1.+0.4*np.exp(-np.abs((xc[i]-xc[N//2]))**2 / beta))
+        height.append(1+np.exp(-np.abs((xc[i]-xc[N//2]))**2 / beta))
         u.append(0.)
 
       elif (sim_details == 'DamBreak'):
         if (i <= N/2):
-          height.append(1.5)
+          height.append(1.)
           u.append(0.)
         elif (i > N/2):
+          height.append(1.5)
+          u.append(0.)
+
+      elif (sim_details == 'RadialDamBreak'):
+        if (i <= N/5):
+          height.append(2.)
+          u.append(0.)
+        elif (i > N/5):
           height.append(1.)
           u.append(0.)
 
@@ -74,27 +81,29 @@ def initialConditions(sim_type, sim_details, xc, N, q):
 ######_________Gas Dynamics_______________
   if (sim_type == 'gasDyno'):
     for j in range(N):
-      if (j >= 0.5*(N)): #RIGHT STATE
-        u.append(0.)
-        rho.append(1.)
-        Pressure.append(1.) #N * k_B * Temp[i])
-        engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-        c_gas.append(np.sqrt(gamma1*Pressure[j]/rho[j]))
-          
-      elif (j < 0.5*(N)): #LEFT STATE
+      if (i > 0.5*(N)):
         u.append(0.)
         rho.append(1.5)
         Pressure.append(1.5) #N * k_B * Temp[i])
-        engyDens.append((5./2.)* Pressure[j] + 0.5 *  u[j] * u[j])
+        engyDens.append((5./2.)* Pressure[i] + 0.5 * rho[i] * u[i] * u[i])
+        c_gas.append(np.sqrt(gamma1*Pressure[i]/rho[i]))
+          
+      elif (i < 0.5*(N)):
+        if (sim_type == 'gasDyno'):
+          u.append(0.)
+          rho.append(1.)
+          Pressure.append(1.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[i] + 0.5 *  u[i] * u[i])
 #          c_gas.append(np.sqrt(gamma*Pressure[i]/rho[i]))
 
       q[0, j+1] = rho[j]
-      q[1, j+1] = u[j] #rho[j]*u[j]
-      q[2, j+1] = Pressure[j] #engyDens[j]
+      q[1, j+1] = rho[j]*u[j]
+      q[2, j+1] = engyDens[j]
 
   return q #u, Pressure,, Z, K, rho
 
 def Mat_ghostCells(q, N, BC):
+
   if(BC == 'extrap'):
     q[0,0] = q[0,1]
     q[0,-1] = q[0,-2]
@@ -103,6 +112,17 @@ def Mat_ghostCells(q, N, BC):
     if q.shape[0] == 3:
       q[2,0] = q[2,1]
       q[2,-1] = q[2,-2]
+
+  if(BC == 'wall'):
+
+    q[0,0] = q[0,1]
+    q[0,-1] = q[0,-2]
+    q[1,0] = -q[1,1]
+    q[1,-1] = q[1,-2]
+    if q.shape[0] == 3:
+      q[2,0] = -q[2,1]
+      q[2,-1] = -q[2,-2]
+
   return q
 
 def fill_ghosts(q, N, Type):

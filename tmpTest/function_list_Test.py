@@ -1,3 +1,28 @@
+#======function_list.py contains:
+#---initialConditions(sim_type, sim_details, xc, N, q):
+#---Mat_ghostCells(q, N, BC)
+#---fill_ghosts(q, N, Type)
+#---JumpSplit(q, N, sim_type):
+#---Temp(Ndens, engyDens, rho, u, N)
+#---PowerDeposition(N,t)
+#---Upwind(a, dxc, N, BC)
+#---splitValues(qMat)
+#---CentDiff(a, dxc, N, BC)
+#---states(a, dxc, dt, u, slope_type, N, BC):
+#---minmod1(C, D, a, dxc, i)
+#---minmod2(C, D, a, dxc, i)
+#---minmodMC(C, D, E, a, dxc, i)
+#---MaxMod(A, B)
+#---Riemann(Ql, Qr, u, N)
+#---VelChange(u, N, t)
+#---Porta_plotty2(X, y, y_original, MOVIE, Title, pauseRate, figNum, t, dt, NumPlots):	
+#---
+#---
+#---
+#---
+
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -73,26 +98,72 @@ def initialConditions(sim_type, sim_details, xc, N, q):
 
 ######_________Gas Dynamics_______________
   if (sim_type == 'gasDyno'):
-    for j in range(N):
-      if (j >= 0.5*(N)): #RIGHT STATE
-        u.append(0.)
-        rho.append(1.)
-        Pressure.append(1.) #N * k_B * Temp[i])
-        engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-        c_gas.append(np.sqrt(gamma1*Pressure[j]/rho[j]))
+
+    if (sim_details == 'shockTube'):
+      print('====SHOCK TUBE=====')
+      for j in range(N):
+        if (j <= (N-1)/2.): #LEFT STATE
+          u.append(0.)
+          rho.append(3.)
+          Pressure.append(3.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+  
+        elif (j > (N-1)/2.): #RIGHT STATE
+          u.append(0.)
+          rho.append(1.)
+          Pressure.append(1.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
+
+    if (sim_details == 'twoShock'):
+      print('====TWO SHOCK====')
           
-      elif (j < 0.5*(N)): #LEFT STATE
-        u.append(0.)
-        rho.append(1.5)
-        Pressure.append(1.5) #N * k_B * Temp[i])
-        engyDens.append((5./2.)* Pressure[j] + 0.5 *  u[j] * u[j])
-#          c_gas.append(np.sqrt(gamma*Pressure[i]/rho[i]))
+      for j in range(N):
+        if (j <= (N-1)/2.): #LEFT STATE
+          u.append(3.)
+          rho.append(1.)
+          Pressure.append(1.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+  
+        elif (j > (N-1)/2.): #RIGHT STATE
+          u.append(1.)
+          rho.append(2.)
+          Pressure.append(1.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
-      q[0, j+1] = rho[j]
-      q[1, j+1] = u[j] #rho[j]*u[j]
-      q[2, j+1] = Pressure[j] #engyDens[j]
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
 
-  return q #u, Pressure,, Z, K, rho
+    if (sim_details == 'flat'):
+      print('====flat=====')
+      for j in range(N):
+        if (j <= (N-1)/2.): #LEFT STATE
+          u.append(0.)
+          rho.append(1.)
+          Pressure.append(0.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+  
+        elif (j > (N-1)/2.): #RIGHT STATE
+          u.append(0.)
+          rho.append(1.)
+          Pressure.append(0.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
+
+  return q, u, Pressure#,, Z, K, rho
 
 def Mat_ghostCells(q, N, BC):
   if(BC == 'extrap'):
@@ -281,4 +352,71 @@ def Porta_plotty2(X, y, y_original, MOVIE, Title, pauseRate, figNum, t, dt, NumP
 #  plt.axis((0, 2*np.pi, -1, 1)) 
 #    plt.pause(pauseRate)
     plt.legend()
+
+
+#def FEMethod():
+#  un+1 = un + dt*(ui+1 - ui)
+
+
+
+#for RHS of charged species continuity equation dn/dt = dj/dx + kinetic Source Terms  ==>
+#                                  DISCRETIZED:  n(t+1) = n(t) + dt/dx * ( j(k+1/2) - j(k-1/2) ) + dt * (Kinetic Source terms)
+def SG(x, D, mobi, n, E):
+
+  for k in range(len(x)):
+    hk = 0.5*(x[k] + x[k+1]) 
+    Dk = 0.5*(D[k] + D[k+1])
+    mu = 0.5*(mobi[k] + mobi[k+1])
+    Ek = 0.5*(E[k]+E[k+1])
+    v_dr = mu*Ek
+    
+    alpha = v_dr*hk / Dk
+  
+    Io = (np.exp(alpha) - 1 ) / alpha
+
+    flux_density.append( Dk / hk * (n[k] - np.exp(alpha)*n[k+1]) / Io )
+
+  return flux_density
+
+
+
+
+def SOR(s, z, N, CYL, phi):
+
+  ds = s[i+1] - s[i]
+  dz = z[i+1] - z[i]
+  RT = 1e-6
+  AT = 0.1
+
+  if (CYL == 0):
+    for i in range(N):
+      r = 0
+      for m in range(MaxIts):
+        while r == 0:
+          w = 2. - 2.*np.pi*ds
+          phi_new[i] = w/2. * (phi_new[i-1] + phi_old[i+1] + ds**2*delta) + (1-w)*phi_old
+          W[i] = 1. / (RT*np.abs(phi_new[i] + AT))
+          WRMS = np.sqrt( 1./N * np.sum((W[i] * np.abs(phi_new[i] - phi_old[i]))**2))   
+          if (WRMS < 1.):
+            r = 1          
+          
+
+    
+#  if (CYL == 1):
+#    if(s != 0 or s != N or z != 0 or z != N):
+#      EE = - ( 2/ds**2 + 2/dz**2)
+#      A = (1/dz**2)/EE
+#      B = A
+#      C = (1
+
+  return phi_new
+
+
+##=== E = grad(phi)
+def calcField(phi_new):
+  E =  
+  
+
+
+
 

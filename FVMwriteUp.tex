@@ -1,0 +1,127 @@
+\documentclass[]{article}
+\usepackage[]{apacite}
+\usepackage{url} %this package should fix any errors with URLs in refs.
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[export]{adjustbox}
+\usepackage[authoryear]{natbib}
+\bibliographystyle{plainnat}
+\usepackage[version=4]{mhchem}
+
+%opening
+\title{Finite Volume Methods -- Details and Applications}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+	
+Finite Volume Methods (FVM) become essential when numerically simulating conservation laws. When equations are written in 
+
+\end{abstract}
+
+
+
+\section{Introduction}
+
+	An equation such as the the continuity (or mass density continuity) equation that is derived on the basis of an infinitesimally small element fixed in space is in conservation form. This equation is as follows,
+
+	\begin{equation}
+		\frac{\partial\rho}{\partial t} + \nabla \cdot {\rho v} = 0.
+	\end{equation}
+	The governing flow equations, such as Euler's equations, that are obtained from a model which is fixed in space are in conservation form. On the other hand, a model of an infinitesimally small fluid element moving with the flow will lead to the development of the same mass continuity equation in nonconservation form. It is based on the idea that the mass is fixed and that it's shape and volume will change as it moves. It is written as follows,
+
+	\begin{equation}
+		\frac{D\rho}{D t} + \rho \nabla \cdot {v} = 0,
+	\end{equation}
+	Where $\frac{D}{Dt}$ is the total derivative.
+
+	The two forms of which these equations may be written is in the differential form as are equations (1) and (2) and the integral form. For discontinuities that exist inside the control volume, which is fully reasonably physically and mathematically, the integral form is used. The differential form assumes the flow is continuous and hence differentiable everywhere. To obtain the differential form from the integral form, the divergence theorem is used which assumes mathematical continuity, which is not always real. Therefore, the integral form is considered more fundamental. An obvious example is any flow that contains shock waves, such as an ionization wave. The integral form of the conservation and nonconservation equations are respectively as follows, 
+	\begin{equation}
+		\frac{\partial}{\partial t} \iiint_V \rho dV + \iint_S {\rho \textbf{V}} \cdot \textbf{dS} = 0,
+	\end{equation}
+	\begin{equation}
+	\frac{D}{D t} \iiint_V \rho dV = 0.
+	\end{equation}
+
+	Finite volume methods for solving partial differential equations or systems of such, largely use the integral conservation form of the governing equations. This, as stated before, allows for discontinuities to exist within the control volume or cells of the computational domain. Most algorithms that use such methods will use a piece-wise linear construction of the variable(s) under consideration. 
+	
+\section{Euler Equations}
+
+	The Euler equations are of particular use when modeling the thermodynamics of a system such as a gas in a tube. In the case of streamer-to-leader dynamics, it becomes essential to use these equations in order to take into account the gas heating that leads to thermal ionization taking over electron-impact ionization.  The outstanding part of these equations are their nonlinearity. In order to model these equations an approach must be made to develop them into their quasi-linear form. To begin, we write out the equations,
+	
+		\begin{equation}
+		\frac{\partial\rho}{\partial t} + \nabla \cdot (\rho v) = 0,
+	\end{equation} 
+	\begin{equation}
+		\frac{\partial \rho v}{\partial t} + \nabla \cdot (\rho v v + p) = 0,
+	\end{equation}
+	\begin{equation}
+		\frac{\partial \epsilon}{\partial t} + \nabla \cdot [(\epsilon + p)v] = 0,
+	\end{equation}	 
+	\begin{equation}
+		p = N k_B T,
+	\end{equation} 
+	\begin{equation}
+	\epsilon = \rho E = \rho (c_v T + \frac{u^2}{2}) .
+	\end{equation}
+
+	We re-write them in vector form, $\frac{\partial \textbf{U}}{t} + \frac{\partial \textbf{F}}{\partial t} = 0$, where
+    \begin{equation}
+    		\textbf{U} =
+    	\begin{bmatrix}
+    		\rho \\
+    		\rho u \\
+    		\epsilon 
+    	\end{bmatrix}, 
+            \textbf{F} =
+        \begin{bmatrix}
+        	\rho \\
+        	\rho u^2 + p \\
+        	\epsilon + p 
+        \end{bmatrix}.
+    \end{equation}
+    The next step is to make F a function of U which entails eliminating p (pressure) using the (8) and (9). Once this is completed we can re-write the PDE as
+    
+    \begin{equation}
+    	\frac{\partial \textbf{U}}{\partial t} + A\frac{\partial \textbf{U}}{\partial x} = 0,
+    \end{equation}
+	where $A = \frac{\partial \textbf{F}}{\partial \textbf{U}}$ is the jacobian of the flux vector. Now the equation appears to linear. The eigenvalues of $A$ dictate the mathematical nature of the equation by giving the slope of the three characteristic lines associated with the system of three equations. 
+
+	
+\section{Numerical Methods}
+
+\subsection{Upwind}
+	
+	Upwind schemes are developed with the idea that a fluid flows in one direction and therefore is influenced by the upwind grid-point/cell values. These are especially effective for shock-capturing methods. For the first order wave equation,
+	
+	\begin{equation}
+		\frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x},
+	\end{equation}
+	the discretization of the spatial variable, in this case the ``upwind difference'', looks like
+	\begin{equation}
+		\frac{\partial u}{\partial x} = \frac{u_i - u_{i-1}}{\Delta x}.
+	\end{equation}
+
+	This method is first-order accurate and highly diffusive, so as time marches the initial discontinuity, or shock, will spread out. There will be no oscillatory behavior (i.e. monotone variation), but the diffusivity is undesirable. Therefore higher order methods have been developed such total-variation-diminishing (TVD) schemes, flux limiters, Godunov schemes, approximate Riemann solvers, etc. each of which have their own advantages and disadvantages.
+
+\subsubsection{Flux-Vector Splitting}
+
+\subsubsection{Godunov Method}
+
+\section{Second-Order Upwind}
+
+\section{High Resoultion: TVD and Flux Limiters}
+
+\section{Multidimensional Hyperbolic Problems}
+
+\section{MultiD Numerical Methods}
+\subsection{Godunov Splitting}
+
+\end{document}

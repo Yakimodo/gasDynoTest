@@ -2,9 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import function_list as fl
 
-EFIX = 0
-MOVIE = 0
-
 N = 1001
 L = 10. #domain_length
 CFL = 0.6 #Courant-Fredrichs-Lewy condition
@@ -12,7 +9,7 @@ dx = L / (N-1) #spatial resolution
 dt = CFL*dx #time step
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
 T_end = 500 #number of steps
-gamma = 1.4 #gravity
+g = 1. #gravity
 xc = np.linspace(-L/2, L/2, N)
 
 eqNum = 3 #number of equations in system (SW = 2)
@@ -29,7 +26,7 @@ s = np.empty((eqNum, N+1))
 amdq = np.empty((eqNum, N+1))
 apdq = np.empty((eqNum, N+1))
 
-q = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_empty)
+q = fl.initialConditions('ShallowWater', 'SmallDisturbance', xc, N, q_empty)
 
 
 for t in range(T_begin, T_end+1):
@@ -42,22 +39,20 @@ for t in range(T_begin, T_end+1):
   rhor = q[0,1:]
   ul = q[1,:-1]
   ur = q[1,1:]
-  pl = q[2,:-1]
-  pr = q[2,1:]
-  El = pl/(gamma - 1) + 0.5 * rhol * ul**2 #q[1,:-1] / q[0,:-1]
-  Er = pr/(gamma - 1) + 0.5 * rhor * ur**2 #q[1,1:] / q[0,1:]  
-  cl = np.sqrt(gamma*pl/rhol)
-  cr = np.sqrt(gamma*pr/rhor)
+  El = q[1,:-1] / q[0,:-1]
+  Er = q[1,1:] / q[0,1:]  
+  cl = np.sqrt(g * hl)
+  cr = np.sqrt(g * hr)
 
   for k in range(N+1):
     u_hat[k] = (np.sqrt(rhol[k])*ul[k] + np.sqrt(rhor[k])*ur[k]) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k]))
-    H_hat[k] = ((El[k] + pl[k]) / np.sqrt(rhol[k]) + (Er[k] + pr[k]) / np.sqrt(rhor[k])) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k])) 
-    c_hat[k] = np.sqrt((gamma-1)*(H_hat[k]-0.5*u_hat[k]**2))
+    H_hat[k] = ((El[k] + presl[k]) / np.sqrt(rhol[k]) + (Er[k] + presr[k]) / np.sqrt(rhor[k])) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k])) 
+    c_hat[k] = np.sqrt((gamma-1)*(H_hat-0.5*u_hat**2))
 
   
     a[1,k] = ((gamma-1)*((H_hat[k]-u_hat[k]**2)*dq1[k] + u_hat[k]*dq2[k]-dq3[k])) / c_hat[k]**2
     a[2,k] = (dq2[k] + (c_hat[k] - u_hat[k])*dq1[k] - c_hat[k]*a[1,k]) / (2*c_hat[k])
-    a[0,k] = dq1[k] - a[1,k] - a[2,k]
+    a[0,k] = dq1 - a[1,k] - a[2,k]
   
     s[0,k] = u_hat[k] - c_hat[k]
     s[1,k] = u_hat[k]
@@ -97,13 +92,12 @@ for t in range(T_begin, T_end+1):
 ###___PLOTTING___###
 
   if(MOVIE == 0):  
-    if(t%15 == 0 or t == 1):  
+    if(t%1 == 0 or t == 1):  
       plt.title(' time  = ' + str(dt*t) )
 #      plt.plot(xc, q_new[0, :len(xc)], label = 'hnew')
 #      plt.plot(xc, q_new[1, :len(xc)], label = 'hunew') # / q[0, :len(xc)])
-      plt.plot(xc, q[0, :len(xc)], label = 'density')
-      plt.plot(xc, q[1, :len(xc)], label = 'velocity')# / q[0, :len(xc)])
-      plt.plot(xc, q[2, :len(xc)], label = 'pressure')# / q[0, :len(xc)])
+      plt.plot(xc, q[0, :len(xc)], label = 'h')
+      plt.plot(xc, q[1, :len(xc)], label = 'hu')# / q[0, :len(xc)])
       plt.axvline(x=0.)  #(max(xc)/2.))
       plt.legend()
       plt.show()

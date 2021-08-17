@@ -74,19 +74,19 @@ def initialConditions(sim_type, sim_details, xc, N, q):
 ######_________Gas Dynamics_______________
   if (sim_type == 'gasDyno'):
     for j in range(N):
-      if (j >= 0.5*(N)): #RIGHT STATE
+      if (j < 0.5*(N)): #LEFT STATE
+        u.append(0.)
+        rho.append(3.)
+        Pressure.append(3.) #N * k_B * Temp[i])
+        engyDens.append((5./2.)* Pressure[j] + 0.5 *  u[j] * u[j])
+        c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+      elif (j >= 0.5*(N)): #RIGHT STATE
         u.append(0.)
         rho.append(1.)
         Pressure.append(1.) #N * k_B * Temp[i])
         engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-        c_gas.append(np.sqrt(gamma1*Pressure[j]/rho[j]))
+        c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
           
-      elif (j < 0.5*(N)): #LEFT STATE
-        u.append(0.)
-        rho.append(1.5)
-        Pressure.append(1.5) #N * k_B * Temp[i])
-        engyDens.append((5./2.)* Pressure[j] + 0.5 *  u[j] * u[j])
-#          c_gas.append(np.sqrt(gamma*Pressure[i]/rho[i]))
 
       q[0, j+1] = rho[j]
       q[1, j+1] = u[j] #rho[j]*u[j]

@@ -71,7 +71,7 @@ for t in range(T_begin, T_end+1):
     R[1,2,k] = 0.5 * u_hat[k]**2
     R[2,0,k] = 1.
     R[2,1,k] = u_hat[k] + c_hat[k]
-    R[2,0,k] = H_hat[k] + u_hat[k]*c_hat[k]
+    R[2,2,k] = H_hat[k] + u_hat[k]*c_hat[k]
 
 
   if (EFIX == 0):
@@ -97,7 +97,7 @@ for t in range(T_begin, T_end+1):
 ###___PLOTTING___###
 
   if(MOVIE == 0):  
-    if(t%15 == 0 or t == 1):  
+    if(t%75 == 0 or t == 1):  
       plt.title(' time  = ' + str(dt*t) )
 #      plt.plot(xc, q_new[0, :len(xc)], label = 'hnew')
 #      plt.plot(xc, q_new[1, :len(xc)], label = 'hunew') # / q[0, :len(xc)])
