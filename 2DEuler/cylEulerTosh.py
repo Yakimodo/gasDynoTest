@@ -5,58 +5,64 @@ import matplotlib.pyplot as plt
 import twoD_function_list as fl
 
 EFIX = 0
-MOVIE = 1
+MOVIE = 0
 HEAT = 0
 RADIAL = 0
 DIM = 2
+CYL = 0
 TITLE = 'shockTube'
 #TITLE = 'constant'
 #TITLE = 'twoShock'
 
 
-N = 100
-L = 10. #domain_length
+M = 10
+N = 10
+L = 1. #domain_length
 CFL = 0.6 #Courant-Fredrichs-Lewy condition
 dr = L / (2.*(N-1)) #spatial res in r
-dz = L / (2.*(N-1)) #spatial res in z
+dz = L / (2.*(M-1)) #spatial res in z
 dt = CFL*dr #time step
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
 T_end = 500 #number of steps
 gamma = 1.4 #gravity
 kB = 1.38e-23
-rc = np.linspace(0., L, N+1)
+rc = np.linspace(0., L, M+1)
 zc = np.linspace(0., L, N+1)
 
 
-eqNum = DIM + 2 #number of equations in system (Cyl Euler = 4) (Euler Cartesian = 3) (SW = 2)
+eqNum = 4 #number of equations in system (Cyl Euler = 4) (Cyl Euler Isentropic = 3) (Euler Cartesian = 3) (SW = 2)
 waveNum = eqNum #number of waves per Riemann Prob
 
-q_empty = np.empty((eqNum, N+2, M+2))
-W = np.empty((eqNum, waveNum, N+1, M+1))
-Wf = np.empty((eqNum, waveNum, N+1, M+1))
-Wg = np.empty((eqNum, waveNum, N+1, M+1))
-R = np.empty((eqNum, waveNum, N+1))
-Rf = np.empty((eqNum, waveNum, N+1, M+1))
-Rg = np.empty((eqNum, waveNum, N+1, M+1))
-u_hat = np.empty((N+1, M+1))
-v_hat = np.empty((N+1, M+1))
-H_hat = np.empty((N+1, M+1))
-c_hat = np.empty((N+1, M+1))
-a = np.empty((eqNum, N+1))
-af = np.empty((eqNum, N+1, M+1))
-ag = np.empty((eqNum, N+1, M+1))
-s = np.empty((eqNum, N+1))
-sf = np.empty((eqNum, N+1, M+1))
-sg = np.empty((eqNum, N+1, M+1))
-amdq = np.empty((eqNum, N+1))
-apdq = np.empty((eqNum, N+1))
-amdqf = np.empty((eqNum, N+1, M+1))
-apdqf = np.empty((eqNum, N+1, M+1))
-amdqg = np.empty((eqNum, N+1, M+1))
-apdqg = np.empty((eqNum, N+1, M+1))
+q_empty = np.empty((eqNum, M+2, N+2))
+W = np.empty((eqNum, waveNum, M+1))
+Wf = np.empty((eqNum, waveNum, M+1, N+1))
+Wg = np.empty((eqNum, waveNum, M+1, N+1))
+R = np.empty((eqNum, waveNum, M+1))
+Rf = np.empty((eqNum, waveNum, M+1, N+1))
+Rg = np.empty((eqNum, waveNum, M+1, N+1))
+u_hat = np.empty((M+1, N+1))
+v_hat = np.empty((M+1, N+1))
+H_hat = np.empty((M+1, N+1))
+H_hatR = np.empty((M+1, N+1))
+H_hatZ = np.empty((M+1, N+1))
+c_hat = np.empty((M+1, N+1))
+c_hatR = np.empty((M+1, N+1))
+c_hatZ = np.empty((M+1, N+1))
+a = np.empty((eqNum, M+1))
+af = np.empty((eqNum, M+1, N+1))
+ag = np.empty((eqNum, M+1, N+1))
+s = np.empty((eqNum, M+1))
+sf = np.empty((eqNum, M+1, N+1))
+sg = np.empty((eqNum, M+1, N+1))
+amdq = np.empty((eqNum, M+1))
+apdq = np.empty((eqNum, M+1))
+amdqf = np.empty((eqNum, M+1, N+1))
+apdqf = np.empty((eqNum, M+1, N+1))
+amdqg = np.empty((eqNum, M+1, N+1))
+apdqg = np.empty((eqNum, M+1, N+1))
 Q_heat = []
 
-q, u, v, P = fl.initialConditions('gasDyno', TITLE, rc, N, q_empty)
+q, u, v, P = fl.initialConditions('gasDyno', TITLE, rc, zc, M, N, q_empty)
 #q, u, P = fl.initialConditions('gasDyno', 'constant', rc, N, q_empty)
 #q, u, P = fl.initialConditions('gasDyno', 'twoShock', rc, N, q_empty)
 #  q0 = density
@@ -78,7 +84,9 @@ for t in range(T_begin, T_end+1):
   q_new_c = np.empty((q.shape[0],q.shape[1], q.shape[2]))
 
 #  if (RADIAL == 0):
-#    q = fl.Mat_ghostCells(q, N, 'extrap')
+  q = fl.Mat_ghostCells(q, M, N, 'extrap', DIM)
+#  print(q)
+#  print(P)
 #  if (RADIAL == 1):
 #    q = fl.Mat_ghostCells(q, N, 'wall')
 #
@@ -103,13 +111,12 @@ for t in range(T_begin, T_end+1):
 #  EfNew = fl.simplePropRight(EfOld, dt, dr, -c)
 #  JNew = fl.simplePropLeft(JOld, dt, dr, -c)
 
-  dq1, dq2, dq3, dq4 = fl.JumpSplit(q, N, 'gasDyno', DIM)
-  rhol = q[0,:-1,:-1]
-  rhor = q[0,1:,1:]
+  dq1R, dq2R, dq3R, dq4R = fl.JumpSplit(q, 'gasDyno', DIM, 'r')
+  dq1Z, dq2Z, dq3Z, dq4Z = fl.JumpSplit(q, 'gasDyno', DIM, 'z')
  
   if (DIM == 1):
-    moml = q[1,:-1,:-1] #rhol * ul
-    momr = q[1,1:,1:] #rhor * ur
+    moml = q[1,:-1] #rhol * ul
+    momr = q[1,1:] #rhor * ur
     ul = moml/rhol #u[1,:-1]
     ur = momr/rhor#u[1,1:]
     u = q[1,:,:]/q[0,:,:]
@@ -120,28 +127,45 @@ for t in range(T_begin, T_end+1):
     P = (gamma-1)*(q[2,:,:]-0.5*q[0,:,:]*(u**2))
 
   if (DIM == 2):
-    rmoml = q[1,:-1,:-1] #rhol * ul
-    rmomr = q[1,1:,1:] #rhor * ur
-    zmoml = q[2,:-1,:-1] #rhol * ul
-    zmomr = q[2,1:,1:] #rhor * ur
-    ul = rmoml/rhol #u[1,:-1]
-    ur = rmomr/rhor#u[1,1:]
-    vl = zmoml/rhol #u[1,:-1]
-    vr = zmomr/rhor#u[1,1:]
+    rholR = q[0,:-1,:]
+    rhorR = q[0,1:,:]
+    rholZ = q[0,:,:-1]
+    rhorZ = q[0,:,1:]
+    momlR = q[1,:-1,:] #rhol * ul
+    momrR = q[1,1:,:] #rhor * ur
+    momlZ = q[2,:,:-1] #rhol * vl
+    momrZ = q[2,:,1:] #rhor * vr
+    ul = momlR/rholR #u[1,:-1]
+    ur = momrR/rhorR #u[1,1:]
+    vl = momlZ/rholZ #u[1,:-1]
+    vr = momrZ/rhorZ #u[1,1:]
     u = q[1,:,:]/q[0,:,:]
     v = q[2,:,:]/q[0,:,:]
-    El = q[3,:-1,:-1]#pl/(gamma - 1) + 0.5 * rhol * ul**2 #q[1,:-1] / q[0,:-1]
-    Er = q[3,1:,1:]#pr/(gamma - 1) + 0.5 * rhor * ur**2 #q[1,1:] / q[0,1:]  
-    pl = (gamma-1)*(El-0.5*rhol*(ul**2+vl**2))#P[2,:-1]
-    pr = (gamma-1)*(Er-0.5*rhor*(ur**2+vr**2))#P[2,:-1]
+#    print(u.shape,v.shape)
+    ElR = q[3,:-1,:]#pl/(gamma - 1) + 0.5 * rhol * ul**2 #q[1,:-1] / q[0,:-1]
+    ErR = q[3,1:,:]#pr/(gamma - 1) + 0.5 * rhor * ur**2 #q[1,1:] / q[0,1:]  
+    ElZ = q[3,:,:-1]#pl/(gamma - 1) + 0.5 * rhol * ul**2 #q[1,:-1] / q[0,:-1]
+    ErZ = q[3,:,1:]#pr/(gamma - 1) + 0.5 * rhor * ur**2 #q[1,1:] / q[0,1:]  
+#    print(ElR.shape,rholR.shape,ul.shape,vl.shape)
+#    print(ErR.shape,rhorR.shape,ur.shape,vr.shape)
+    plR = (gamma-1)*(ElR[:,:-1]-0.5*rholR[:,:-1]*(ul[:,:-1]**2+vl[:-1,:]**2))#P[2,:-1]
+    prR = (gamma-1)*(ErR[:,:-1]-0.5*rhorR[:,:-1]*(ur[:,:-1]**2+vr[:-1,:]**2))#P[2,:-1]
+    plZ = (gamma-1)*(ElZ[:-1,:]-0.5*rholZ[:-1,:]*(ul[:,:-1]**2+vl[:-1,:]**2))#P[2,:-1]
+    prZ = (gamma-1)*(ErZ[:-1,:]-0.5*rhorZ[:-1,:]*(ur[:,:-1]**2+vr[:-1,:]**2))#P[2,:-1]
   #  Temp = 2./(5.*Ndens[:]*kB) * (q[2,:] - 0.5 * q[1,:]**2/q[0,:])
     P = (gamma-1)*(q[2,:,:]-0.5*q[0,:,:]*(u**2+v**2))
+    rho = q[0,:,:]
+    print(P.shape,rho.shape, len(rc), len(zc))
+    print(rho)
 
-  cl = np.sqrt(gamma*pl/rhol)
-  cr = np.sqrt(gamma*pr/rhor)
 
-  for k in range(N+1):
-    for j in range(M+1):
+    clR = np.sqrt(gamma*plR/rholR[:,:-1])
+    crR = np.sqrt(gamma*prR/rhorR[:,:-1])
+    clZ = np.sqrt(gamma*plZ/rholZ[:-1,:])
+    crZ = np.sqrt(gamma*prZ/rhorZ[:-1,:])
+
+  for m in range(M+1): #r
+    for n in range(N+1): #z
     
 #    if (DIM == 1):
 #      u_hat[k] = (np.sqrt(rhol[k])*ul[k] + np.sqrt(rhor[k])*ur[k]) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k]))
@@ -168,85 +192,90 @@ for t in range(T_begin, T_end+1):
 ###------------------------------------------
 
 ###-----2D Cylindrical-----------------------
-    if (DIM == 2): 
-      u_hat[k,j] = (np.sqrt(rhol[k,j])*ul[k,j] + np.sqrt(rhor[k,j])*ur[k,j]) / (np.sqrt(rhol[k,j]) + np.sqrt(rhor[k,j]))
-      v_hat[k,j] = (np.sqrt(rhol[k,j])*vl[k,j] + np.sqrt(rhor[k,j])*vr[k,j]) / (np.sqrt(rhol[k,j]) + np.sqrt(rhor[k,j]))
-      H_hat[k,j] = ((El[k,j] + pl[k,j]) / np.sqrt(rhol[k,j]) + (Er[k,j] + pr[k,j]) / np.sqrt(rhor[k,j])) / (np.sqrt(rhol[k,j]) + np.sqrt(rhor[k,j])) 
-      c_hat[k,j] = np.sqrt((gamma-1)*(H_hat[k,j]-0.5*(u_hat[k,j]**2+v_hat[k,j]**2)))
 
-###-----r subroutine
-      af[2,k,j] = dq3[k,j] - dq1[k,j] * v_hat[k,j]
-      af[1,k,j] = (gamma-1)/c_hat[k,j]**2 * (dq1[k,j]*(H_hat[k,j]-u_hat[k,j]**2) + u_hat[k,j]*dq2[k,j] - (dq4[k,j] - (dq3[k,j] - v_hat[k,j]*dq1[k,j])*v_hat[k,j]))
-      af[0,k,j] = 1/(2.*c_hat[k,j]) * (dq1[k,j]*(u_hat[k,j]+c_hat[k,j])) - dq2[k,j] - c_hat[k,j]*a[1,k,j]
-      af[3,k,j] = dq1[k,j] - a[0,k,j] - a[1,k,j]
-
-      sf[0,k,j] = u_hat[k,j] - c_hat[k,j]
-      sf[1,k,j] = u_hat[k,j]
-      sf[2,k,j] = u_hat[k,j]
-      sf[3,k,j] = u_hat[k,j] + c_hat[k,j]
-    
-      Rf[0,0,k,j] = 1.
-      Rf[0,1,k,j] = u_hat[k,j] - c_hat[k,j]
-      Rf[0,2,k,j] = v_hat[k,j]
-      Rf[0,3,k,j] = H_hat[k,j] - u_hat[k,j]*c_hat[k,j]
-
-      Rf[1,0,k,j] = 1.
-      Rf[1,1,k,j] = u_hat[k,j]
-      Rf[1,2,k,j] = v_hat[k,j]
-      Rf[1,3,k,j] = 0.5 *( u_hat[k,j]**2 + v_hat[k,j]**2 )
-
-      Rf[2,0,k,j] = 0.
-      Rf[2,1,k,j] = 0.
-      Rf[2,2,k,j] = 1.
-      Rf[2,3,k,j] = v_hat[k,j]
-
-      Rf[3,0,k,j] = 1.
-      Rf[3,1,k,j] = u_hat[k,j] + c_hat[k,j]
-      Rf[3,2,k,j] = v_hat[k,j]
-      Rf[3,3,k,j] = H_hat[k,j] + u_hat[k,j]*c_hat[k,j]
-
-###----z subroutine
-      ag[2,k,j] = dq2[k,j] - dq1[k,j]*u_hat[k,j]
-      ag[1,k,j] = (gamma-1)/c_hat[k,j]**2 * (dq1[k,j]*(H_hat[k,j]-v_hat[k,j]**2) + v_hat[k,j]*dq3[k,j] - (dq4[k,j] - (dq2[k,j] - u_hat[k,j]*dq1[k,j])*u_hat[k,j]))
-      ag[0,k,j] = 1/(2.*c_hat[k,j]) * (dq1[k,j]* (v_hat[k,j]+c_hat[k,j]) - dq3[k,j] - c_hat[k,j]*ag[1,k,j])
-      ag[3,k,j] = dq1[k,j] - ag[0,k,j] - ag[1,k,j]
-
-      sg[0,k,j] = v_hat[k,j] - c_hat[k,j]
-      sg[1,k,j] = v_hat[k,j]
-      sg[2,k,j] = v_hat[k,j]
-      sg[3,k,j] = v_hat[k,j] + c_hat[k,j]
-    
-      Rg[0,0,k,j] = 1.
-      Rg[0,1,k,j] = u_hat[k,j]
-      Rg[0,2,k,j] = v_hat[k,j] - c_hat[k,j]
-      Rg[0,3,k,j] = H_hat[k,j] - v_hat[k,j]*c_hat[k,j]
-
-      Rg[1,0,k,j] = 1.
-      Rg[1,1,k,j] = u_hat[k,j]
-      Rg[1,2,k,j] = v_hat[k,j]
-      Rg[1,3,k,j] = 0.5 *( u_hat[k,j]**2 + v_hat[k,j]**2 )
-
-      Rg[2,0,k,j] = 0.
-      Rg[2,1,k,j] = 1.
-      Rg[2,2,k,j] = 0.
-      Rg[2,3,k,j] = u_hat[k,j]
-
-      Rg[3,0,k,j] = 1.
-      Rg[3,1,k,j] = u_hat[k,j]
-      Rg[3,2,k,j] = v_hat[k,j] + c_hat[k,j]
-      Rg[3,3,k,j] = H_hat[k,j] + u_hat[k,j]*c_hat[k,j]
+      if (DIM == 2): 
+        u_hat[m,n] = (np.sqrt(rholR[m,n])*ul[m,n] + np.sqrt(rhorR[m,n])*ur[m,n]) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n]))
+        v_hat[m,n] = (np.sqrt(rholZ[m,n])*vl[m,n] + np.sqrt(rhorZ[m,n])*vr[m,n]) / (np.sqrt(rholZ[m,n]) + np.sqrt(rhorZ[m,n]))
+        H_hatR[m,n] = ((ElR[m,n] + plR[m,n]) / np.sqrt(rholR[m,n]) + (ErR[m,n] + prR[m,n]) / np.sqrt(rhorR[m,n])) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n])) 
+        H_hatZ[m,n] = ((ElZ[m,n] + plZ[m,n]) / np.sqrt(rholZ[m,n]) + (ErZ[m,n] + prZ[m,n]) / np.sqrt(rhorZ[m,n])) / (np.sqrt(rholZ[m,n]) + np.sqrt(rhorZ[m,n])) 
+        c_hatR[m,n] = np.sqrt((gamma-1)*(H_hatR[m,n]-0.5*(u_hat[m,n]**2+v_hat[m,n]**2)))
+        c_hatZ[m,n] = np.sqrt((gamma-1)*(H_hatZ[m,n]-0.5*(u_hat[m,n]**2+v_hat[m,n]**2)))
+  
+  ###-----r subroutine
+        af[2,m,n] = dq3R[m,n] - dq1R[m,n] * v_hat[m,n]
+        af[1,m,n] = (gamma-1)/c_hatR[m,n]**2 * (dq1R[m,n]*(H_hatR[m,n]-u_hat[m,n]**2) + u_hat[m,n]*dq2R[m,n] - (dq4R[m,n] - (dq3R[m,n] - v_hat[m,n]*dq1R[m,n])*v_hat[m,n]))
+        af[0,m,n] = 1/(2.*c_hatR[m,n]) * (dq1R[m,n]*(u_hat[m,n]+c_hatR[m,n])) - dq2R[m,n] - c_hatR[m,n]*af[1,m,n]
+        af[3,m,n] = dq1R[m,n] - af[0,m,n] - af[1,m,n]
+  
+        sf[0,m,n] = u_hat[m,n] - c_hatR[m,n]
+        sf[1,m,n] = u_hat[m,n]
+        sf[2,m,n] = u_hat[m,n]
+        sf[3,m,n] = u_hat[m,n] + c_hatR[m,n]
+      
+        Rf[0,0,m,n] = 1.
+        Rf[0,1,m,n] = u_hat[m,n] - c_hatR[m,n]
+        Rf[0,2,m,n] = v_hat[m,n]
+        Rf[0,3,m,n] = H_hatR[m,n] - u_hat[m,n]*c_hatR[m,n]
+  
+        Rf[1,0,m,n] = 1.
+        Rf[1,1,m,n] = u_hat[m,n]
+        Rf[1,2,m,n] = v_hat[m,n]
+        Rf[1,3,m,n] = 0.5 *( u_hat[m,n]**2 + v_hat[m,n]**2 )
+  
+        Rf[2,0,m,n] = 0.
+        Rf[2,1,m,n] = 0.
+        Rf[2,2,m,n] = 1.
+        Rf[2,3,m,n] = v_hat[m,n]
+  
+        Rf[3,0,m,n] = 1.
+        Rf[3,1,m,n] = u_hat[m,n] + c_hatR[m,n]
+        Rf[3,2,m,n] = v_hat[m,n]
+        Rf[3,3,m,n] = H_hatR[m,n] + u_hat[m,n]*c_hatR[m,n]
+  
+  ###----z subroutine
+        ag[2,m,n] = dq2Z[m,n] - dq1Z[m,n]*u_hat[m,n]
+        ag[1,m,n] = (gamma-1)/c_hatZ[m,n]**2 * (dq1Z[m,n]*(H_hatZ[m,n]-v_hat[m,n]**2) + v_hat[m,n]*dq3Z[m,n] - (dq4Z[m,n] - (dq2Z[m,n] - u_hat[m,n]*dq1Z[m,n])*u_hat[m,n]))
+        ag[0,m,n] = 1/(2.*c_hatZ[m,n]) * (dq1Z[m,n]* (v_hat[m,n]+c_hatZ[m,n]) - dq3Z[m,n] - c_hatZ[m,n]*ag[1,m,n])
+        ag[3,m,n] = dq1Z[m,n] - ag[0,m,n] - ag[1,m,n]
+  
+        sg[0,m,n] = v_hat[m,n] - c_hatZ[m,n]
+        sg[1,m,n] = v_hat[m,n]
+        sg[2,m,n] = v_hat[m,n]
+        sg[3,m,n] = v_hat[m,n] + c_hatZ[m,n]
+      
+        Rg[0,0,m,n] = 1.
+        Rg[0,1,m,n] = u_hat[m,n]
+        Rg[0,2,m,n] = v_hat[m,n] - c_hatZ[m,n]
+        Rg[0,3,m,n] = H_hatZ[m,n] - v_hat[m,n]*c_hatZ[m,n]
+  
+        Rg[1,0,m,n] = 1.
+        Rg[1,1,m,n] = u_hat[m,n]
+        Rg[1,2,m,n] = v_hat[m,n]
+        Rg[1,3,m,n] = 0.5 *( u_hat[m,n]**2 + v_hat[m,n]**2 )
+  
+        Rg[2,0,m,n] = 0.
+        Rg[2,1,m,n] = 1.
+        Rg[2,2,m,n] = 0.
+        Rg[2,3,m,n] = u_hat[m,n]
+  
+        Rg[3,0,m,n] = 1.
+        Rg[3,1,m,n] = u_hat[m,n]
+        Rg[3,2,m,n] = v_hat[m,n] + c_hatZ[m,n]
+        Rg[3,3,m,n] = H_hatZ[m,n] + u_hat[m,n]*c_hatZ[m,n]
 
 
   if (EFIX == 0):
     for j in range(eqNum):
       for w in range(waveNum):
-        for k in range(N+1): #spatial variable
-          for l in range(M+1): #spatial variable
+        for M in range(M+1): #spatial variable r
+     
           if (DIM == 1):
             W[w,j,k] = a[w,k] * R[w,j,k]
+          
           if (DIM == 2):
-            Wf[w,j,k,l] = af[w,k,l] * Rf[w,j,k,l]
-            Wg[w,j,k,l] = ag[w,k,l] * Rg[w,j,k,l]
+            for N in range(N+1): #spatial variable z
+              Wf[w,j,m,n] = af[w,m,n] * Rf[w,j,m,n]
+              Wg[w,j,m,n] = ag[w,m,n] * Rg[w,j,m,n]
  
 
 #    if (DIM == 1):   
@@ -299,32 +328,46 @@ for t in range(T_begin, T_end+1):
       apdqg[:,:,:] = 0.
    
       for j in range(eqNum): 
-        for k in range(N-1):
-          for l in range(M-1):
+        for m in range(M-1):
+          for n in range(N-1):
             for w in range(waveNum):
-            amdqf[j,k,l] += min(sf[w,k+1,l],0) * Wf[w,j,k+1,l]
-            apdqf[j,k,l] += max(sf[w,k,l],0) * Wf[w,j,k,l]   
-            
-            amdqg[j,k,l] += min(sg[w,k,l+1],0) * Wg[w,j,k,l+1]
-            apdqg[j,k,l] += max(sg[w,k,l],0) * Wg[w,j,k,l]   
+              amdqf[j,m,n] += min(sf[w,m+1,n],0) * Wf[w,j,m+1,n]
+              apdqf[j,m,n] += max(sf[w,m,n],0) * Wf[w,j,m,n]   
+              
+              amdqg[j,m,n] += min(sg[w,m,n+1],0) * Wg[w,j,m,n+1]
+              apdqg[j,m,n] += max(sg[w,m,n],0) * Wg[w,j,m,n]   
   
       if (HEAT == 0):
         if (RADIAL == 0):
           for j in range(eqNum): 
-            for k in range(N): #q = q.shape[0],q.shape[1],q.shape[2] (eqNum,N+2,M+2)
-              for l in range(M):
-                q_new_a[j,k+1,l] = q[j,k+1,l] - (1./3.) * dt/dr * (amdqf[j,k,l] + apdqf[j,k,l])   
-                 
-                q_new_b[j,k,l+1] = q_new_a[j,k,l+1] - (1./3.) * dt/dr * (amdqg[j,k,l] + apdqf[j,k,l])
-  
-              if (j == 0):
-                q_new_c[j,k+1,l+1] = q_new_b[j,k+1] - (1./3.)*dt * (1/rc[k+1] * 2.*q_new_b[1,k+1])
-              elif (j == 1):
-                q_new_c[j,k+1] = q_new_b[j,k+1] - (1./3.)*dt * (1/rc[k+1] * (2.*q_new_b[1,k+1]**2/q_new_b[0,k+1]))
-              elif (j == 2):
-                q_new_c[j,k+1] = q_new_b[j,k+1] - (1./3.)*dt * (1/rc[k+1] * (2.*q_new_b[2,k+1]*q_new_b[1,k+1]/q_new_b[0,k+1]))
-              elif (j == 3):
-                q_new_c[j,k+1] = q_new_b[j,k+1] - (1./3.)*dt * (1/rc[k+1] * ((q_new_b[3,k+1]+P[k+1])*(q_new_b[1,k+1]/q_new_b[0,k+1])))
+            for m in range(m): #q = q.shape[0],q.shape[1],q.shape[2] (eqnum,n+2,m+2)
+              for n in range(n):
+                q_new_a[j,m+1,n] = q[j,m+1,n] - (1./3.) * dt/dr * (amdqf[j,m,n] + apdqf[j,m,n])   
+                
+                ##Add ghost cell filling function
+#          q_new_a = fl.Mat_ghostCells(q_new_a, M, N, 'extrap', DIM)
+          q_new_b = q_new_a
+          for j in range(eqNum): 
+            for m in range(M): #q = q.shape[0],q.shape[1],q.shape[2] (eqnum,n+2,m+2)
+              for n in range(N):
+                q_new_b[j,m,n+1] = q_new_a[j,m+1,n] - (1./3.) * dt/dz * (amdqg[j,m,n] + apdqf[j,m,n])  
+
+                ##Add ghost cell filling function
+#          q_new_b = fl.Mat_ghostCells(q_new_b, M, N, 'extrap', DIM)
+
+          if (CYL == 1):
+            q_new_c = q_new_b
+            for j in range(eqNum): 
+              for m in range(m): #q = q.shape[0],q.shape[1],q.shape[2] (eqnum,n+2,m+2)
+                for n in range(n):
+                  if (j == 0):
+                    q_new_c[j,m+1,n+1] = q_new_b[j,m,n+1] - (1./3.)*dt * (1/rc[m+1] * 2.*q_new_b[1,m,n+1])
+                  elif (j == 1):
+                    q_new_c[j,m+1,n+1] = q_new_b[j,m, n+1] - (1./3.)*dt * (1/rc[m+1] * (2.*q_new_b[1,m,n+1]**2/q_new_b[0,m,n+1]))
+                  elif (j == 2):
+                    q_new_c[j,m+1,n+1] = q_new_b[j,m, n+1] - (1./3.)*dt * (1/rc[m+1] * (2.*q_new_b[2,m,n+1]*q_new_b[1,m,n+1]/q_new_b[0,m,n+1]))
+                  elif (j == 3):
+                    q_new_c[j,m+1,n+1] = q_new_b[j,m, n+1] - (1./3.)*dt * (1/rc[m+1] * ((q_new_b[3,m,n+1]+P[m+1,n+1])*(q_new_b[1,m,n+1]/q_new_b[0,n+1])))
          
          #qn+1 = qn - dt/dr*(leftFluctuations + rightFluctuations)    
   
@@ -347,25 +390,29 @@ for t in range(T_begin, T_end+1):
 
   if(MOVIE == 0):  
 #    if(t%75 == 0 or t == 1): 
-    if(t%75 == 0 or t == 1): 
-      print('pl' + str(pl))
-      print('rhol' + str(rhol))
-      print('cl' + str(cl))
-      print('cr' + str(cr))
-      print('ul' + str(ul))
-      print('ur' + str(ur))
+    if(t%1 == 0 or t == 1): 
+#      print('pl' + str(pl))
+#      print('rhol' + str(rhol))
+#      print('cl' + str(cl))
+#      print('cr' + str(cr))
+#      print('ul' + str(ul))
+#      print('ur' + str(ur))
       plt.figure(1)
+      R,Z = np.meshgrid(rc, zc)
       plt.title(' time  = ' + str(dt*t) )
+#      plt.contourf(R, Z, 
+      plt.contourf(P[:len(rc),:len(zc)], label = 'density')
 #      plt.plot(rc, q_new[0, :len(rc)], label = 'hnew')
 #      plt.plot(rc, q_new[1, :len(rc)], label = 'hunew') # / q[0, :len(rc)])
-      plt.plot(rc, q[0, :len(rc)], label = 'density')
-      plt.plot(rc, u[:len(rc)], label = 'velocity')# / q[0, :len(rc)])
-      plt.plot(rc, P[:len(rc)], label = 'pressure')# / q[0, :len(rc)])
+#      plt.plot(rc, q[0, :len(rc)], label = 'density')
+#      plt.plot(rc, u[:len(rc)], label = 'velocity')# / q[0, :len(rc)])
+#      plt.plot(zc, u[:len(rc)], label = 'velocity')# / q[0, :len(rc)])
+#      plt.plot(rc, P[:len(rc)], label = 'pressure')# / q[0, :len(rc)])
       plt.axvline(x=0., color='k', linestyle='--')  #(max(rc)/2.))
       plt.legend()
 
       plt.figure(1)
-      plt.plot(rc, Q_heat[:len(rc)])
+#      plt.plot(rc, Q_heat[:len(rc)])
 #      plt.plot(rc, EfOld[:len(rc)], label = 'EF')
 #      plt.plot(rc, JOld[:len(rc)], label = 'Current Density')
 #      plt.plot(rc, Temp[1:], label = 'Temperature')
@@ -399,7 +446,11 @@ for t in range(T_begin, T_end+1):
 #  EfOld = EfNew
 #  JOld = JNew
   if (HEAT == 0):
-    q = q_new_a
+    if (CYL == 0):
+      q = q_new_b
+    elif (CYL == 1):
+      q = q_new_c
+
   elif (HEAT == 1):
     q = q_new_b
 #  print('q = ' + str(q))
