@@ -32,36 +32,36 @@ def initialConditions(sim_type, sim_details, rc, zc, M, N, q):
       print('====SHOCK TUBE=====')
       for m in range(M+1):
         for n in range(N+1):
-          if (m <= (M-1)/2. and n <= (N-1)/2.): #top left quadrant
-            u[m,n] = 1.206
+          if (m <= (M-1)/2. and n <= (N-1)/2.): #bottom left quadrant
+            u[m,n] = 0.#1.206
             v[m,n] = 0.
-            rho[m,n] = 0.5323
-            Pressure[m,n] = 0.3 #N * k_B * Temp[i]
-            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] *  u[m,n] * u[m,n]
+            rho[m,n] = 1.#0.5323
+            Pressure[m,n] = 1.#0.3 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
             c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
 
-          elif (m <= (M-1)/2. and n > (N-1)/2.): # top right quadrant
-            u[m,n] = 1.206
-            v[m,n] = 1.206
-            rho[m,n] = 0.138
-            Pressure[m,n] = 0.029 #N * k_B * Temp[i]
-            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] *  u[m,n] * u[m,n]
+          elif (m <= (M-1)/2. and n > (N-1)/2.): # top left quadrant
+            u[m,n] = 0.#1.206
+            v[m,n] = 0.#1.206
+            rho[m,n] = 3.# 0.138
+            Pressure[m,n] = 3.#0.029 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
             c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
    
-          elif (m > (M-1)/2. and n <= (N-1)/2.): #bottom left quandrant
+          elif (m > (M-1)/2. and n <= (N-1)/2.): #bottom right quandrant
             u[m,n] = 0.
             v[m,n] = 0.
-            rho[m,n] = 1.5
-            Pressure[m,n] = 1.5 #N * k_B * Temp[i]
-            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] *  u[m,n] * u[m,n]
+            rho[m,n] = 3.#1.5
+            Pressure[m,n] =3.# 1.5 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
             c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
 
-          elif (m > (M-1)/2. and n > (N-1)/2.): #bottom right quandrant
+          elif (m > (M-1)/2. and n > (N-1)/2.): #top right quandrant
             u[m,n] = 0.
-            v[m,n] = 1.206
-            rho[m,n] = 0.5323
-            Pressure[m,n] = 0.3 #N * k_B * Temp[i]
-            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] *  u[m,n] * u[m,n]
+            v[m,n] = 0.#1.206
+            rho[m,n] = 1.#0.5323
+            Pressure[m,n] = 1.#0.3 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] *  ( u[m,n]**2 + v[m,n]**2)
             c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
 
 
@@ -146,24 +146,33 @@ def Mat_ghostCells(q, M, N, BC, DIM):
   if(DIM == 2):
 
     if(BC == 'extrap'):
-#---r spatial variable
-      q[0,0,:] = q[0,1,:]
-      q[0,-1,:] = q[0,-2,:]
-      q[1,0,:] = q[1,1,:]
-      q[1,-1,:] = q[1,-2,:]
-      q[2,0,:] = q[2,1,:]
-      q[2,-1,:] = q[2,-2,:]
-      q[3,0,:] = q[3,1,:]
-      q[3,-1,:] = q[3,-2,:]
+      for j in range(q.shape[0]):
 #---z spatial variable
-      q[0,:,0] = q[0,:,1]
-      q[0,:,-1] = q[0,:,-2]
-      q[1,:,0] = q[1,:,1]
-      q[1,:,-1] = q[1,:,-2]
-      q[2,:,0] = q[2,:,1]
-      q[2,:,-1] = q[2,:,-2]
-      q[3,:,0] = q[3,:,1]
-      q[3,:,-1] = q[3,:,-2]
+        q[j,0,:] = q[j,1,:]
+        q[j,-1,:] = q[j,-2,:]
+#---r spatial variable
+        q[j,:,0] = q[j,:,1]
+        q[j,:,-1] = q[j,:,-2]
+
+
+##---z spatial variable
+#      q[0,0,:] = q[0,1,:]
+#      q[0,-1,:] = q[0,-2,:]
+#      q[1,0,:] = q[1,1,:]
+#      q[1,-1,:] = q[1,-2,:]
+#      q[2,0,:] = q[2,1,:]
+#      q[2,-1,:] = q[2,-2,:]
+#      q[3,0,:] = q[3,1,:]
+#      q[3,-1,:] = q[3,-2,:]
+##---r spatial variable
+#      q[0,:,0] = q[0,:,1]
+#      q[0,:,-1] = q[0,:,-2]
+#      q[1,:,0] = q[1,:,1]
+#      q[1,:,-1] = q[1,:,-2]
+#      q[2,:,0] = q[2,:,1]
+#      q[2,:,-1] = q[2,:,-2]
+#      q[3,:,0] = q[3,:,1]
+#      q[3,:,-1] = q[3,:,-2]
   
     if(BC == 'wall'):
   
@@ -211,20 +220,17 @@ def JumpSplit(q, sim_type, DIM, SPATv):
       dq3 = 0.
 
   if (DIM == 2):
-    if (SPATv == 'r'):
+    if (SPATv == 'z'):
       dq1 = q[0,1:,:] - q[0,:-1,:] 
       dq2 = q[1,1:,:] - q[1,:-1,:] 
       if (sim_type == 'gasDyno'):   
         dq3 = q[2,1:,:] - q[2,:-1,:]
         dq4 = q[3,1:,:] - q[3,:-1,:] 
-    if (SPATv == 'z'):
+    if (SPATv == 'r'):
       dq1 = q[0,:,1:] - q[0,:,:-1] 
       dq2 = q[1,:,1:] - q[1,:,:-1] 
       if (sim_type == 'gasDyno'):   
-        dq3 = q[2,1:,:] - q[2,:-1,:]
-        dq4 = q[3,1:,:] - q[3,:-1,:] 
-  else:
-    dq3 = 0.
-    dq4 = 0.    
+        dq3 = q[2,:,1:] - q[2,:,:-1]
+        dq4 = q[3,:,1:] - q[3,:,:-1] 
 
   return dq1,dq2,dq3,dq4

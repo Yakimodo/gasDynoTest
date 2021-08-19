@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import function_list_Test as fl
 
 EFIX = 0
-MOVIE = 1
+MOVIE = 0
 HEAT = 0
 RADIAL = 0
 TITLE = 'shockTube'
@@ -127,7 +127,7 @@ for t in range(T_begin, T_end+1):
     R[2,1,k] = u_hat[k] + c_hat[k]
     R[2,2,k] = H_hat[k] + u_hat[k]*c_hat[k]
 
-
+  print(R)
   if (EFIX == 0):
     for j in range(eqNum):
       for w in range(waveNum):
