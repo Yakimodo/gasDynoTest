@@ -17,7 +17,7 @@ TITLE = 'shockTube'
 
 M = 6
 N = 6
-L = .1 #domain_length
+L = .005 #domain_length
 CFL = 0.6 #Courant-Fredrichs-Lewy condition
 dr = L / (2.*(M-1)) #spatial res in r
 dz = L / (2.*(N-1)) #spatial res in z
@@ -33,43 +33,43 @@ zc = np.linspace(0., L, N+2)
 eqNum = 4 #number of equations in system (Cyl Euler = 4) (Cyl Euler Isentropic = 3) (Euler Cartesian = 3) (SW = 2)
 waveNum = eqNum #number of waves per Riemann Prob
 
-q_empty = np.empty((eqNum, M+2, N+2))
-q_empty[:,:,:] = 0.
-W = np.empty((eqNum, waveNum, M+1))
-Wf = np.empty((eqNum, waveNum, M+1, N+1))
-Wg = np.empty((eqNum, waveNum, M+1, N+1))
-R = np.empty((eqNum, waveNum, M+1))
-Rf = np.empty((eqNum, waveNum, M+1, N+1))
-Rg = np.empty((eqNum, waveNum, M+1, N+1))
-u_hat = np.empty((M+1, N+1))
-v_hat = np.empty((M+1, N+1))
-H_hat = np.empty((M+1, N+1))
-H_hatR = np.empty((M+1, N+1))
-H_hatZ = np.empty((M+1, N+1))
-c_hat = np.empty((M+1, N+1))
-c_hatR = np.empty((M+1, N+1))
-c_hatZ = np.empty((M+1, N+1))
-a = np.empty((eqNum, M+1))
-af = np.empty((eqNum, M+1, N+1))
-ag = np.empty((eqNum, M+1, N+1))
-s = np.empty((eqNum, M+1))
-sf = np.empty((eqNum, M+1, N+1))
-sg = np.empty((eqNum, M+1, N+1))
-amdq = np.empty((eqNum, M+1))
-apdq = np.empty((eqNum, M+1))
-amdqf = np.empty((eqNum, M+1, N+1))
-apdqf = np.empty((eqNum, M+1, N+1))
-amdqg = np.empty((eqNum, M+1, N+1))
-apdqg = np.empty((eqNum, M+1, N+1))
+q_zeros = np.empty((eqNum, M+2, N+2))
+q_zeros[:,:,:] = 0.
+W = np.zeros((eqNum, waveNum, M+1))
+Wf = np.zeros((eqNum, waveNum, M+1, N+1))
+Wg = np.zeros((eqNum, waveNum, M+1, N+1))
+R = np.zeros((eqNum, waveNum, M+1))
+Rf = np.zeros((eqNum, waveNum, M+1, N+1))
+Rg = np.zeros((eqNum, waveNum, M+1, N+1))
+u_hat = np.zeros((M+1, N+1))
+v_hat = np.zeros((M+1, N+1))
+H_hat = np.zeros((M+1, N+1))
+H_hatR = np.zeros((M+1, N+1))
+H_hatZ = np.zeros((M+1, N+1))
+c_hat = np.zeros((M+1, N+1))
+c_hatR = np.zeros((M+1, N+1))
+c_hatZ = np.zeros((M+1, N+1))
+a = np.zeros((eqNum, M+1))
+af = np.zeros((eqNum, M+1, N+1))
+ag = np.zeros((eqNum, M+1, N+1))
+s = np.zeros((eqNum, M+1))
+sf = np.zeros((eqNum, M+1, N+1))
+sg = np.zeros((eqNum, M+1, N+1))
+amdq = np.zeros((eqNum, M+1))
+apdq = np.zeros((eqNum, M+1))
+amdqf = np.zeros((eqNum, M+1, N+1))
+apdqf = np.zeros((eqNum, M+1, N+1))
+amdqg = np.zeros((eqNum, M+1, N+1))
+apdqg = np.zeros((eqNum, M+1, N+1))
 Q_heat = []
 
-q, u, v, P = fl.initialConditions('gasDyno', TITLE, rc, zc, M, N, q_empty)
+q, u, v, Pressure = fl.initialConditions('gasDyno', TITLE, rc, zc, M, N, q_zeros)
 
 for t in range(T_begin, T_end+1):
 
-  q_new_a = np.empty((q.shape[0],q.shape[1], q.shape[2]))
-  q_new_b = np.empty((q.shape[0],q.shape[1], q.shape[2]))
-  q_new_c = np.empty((q.shape[0],q.shape[1], q.shape[2]))
+  q_new_a = np.zeros((q.shape[0],q.shape[1], q.shape[2]))
+  q_new_b = np.zeros((q.shape[0],q.shape[1], q.shape[2]))
+  q_new_c = np.zeros((q.shape[0],q.shape[1], q.shape[2]))
 
   q = fl.Mat_ghostCells(q, M, N, 'extrap', DIM)
   print('q filled ghost cells = \n' + str(q))
@@ -80,64 +80,84 @@ for t in range(T_begin, T_end+1):
 #      Q_heat.append(25.*np.exp(-0.05*t)*EfOld[i]*JOld[i])
 
 
-  if (DIM == 2):
-    rholR = q[0,1:-1,:-1]
-    rhorR = q[0,1:-1,1:]
-    rholZ = q[0,:-1,1:-1]
-    rhorZ = q[0,1:,1:-1]
-    momlR = q[1,1:-1,:-1] #rhol * ul
-    momrR = q[1,1:-1,1:] #rhor * ur
-    momlZ = q[2,:-1,1:-1] #rhol * vl
-    momrZ = q[2,1:,1:-1] #rhor * vr
-    ul = momlR/rholR #u[1,:-1]
-    ur = momrR/rhorR #u[1,1:]
-    vl = momlZ/rholZ #u[1,:-1]
-    vr = momrZ/rhorZ #u[1,1:]
-    u = q[1,:,:]/q[0,:,:]
-    v = q[2,:,:]/q[0,:,:]
-    ElR = q[3,1:-1,:-1]#pl/(gamma - 1) + 0.5 * rhol * ul**2 #q[1,:-1] / q[0,:-1]
-    ErR = q[3,1:-1,1:]#pr/(gamma - 1) + 0.5 * rhor * ur**2 #q[1,1:] / q[0,1:]  
-    ElZ = q[3,:-1,1:-1]#pl/(gamma - 1) + 0.5 * rhol * ul**2 #q[1,:-1] / q[0,:-1]
-    ErZ = q[3,1:,1:-1]#pr/(gamma - 1) + 0.5 * rhor * ur**2 #q[1,1:] / q[0,1:]  
-    P = (gamma-1)*(q[3,:,:]-0.5*q[0,:,:]*(u**2+v**2))
-    plR = P[1:-1,:-1]
-    prR = P[1:-1,1:]
-    plZ = P[:-1,1:-1]
-    prZ = P[1:,1:-1]
-    rho = q[0,:,:]
+  rholR = q[0,1:-1,:-1] #(M, N+1) 
+  rhorR = q[0,1:-1,1:]    #
+  momlR = q[1,1:-1,:-1]   #
+  momrR = q[1,1:-1,1:]    #
+  ul = momlR/rholR        #
+  ur = momrR/rhorR        #
+  ElR = q[3,1:-1,:-1]     #
+  ErR = q[3,1:-1,1:]  #(M, N+1)
+  u = q[1,:,:]/q[0,:,:] #(M+2, N+2)
+
+  rholZ = q[0,:-1,1:-1] #(M+1, N)
+  rhorZ = q[0,1:,1:-1]   #
+  momlZ = q[2,:-1,1:-1]  #
+  momrZ = q[2,1:,1:-1]   #
+  vl = momlZ/rholZ       #
+  vr = momrZ/rhorZ       # 
+  ElZ = q[3,:-1,1:-1]    #
+  ErZ = q[3,1:,1:-1]    #(M+1, N)
+  v = q[2,:,:]/q[0,:,:] #(M+2, N+2)
+
+  P = (gamma-1)*(q[3,:,:]-0.5*q[0,:,:]*(u**2+v**2)) #(M+2, N+2)
+  plR = P[1:-1,:-1] #(M,N+1)
+  prR = P[1:-1,1:] 
+  plZ = P[:-1,1:-1] #(M+1,N)
+  prZ = P[1:,1:-1]
+  rho = q[0,:,:] #(M+2,N+2)
+  P[0,0] = 0.
+  P[-1,0] = 0.
+  P[0,-1] = 0.
+  P[-1,-1] = 0.
 
   R,Z = np.meshgrid(rc[1:-1], zc[1:-1])
-  plt.subplot(2,2,1)
 #  print(len(rc[1:-1]),len(zc[1:-1]), len(rho[1:-1]))
-  plt.title(' time  = ' + str(dt*t) )
 ##      plt.contourf(R, Z, 
-  print('Pressure =\n ' + str(P))
-  print('rho =\n ' + str(rho))
+#  print('Pressure =\n ' + str(P))
+#  print('rho =\n ' + str(rho))
 ##      print('u = ' + str(u))
 ##      print('v = ' + str(v))
-  cp = plt.contourf(rho[1:-1,1:-1])
+  plt.subplot(2,2,1)
+  plt.suptitle('time = ' + str(dt*t))
+  plt.title('mass density' )
+  cp = plt.contourf(rho[:,:])
   plt.colorbar(cp)
   plt.subplot(2,2,2)
-  cp = plt.contourf(P[1:-1,1:-1])
+  plt.title('Pressure' )
+  cp = plt.contourf(P[:,:])
   plt.colorbar(cp)
   plt.show()
 
 ###-----2D Cylindrical-----------------------
   for m in range(M+1): #r
+    for n in range(N): #z
+      v_hat[m,n] = (np.sqrt(rholZ[m,n])*vl[m,n] + np.sqrt(rhorZ[m,n])*vr[m,n]) / (np.sqrt(rholZ[m,n]) + np.sqrt(rhorZ[m,n])) #(M+1,N)
+
+#      H_hatZ[m,n] = ((ElZ[m,n] + plZ[m,n]) / np.sqrt(rholZ[m,n]) + (ErZ[m,n] + prZ[m,n]) / np.sqrt(rhorZ[m,n])) / (np.sqrt(rholZ[m,n]) + np.sqrt(rhorZ[m,n])) 
+#      c_hatZ[m,n] = np.sqrt((gamma-1)*(H_hatZ[m,n]-0.5*(u_hat[m,n]**2+v_hat[m,n]**2)))
+
+  for m in range(M): #r
     for n in range(N+1): #z
+      u_hat[m,n] = (np.sqrt(rholR[m,n])*ul[m,n] + np.sqrt(rhorR[m,n])*ur[m,n]) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n])) #(M+1,N+1)
+      H_hatR[m,n] = ((ElR[m,n] + plR[m,n]) / np.sqrt(rholR[m,n]) + (ErR[m,n] + prR[m,n]) / np.sqrt(rhorR[m,n])) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n])) #(M+1,N+1)
 
-#      if (DIM == 2): 
-      u_hat[m,n] = (np.sqrt(rholR[m,n])*ul[m,n] + np.sqrt(rhorR[m,n])*ur[m,n]) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n]))
-      v_hat[m,n] = (np.sqrt(rholZ[m,n])*vl[m,n] + np.sqrt(rhorZ[m,n])*vr[m,n]) / (np.sqrt(rholZ[m,n]) + np.sqrt(rhorZ[m,n]))
-      H_hatR[m,n] = ((ElR[m,n] + plR[m,n]) / np.sqrt(rholR[m,n]) + (ErR[m,n] + prR[m,n]) / np.sqrt(rhorR[m,n])) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n])) 
-      H_hatZ[m,n] = ((ElZ[m,n] + plZ[m,n]) / np.sqrt(rholZ[m,n]) + (ErZ[m,n] + prZ[m,n]) / np.sqrt(rhorZ[m,n])) / (np.sqrt(rholZ[m,n]) + np.sqrt(rhorZ[m,n])) 
-      c_hatR[m,n] = np.sqrt((gamma-1)*(H_hatR[m,n]-0.5*(u_hat[m,n]**2+v_hat[m,n]**2)))
-      c_hatZ[m,n] = np.sqrt((gamma-1)*(H_hatZ[m,n]-0.5*(u_hat[m,n]**2+v_hat[m,n]**2)))
+  for m in range(M): #r
+    for n in range(N+1): #z
+      c_hatR[m,n] = np.sqrt((gamma-1)*(H_hatR[m,n]-0.5*(u_hat[m,n]**2 + v_hat[m,n]**2))) #(M+1,N+1)
 
+  print('H_hatR = \n' + str(c_hatR.shape) + '\n'+ str(H_hatR))
+  print('c_hatR = \n' + str(c_hatR.shape) +'\n' + str(c_hatR))
+  print('u_hat = \n' + str(u_hat.shape) +'\n' + str(u_hat))
+  print('v_hat = \n' + str(v_hat.shape) +'\n' + str(v_hat))
+
+  
   dq1R, dq2R, dq3R, dq4R = fl.JumpSplit(q, 'gasDyno', DIM, 'r')
+  print('shape of dq1R = ' + str(dq1R.shape))
 
+#  print('dq1R, dq2R, dq3R, dq4R = \n ' + str(dq1R) + '\n' + str(dq2R) + '\n' + str(dq3R) + '\n' + str(dq4R))
 
-  for m in range(M+1): #r
+  for m in range(M): #r
     for n in range(N+1): #z
 ###-----r subroutine
       af[2,m,n] = dq3R[m,n] - dq1R[m,n] * v_hat[m,n]
@@ -170,10 +190,10 @@ for t in range(T_begin, T_end+1):
       Rf[3,2,m,n] = v_hat[m,n]
       Rf[3,3,m,n] = H_hatR[m,n] + u_hat[m,n]*c_hatR[m,n]
 
-#  print('af = ' + str(af))
-#  print('Rf = ' + str(Rf))
-  print('af[0,0,5] = ' + str(af[0,0,5]))
-  print('Rf[0,0,0,5] = ' + str(Rf[0,0,0,5]))
+  print('af = \n' + str(af))
+  print('Rf = ' + str(Rf))
+#  print('af[0,0,5] = ' + str(af[0,0,5]))
+#  print('Rf[0,0,0,5] = ' + str(Rf[0,0,0,5]))
 
   Wf[:,:,:,:] = 0.
   for j in range(eqNum):
@@ -181,11 +201,12 @@ for t in range(T_begin, T_end+1):
       for m in range(M+1): #spatial variable r
         for n in range(N+1): #spatial variable z
           Wf[w,j,m,n] = af[w,m,n] * Rf[w,j,m,n]
-          if (w == 0 and j == 0 and m == 0 and n == 5):
-            print('inside for loop  = ' + str(Wf[w,j,m,n]) + str(af[w,m,n]) + str(Rf[w,j,m,n]))
+#          if (w == 0 and j == 0 and m == 0 and n == 5):
+#            print('inside for loop  = ' + str(Wf[w,j,m,n]) + str(af[w,m,n]) + str(Rf[w,j,m,n]))
 
 #  print('sf = ' + str(sf))
-  print('Wf[0,0,0,5] = ' + str(Wf[0,0,0,5]) + str(af[0,0,5]*Rf[0,0,0,5]))
+  print('Wf = ' + str(Wf))
+#  print('Wf[0,0,0,5] = ' + str(Wf[0,0,0,5]) + str(af[0,0,5]*Rf[0,0,0,5]))
 
   amdqf[:,:,:] = 0.
   apdqf[:,:,:] = 0.
@@ -194,63 +215,75 @@ for t in range(T_begin, T_end+1):
     for m in range(M):
       for n in range(N):
         for w in range(waveNum):
-          amdqf[j,m,n] += min(sf[w,m+1,n],0) * Wf[w,j,m+1,n]
+          amdqf[j,m,n] += min(sf[w,m,n+1],0) * Wf[w,j,m,n+1]
           apdqf[j,m,n] += max(sf[w,m,n],0) * Wf[w,j,m,n]   
 
-  print('amdqf = ' + str(amdqf))
-  print('apdqf = ' + str(apdqf))
+  print('amdqf = \n' + str(amdqf))
+  print('apdqf = \n' + str(apdqf))
 
   q_new_a[:,:,:] = 0.
   for j in range(eqNum): 
-    for m in range(M+1): #q = q.shape[0],q.shape[1],q.shape[2] (eqnum,n+2,m+2)
+    for m in range(M): #q = q.shape[0],q.shape[1],q.shape[2] (eqnum,n+2,m+2)
       for n in range(N+1):
-        q_new_a[j,m,n] = q[j,m,n] - (1./2.) * dt/dr * (amdqf[j,m,n] + apdqf[j,m,n])   
+        q_new_a[j,m+1,n+1] = q[j,m+1,n+1] - (1./2.) * dt/dr * (amdqf[j,m,n] + apdqf[j,m,n])   
+        if (j == 0 and m+1==6 and n+1==4):
+          print('HERE1')
+          print(q[j,m+1,n+1], dt/dr, amdqf[j,m,n], apdqf[j,m,n], q_new_a[j,m+1,n+1])
+        if (j == 0 and (m+1==5) and (n+1) == 3):
+          print('HERE2')
+          print(q[j,m+1,n+1], dt/dr, amdqf[j,m,n], apdqf[j,m,n], q_new_a[j,m+1,n+1])
+        
 
 
-
-  print('q = ' + str(q))
-  print('prior to filling ghost  q_new_a = ' + str(q_new_a))
+#  print('q = ' + str(q))
+  print('prior to filling ghost  q_new_a = \n'  + str(q_new_a))
   q_new_a = fl.Mat_ghostCells(q_new_a, M, N, 'extrap', DIM)
-  print('q_new_a = ' + str(q_new_a))
-  print('q - q_new_a = ' + str(q-q_new_a))
+  print('q_new_a = \n' + str(q_new_a))
+#  print('q - q_new_a = ' + str(q-q_new_a))
 
-  if (DIM == 2):
-    rholR = q_new_a[0,:,:-1]
-    rhorR = q_new_a[0,:,1:]
-    rholZ = q_new_a[0,:-1,:]
-    rhorZ = q_new_a[0,1:,:]
-    print(rholR.shape,rhorR.shape,rholZ.shape,rhorZ.shape)
-    momlR = q_new_a[1,:,:-1] #rhol * ul
-    momrR = q_new_a[1,:,1:] #rhor * ur
-    momlZ = q_new_a[2,:-1,:] #rhol * vl
-    momrZ = q_new_a[2,1:,:] #rhor * vr
-    ul = momlR/rholR #u[1,:-1]
-    ur = momrR/rhorR #u[1,1:]
-    vl = momlZ/rholZ #u[1,:-1]
-    vr = momrZ/rhorZ #u[1,1:]
-    u = q_new_a[1,:,:]/q_new_a[0,:,:]
-    v = q_new_a[2,:,:]/q_new_a[0,:,:]
-    ElR = q_new_a[3,:,:-1]#pl/(gamma - 1) + 0.5 * rhol * ul**2 #q_new_a[1,:-1] / q_new_a[0,:-1]
-    ErR = q_new_a[3,:,1:]#pr/(gamma - 1) + 0.5 * rhor * ur**2 #q_new_a[1,1:] / q_new_a[0,1:]  
-    ElZ = q_new_a[3,:-1,:]#pl/(gamma - 1) + 0.5 * rhol * ul**2 #q_new_a[1,:-1] / q_new_a[0,:-1]
-    ErZ = q_new_a[3,1:,:]#pr/(gamma - 1) + 0.5 * rhor * ur**2 #q_new_a[1,1:] / q_new_a[0,1:]  #    print(ElR.shape,rholR.shape,ul.shape,vl.shape)
-  #  Temp = 2./(5.*Ndens[:]*kB) * (q[2,:] - 0.5 * q[1,:]**2/q[0,:])
-    P = (gamma-1)*(q_new_a[3,:,:]-0.5*q_new_a[0,:,:]*(u**2+v**2))
-    plR = P[:,:-1]
-    prR = P[:,1:]
-    plZ = P[:-1,:]
-    prZ = P[1:,:]
-    rho = q_new_a[0,:,:]
+  rholR = q_new_a[0,1:-1,:-1] #(M, N+1) 
+  rhorR = q_new_a[0,1:-1,1:]    #
+  momlR = q_new_a[1,1:-1,:-1]   #
+  momrR = q_new_a[1,1:-1,1:]    #
+  ul = momlR/rholR        #
+  ur = momrR/rhorR        #
+  ElR = q_new_a[3,1:-1,:-1]     #
+  ErR = q_new_a[3,1:-1,1:]  #(M, N+1)
+  u = q_new_a[1,:,:]/q_new_a[0,:,:] #(M+2, N+2)
 
-  plt.figure(2)
-  R,Z = np.meshgrid(rc, zc)
-  plt.title(' time  = ' + str(dt*t) )
-##      plt.contourf(R, Z, 
-#  print('Pressure = ' + str(P))
-##      print('rho = ' + str(rho))
+  rholZ = q_new_a[0,:-1,1:-1] #(M+1, N)
+  rhorZ = q_new_a[0,1:,1:-1]   #
+  momlZ = q_new_a[2,:-1,1:-1]  #
+  momrZ = q_new_a[2,1:,1:-1]   #
+  vl = momlZ/rholZ       #
+  vr = momrZ/rhorZ       # 
+  ElZ = q_new_a[3,:-1,1:-1]    #
+  ErZ = q_new_a[3,1:,1:-1]    #(M+1, N)
+  v = q_new_a[2,:,:]/q_new_a[0,:,:] #(M+2, N+2)
+
+  P = (gamma-1)*(q_new_a[3,:,:]-0.5*q_new_a[0,:,:]*(u**2+v**2)) #(M+2, N+2)
+  plR = P[1:-1,:-1] #(M,N+1)
+  prR = P[1:-1,1:] 
+  plZ = P[:-1,1:-1] #(M+1,N)
+  prZ = P[1:,1:-1]
+  rho = q_new_a[0,:,:] #(M+2,N+2)
+  P[0,0] = 0.
+  P[-1,0] = 0.
+  P[0,-1] = 0.
+  P[-1,-1] = 0.
+
+#  print('Pressure =\n ' + str(P))
+#  print('rho =\n ' + str(rho))
 ##      print('u = ' + str(u))
 ##      print('v = ' + str(v))
-  cp = plt.contourf(rho, label = 'density')
+  plt.subplot(2,2,1)
+  plt.suptitle('time = ' + str(dt*t))
+  plt.title('mass density' )
+  cp = plt.contourf(rho[:,:])
+  plt.colorbar(cp)
+  plt.subplot(2,2,2)
+  plt.title('Pressure' )
+  cp = plt.contourf(P[:,:])
   plt.colorbar(cp)
   plt.show()
 

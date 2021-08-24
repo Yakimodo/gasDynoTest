@@ -6,10 +6,10 @@ import function_list_Test as fl
 
 EFIX = 0
 MOVIE = 0
-HEAT = 1
+HEAT = 0
 
-N = 1001
-L = 1. #domain_length
+N = 7
+L = .005 #domain_length
 CFL = 0.6 #Courant-Fredrichs-Lewy condition
 dx = L / (2.*(N-1)) #spatial resolution
 dt = CFL*dx #time step
@@ -21,23 +21,23 @@ xc = np.linspace(-L/2, L/2, N)
 eqNum = 3 #number of equations in system (SW = 2)
 waveNum = eqNum #number of waves per Riemann Prob
 
-q_empty = np.empty((eqNum, N+2))
-W = np.empty((eqNum, waveNum, N+1))
-R = np.empty((eqNum, waveNum, N+1))
-u_hat = np.empty((N+1))
-H_hat = np.empty((N+1))
-c_hat = np.empty((N+1))
-a = np.empty((eqNum, N+1))
-s = np.empty((eqNum, N+1))
-amdq = np.empty((eqNum, N+1))
-apdq = np.empty((eqNum, N+1))
+q_zeros = np.zeros((eqNum, N+2))
+W = np.zeros((eqNum, waveNum, N+1))
+R = np.zeros((eqNum, waveNum, N+1))
+u_hat = np.zeros((N+1))
+H_hat = np.zeros((N+1))
+c_hat = np.zeros((N+1))
+a = np.zeros((eqNum, N+1))
+s = np.zeros((eqNum, N+1))
+amdq = np.zeros((eqNum, N+1))
+apdq = np.zeros((eqNum, N+1))
 
 
-q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_empty)
-#q, u, P = fl.initialConditions('gasDyno', 'twoShock', xc, N, q_empty)
-#q, u, P = fl.initialConditions('gasDyno', 'flat', xc, N, q_empty)
-q_new_a = np.empty((q.shape[0],q.shape[1]))
-q_new_b = np.empty((q.shape[0],q.shape[1]))
+q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'twoShock', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'flat', xc, N, q_zeros)
+q_new_a = np.zeros((q.shape[0],q.shape[1]))
+q_new_b = np.zeros((q.shape[0],q.shape[1]))
 #  q0 = density
 #  q1 = momentum
 #  q2 = energy density
@@ -66,8 +66,6 @@ for t in range(T_begin, T_end+1):
   pl = (gamma-1)*(El-0.5*rhol*ul**2)#P[2,:-1]
   pr = (gamma-1)*(Er-0.5*rhor*ur**2)#P[2,:-1]
   P = (gamma-1)*(q[2,:]-0.5*q[0,:]*u**2)
-  cl = np.sqrt(gamma*pl/rhol)
-  cr = np.sqrt(gamma*pr/rhor)
 
   for k in range(N+1):
     u_hat[k] = (np.sqrt(rhol[k])*ul[k] + np.sqrt(rhor[k])*ur[k]) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k]))
@@ -99,6 +97,10 @@ for t in range(T_begin, T_end+1):
       for w in range(waveNum):
         for k in range(N+1): #spatial variable
           W[w,j,k] = a[w,k] * R[w,j,k]
+   
+    print('a = \n' + str(a))
+    print('R = \n' + str(R))
+    print('W = \n' + str(W))
     
     amdq[:,:] = 0.
     apdq[:,:] = 0.
@@ -109,11 +111,15 @@ for t in range(T_begin, T_end+1):
           amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
           apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
 
+    print('amdq = \n' + str(amdq))
+    print('apdq = \n' + str(apdq))
+
     if (HEAT == 0):
       for j in range(eqNum): 
         for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
           q_new_a[j,k+1] = q[j,k+1] - dt/dx * (amdq[j,k] + apdq[j,k])
-       #qn+1 = qn - dt/dx*(leftFluctuations + rightFluctuations)    
+       #qn+1 = qn - dt/dx*(leftFluctuations + rightFluctuations)     
+      print('q_new_a = ' + str(q_new_a))
 
 #    q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap')
 
@@ -134,8 +140,6 @@ for t in range(T_begin, T_end+1):
 #    if(t%5 == 0 or t == 1): 
       print('pl' + str(pl))
       print('rhol' + str(rhol))
-      print('cl' + str(cl))
-      print('cr' + str(cr))
       print('ul' + str(ul))
       print('ur' + str(ur))
       plt.figure(1)

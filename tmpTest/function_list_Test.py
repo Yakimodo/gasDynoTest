@@ -102,14 +102,14 @@ def initialConditions(sim_type, sim_details, xc, N, q):
     if (sim_details == 'shockTube'):
       print('====SHOCK TUBE=====')
       for j in range(N):
-        if (j <= (N-1)/2.): #LEFT STATE
+        if (j > (N-1)/2.): #LEFT STATE
           u.append(0.)
           rho.append(3.)
           Pressure.append(3.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
-        elif (j > (N-1)/2.): #RIGHT STATE
+        elif (j <= (N-1)/2.): #RIGHT STATE
           u.append(0.)
           rho.append(1.)
           Pressure.append(1.) #N * k_B * Temp[i])
@@ -413,8 +413,8 @@ def SOR(s, z, N, CYL, phi):
 
 
 ##=== E = grad(phi)
-def calcField(phi_new):
-  E =  
+#def calcField(phi_new):
+#  E =  
   
 
 

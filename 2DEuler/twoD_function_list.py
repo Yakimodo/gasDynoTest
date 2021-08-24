@@ -11,16 +11,16 @@ def initialConditions(sim_type, sim_details, rc, zc, M, N, q):
   rmin = min(rc)
   zmax = max(zc)
   zmin = min(zc)
-  rho = np.empty((M+2, N+2))
-  u = np.empty((M+2, N+2))
-  v = np.empty((M+2, N+2))
-  Pressure = np.empty((M+2, N+2)) 
-  height = np.empty((M+2, N+2))
-  engyDens = np.empty((M+2, N+2))
-#  q = np.empty((3, N+2))
-  s = np.empty((M+2, N+2)) 
-  c_gas = np.empty((M+2, N+2))
-  Ndens = np.empty((M+2, N+2))
+  rho = np.zeros((M+2, N+2))
+  u = np.zeros((M+2, N+2))
+  v = np.zeros((M+2, N+2))
+  Pressure = np.zeros((M+2, N+2)) 
+  height = np.zeros((M+2, N+2))
+  engyDens = np.zeros((M+2, N+2))
+#  q = np.zeros((3, N+2))
+  s = np.zeros((M+2, N+2)) 
+  c_gas = np.zeros((M+2, N+2))
+  Ndens = np.zeros((M+2, N+2))
   gamma1 = gamma - 1  
 
 
@@ -230,16 +230,16 @@ def JumpSplit(q, sim_type, DIM, SPATv):
 
   if (DIM == 2):
     if (SPATv == 'z'):
-      dq1 = q[0,1:,:] - q[0,:-1,:] 
-      dq2 = q[1,1:,:] - q[1,:-1,:] 
+      dq1 = q[0,1:,1:-1] - q[0,:-1,1:-1] 
+      dq2 = q[1,1:,1:-1] - q[1,:-1,1:-1] 
       if (sim_type == 'gasDyno'):   
-        dq3 = q[2,1:,:] - q[2,:-1,:]
-        dq4 = q[3,1:,:] - q[3,:-1,:] 
+        dq3 = q[2,1:,1:-1] - q[2,:-1,1:-1]
+        dq4 = q[3,1:,1:-1] - q[3,:-1,1:-1] 
     if (SPATv == 'r'):
-      dq1 = q[0,:,1:] - q[0,:,:-1] 
-      dq2 = q[1,:,1:] - q[1,:,:-1] 
+      dq1 = q[0,1:-1,1:] - q[0,1:-1,:-1] 
+      dq2 = q[1,1:-1,1:] - q[1,1:-1,:-1] 
       if (sim_type == 'gasDyno'):   
-        dq3 = q[2,:,1:] - q[2,:,:-1]
-        dq4 = q[3,:,1:] - q[3,:,:-1] 
+        dq3 = q[2,1:-1,1:] - q[2,1:-1,:-1]
+        dq4 = q[3,1:-1,1:] - q[3,1:-1,:-1] 
 
   return dq1,dq2,dq3,dq4
