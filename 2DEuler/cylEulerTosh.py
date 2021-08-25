@@ -5,25 +5,27 @@ import matplotlib.pyplot as plt
 import twoD_function_list as fl
 
 EFIX = 0
-MOVIE = 1
+MOVIE = 0
 HEAT = 0
 RADIAL = 0
 DIM = 2
 CYL = 0
 TITLE = 'shockTube'
+#TITLE = 'csun-BalbasICs'
 #TITLE = 'constant'
 #TITLE = 'twoShock'
 
 
-M = 101
-N = 101
+M = 100
+N = 100
 L = 1. #domain_length
-CFL = 0.6 #Courant-Fredrichs-Lewy condition
+CFL = 0.75 #Courant-Fredrichs-Lewy condition
 dr = L / (2.*(M-1)) #spatial res in r
 dz = L / (2.*(N-1)) #spatial res in z
 dt = CFL*dr #time step
+print('dt = ' + str(dt))
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
-T_end = 500 #number of steps
+T_end = 501 #number of steps
 gamma = 1.4 #gravity
 kB = 1.38e-23
 rc = np.linspace(0., L, M+2)
@@ -67,6 +69,7 @@ q, u, v, Pressure = fl.initialConditions('gasDyno', TITLE, rc, zc, M, N, q_zeros
 
 for t in range(T_begin, T_end+1):
 
+  print('Step number = ' + str(t))
   q_new_a = np.zeros((q.shape[0],q.shape[1], q.shape[2]))
   q_new_b = np.zeros((q.shape[0],q.shape[1], q.shape[2]))
   q_new_c = np.zeros((q.shape[0],q.shape[1], q.shape[2]))
@@ -111,18 +114,18 @@ for t in range(T_begin, T_end+1):
   P[0,-1] = 0.
   P[-1,-1] = 0.
 
-  if (MOVIE == 0):
-    R,Z = np.meshgrid(rc[1:-1], zc[1:-1])
-    plt.subplot(2,2,1)
-    plt.suptitle('time = ' + str(dt*t))
-    plt.title('mass density' )
-    cp = plt.contourf(rho[:,:])
-    plt.colorbar(cp)
-    plt.subplot(2,2,2)
-    plt.title('Pressure' )
-    cp = plt.contourf(P[:,:])
-    plt.colorbar(cp)
-    plt.show()
+#  if (MOVIE == 0):
+#    R,Z = np.meshgrid(rc[1:-1], zc[1:-1])
+#    plt.subplot(2,2,1)
+#    plt.suptitle('time = ' + str(dt*t))
+#    plt.title('mass density' )
+#    cp = plt.contourf(rho[:,:])
+#    plt.colorbar(cp)
+#    plt.subplot(2,2,2)
+#    plt.title('Pressure' )
+#    cp = plt.contourf(P[:,:])
+#    plt.colorbar(cp)
+#    plt.show()
 
 ###-----2D Cylindrical-----------------------
   for m in range(M+1): #r
@@ -239,17 +242,17 @@ for t in range(T_begin, T_end+1):
   P[-1,-1] = 0.
 
 
-  if (MOVIE == 0):
-    plt.subplot(2,2,1)
-    plt.suptitle('r subroutine time = ' + str(dt*t))
-    plt.title('mass density' )
-    cp = plt.contourf(rho[:,:])
-    plt.colorbar(cp)
-    plt.subplot(2,2,2)
-    plt.title('Pressure' )
-    cp = plt.contourf(P[:,:])
-    plt.colorbar(cp)
-    plt.show()
+#  if (MOVIE == 0):
+#    plt.subplot(2,2,1)
+#    plt.suptitle('r subroutine time = ' + str(dt*t))
+#    plt.title('mass density' )
+#    cp = plt.contourf(rho[:,:])
+#    plt.colorbar(cp)
+#    plt.subplot(2,2,2)
+#    plt.title('Pressure' )
+#    cp = plt.contourf(P[:,:])
+#    plt.colorbar(cp)
+#    plt.show()
 
   dq1Z, dq2Z, dq3Z, dq4Z = fl.JumpSplit(q_new_a, 'gasDyno', DIM, 'z')
 
@@ -390,9 +393,9 @@ for t in range(T_begin, T_end+1):
 
   if(MOVIE == 0):  
 #    if(t%75 == 0 or t == 1): 
-    if(t%1 == 0 or t == 1): 
+    if(t%25 == 0 or t == 1): 
       plt.subplot(2,2,1)
-      plt.suptitle('z subroutine time = ' + str(dt*t))
+      plt.suptitle('time = ' + str(dt*t))
       plt.title('mass density' )
       cp = plt.contourf(rho[:,:])
       plt.colorbar(cp)

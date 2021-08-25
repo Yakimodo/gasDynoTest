@@ -77,6 +77,51 @@ def initialConditions(sim_type, sim_details, rc, zc, M, N, q):
           q[2, m+1, n+1] = rho[m+1,n+1]*v[m+1,n+1]
           q[3, m+1, n+1] = engyDens[m+1,n+1] #Pressure[j]
 
+
+    if (sim_details == 'csun-BalbasICs'):
+      print('====BalbasICs=====')
+      for m in range(M+2):
+        for n in range(N+2):
+          if (m <= HALF and n <= HALF): #bottom left quadrant
+            u[m,n] = 1.206
+            v[m,n] = 1.206
+            rho[m,n] = 0.138
+            Pressure[m,n] = 0.029 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+
+          elif (m <= HALF and n > HALF): # top left quadrant
+            u[m,n] = 1.206
+            v[m,n] = 0.
+            rho[m,n] = 0.5323
+            Pressure[m,n] = 0.3
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+   
+          elif (m > HALF and n <= HALF): #bottom right quandrant
+            u[m,n] = 0.
+            v[m,n] = 1.206
+            rho[m,n] = 0.5323
+            Pressure[m,n] = 0.3
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+
+          elif (m > HALF and n > HALF): #top right quandrant
+            u[m,n] = 0.
+            v[m,n] = 0. 
+            rho[m,n] = 1.5
+            Pressure[m,n] = 1.5
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] *  ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+
+
+      for m in range(M):
+        for n in range(N):
+          q[0, m+1, n+1] = rho[m+1,n+1]
+          q[1, m+1, n+1] = rho[m+1,n+1]*u[m+1,n+1] #u[j]
+          q[2, m+1, n+1] = rho[m+1,n+1]*v[m+1,n+1]
+          q[3, m+1, n+1] = engyDens[m+1,n+1] #Pressure[j]
+
 #    print(q)
 
 

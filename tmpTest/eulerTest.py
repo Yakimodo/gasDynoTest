@@ -8,9 +8,9 @@ EFIX = 0
 MOVIE = 0
 HEAT = 0
 
-N = 7
-L = .005 #domain_length
-CFL = 0.6 #Courant-Fredrichs-Lewy condition
+N = 200
+L = 1. #domain_length
+CFL = 0.25 #Courant-Fredrichs-Lewy condition
 dx = L / (2.*(N-1)) #spatial resolution
 dt = CFL*dx #time step
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
@@ -33,7 +33,7 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 
-q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros)
+q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'twoShock', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'flat', xc, N, q_zeros)
 q_new_a = np.zeros((q.shape[0],q.shape[1]))
@@ -136,8 +136,8 @@ for t in range(T_begin, T_end+1):
 ###___PLOTTING___###
 
   if(MOVIE == 0):  
-    if(t%75 == 0 or t == 1): 
-#    if(t%5 == 0 or t == 1): 
+#    if(t%75 == 0 or t == 1): 
+    if(t%5 == 0 or t == 1): 
       print('pl' + str(pl))
       print('rhol' + str(rhol))
       print('ul' + str(ul))

@@ -120,6 +120,27 @@ def initialConditions(sim_type, sim_details, xc, N, q):
         q[1, j+1] = rho[j]*u[j] #u[j]
         q[2, j+1] = engyDens[j] #Pressure[j]
 
+    if (sim_details == 'BalbasICs'):
+      print('====Balbas=====')
+      for j in range(N):
+        if (j <= (N-1)/2.): #LEFT STATE
+          u.append(1.206)
+          rho.append(0.5323)
+          Pressure.append(0.3) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+  
+        elif (j > (N-1)/2.): #RIGHT STATE
+          u.append(1.206)
+          rho.append(0.138)
+          Pressure.append(0.029) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
+
     if (sim_details == 'twoShock'):
       print('====TWO SHOCK====')
           
