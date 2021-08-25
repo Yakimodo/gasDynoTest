@@ -77,7 +77,7 @@ def initialConditions(sim_type, sim_details, rc, zc, M, N, q):
           q[2, m+1, n+1] = rho[m+1,n+1]*v[m+1,n+1]
           q[3, m+1, n+1] = engyDens[m+1,n+1] #Pressure[j]
 
-    print(q)
+#    print(q)
 
 
     if (sim_details == 'constant'):
