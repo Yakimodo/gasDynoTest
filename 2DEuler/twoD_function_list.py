@@ -28,13 +28,86 @@ def initialConditions(sim_type, sim_details, rc, zc, M, N, q):
 ######_________Gas Dynamics_______________
   if (sim_type == 'gasDyno'):
 
-    if (M%2 == 1): HALF = (M-1)/2
-    elif (M%2 == 0): HALF = M/2
-    if (N%2 == 1): HALF = (N-1)/2
-    elif (N%2 == 0): HALF = N/2
+    if (M%2 == 1):
+      HALF = (M-1)/2
+      THIRD = (M-1)/3
+    elif (M%2 == 0): 
+      HALF = M/2
+      THIRD = M/3
+    if (N%2 == 1): 
+      HALF = (N-1)/2
+      THIRD = (N-1)/3
+    elif (N%2 == 0): 
+      HALF = N/2
+      THIRD = (N-1)/3
 
-    if (sim_details == 'shockTube'):
-      print('====SHOCK TUBE=====')
+    if (sim_details == 'shockTube-2q'):
+      print('====2-quadrant SHOCK TUBE=====')
+      for m in range(M+2):
+        for n in range(N+2):
+          if (n <= HALF): #left quadrant
+            u[m,n] = 0.#1.206
+            v[m,n] = 0.
+            rho[m,n] = 3.#0.5323
+            Pressure[m,n] = 3.#0.3 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+
+          elif (n > HALF): #right quadrant
+            u[m,n] = 0.#1.206
+            v[m,n] = 0.#1.206
+            rho[m,n] = 3.# 0.138
+            Pressure[m,n] = 3.#0.029 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+
+
+
+      for m in range(M):
+        for n in range(N):
+          q[0, m+1, n+1] = rho[m+1,n+1]
+          q[1, m+1, n+1] = rho[m+1,n+1]*u[m+1,n+1] #u[j]
+          q[2, m+1, n+1] = rho[m+1,n+1]*v[m+1,n+1]
+          q[3, m+1, n+1] = engyDens[m+1,n+1] #Pressure[j]
+
+    if (sim_details == 'shockTube-3q'):
+      print('====3-quadrant SHOCK TUBE=====')
+      for m in range(M+2):
+        for n in range(N+2):
+          if (n <= THIRD): #left quadrant
+            u[m,n] = 0.#1.206
+            v[m,n] = 0.
+            rho[m,n] = 3.#0.5323
+            Pressure[m,n] = 3.#0.3 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+
+          elif (THIRD < n <= 2.*THIRD): #middle quadrant
+            u[m,n] = 0.#1.206
+            v[m,n] = 0.
+            rho[m,n] = 1.#0.5323
+            Pressure[m,n] = 1.#0.3 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+
+          elif (n > 2.*THIRD): #right quadrant
+            u[m,n] = 0.#1.206
+            v[m,n] = 0.#1.206
+            rho[m,n] = 3.# 0.138
+            Pressure[m,n] = 3.#0.029 #N * k_B * Temp[i]
+            engyDens[m,n] = (5./2.)* Pressure[m,n] + 0.5 * rho[m,n] * ( u[m,n]**2 + v[m,n]**2)
+            c_gas[m,n] = np.sqrt(gamma*Pressure[m,n]/rho[m,n])
+
+      for m in range(M):
+        for n in range(N):
+          q[0, m+1, n+1] = rho[m+1,n+1]
+          q[1, m+1, n+1] = rho[m+1,n+1]*u[m+1,n+1] #u[j]
+          q[2, m+1, n+1] = rho[m+1,n+1]*v[m+1,n+1]
+          q[3, m+1, n+1] = engyDens[m+1,n+1] #Pressure[j]
+
+
+    if (sim_details == 'shockTube-4q'):
+      print('====4-quadrant SHOCK TUBE=====')
       for m in range(M+2):
         for n in range(N+2):
           if (m <= HALF and n <= HALF): #bottom left quadrant

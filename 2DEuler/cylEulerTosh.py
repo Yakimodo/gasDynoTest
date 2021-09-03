@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.axes3d import Axes3D
 import twoD_function_list as fl
 
 EFIX = 0
@@ -10,7 +11,9 @@ HEAT = 0
 RADIAL = 0
 DIM = 2
 CYL = 0
-TITLE = 'shockTube'
+#TITLE = 'shockTube-2q'
+TITLE = 'shockTube-3q'
+#TITLE = 'shockTube-4q'
 #TITLE = 'csun-BalbasICs'
 #TITLE = 'constant'
 #TITLE = 'twoShock'
@@ -394,16 +397,27 @@ for t in range(T_begin, T_end+1):
   if(MOVIE == 0):  
 #    if(t%75 == 0 or t == 1): 
     if(t%25 == 0 or t == 1): 
-      plt.subplot(2,2,1)
-      plt.suptitle('time = ' + str(dt*t))
-      plt.title('mass density' )
-      cp = plt.contourf(rho[:,:])
-      plt.colorbar(cp)
-      plt.subplot(2,2,2)
-      plt.title('Pressure' )
-      cp = plt.contourf(P[:,:])
-      plt.colorbar(cp)
+      R,Z = np.meshgrid(rc, zc)
+      fig = plt.figure()
+      ax = Axes3D(fig)
+#      ax = fig.gca(projection='3d')
+      ax.set_xlabel('X-Axis')
+      ax.set_xlabel('Y-Axis')
+      ax.set_xlabel('Z-Axis')
+      print(R.shape,Z.shape,rho[1:-1,1:-1].shape)
+      ax.plot_surface(R[1:-1,1:-1], Z[1:-1,1:-1], rho[1:-1,1:-1], rstride=1, cstride=1, cmap='hot')
       plt.show()
+#
+#      plt.subplot(2,2,1)
+#      plt.suptitle('time = ' + str(dt*t))
+#      plt.title('mass density' )
+#      cp = plt.contourf(rho[:,:])
+#      plt.colorbar(cp)
+#      plt.subplot(2,2,2)
+#      plt.title('Pressure' )
+#      cp = plt.contourf(P[:,:])
+#      plt.colorbar(cp)
+#      plt.show()
 
 #      plt.figure(1)
 #      R,Z = np.meshgrid(rc, zc)
