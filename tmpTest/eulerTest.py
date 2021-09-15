@@ -33,8 +33,8 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 
-#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros)
-q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
+q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
+#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
@@ -157,10 +157,11 @@ for t in range(T_begin, T_end+1):
   if(MOVIE == 0):  
 #    if(t%75 == 0 or t == 1): 
 #    if(t%5 == 0 or t == 1): 
-#    if(0.249 < t*dt < 0.251 or t == 1): ##FOR Toro_TEST1---Shock Tube
-    if(0.148 < t*dt < 0.152 or t == 1 or t == 10 ): ##FOR Toro_TEST2
-#    if(0.01198 < t*dt < 0.0121 or t == 1): ##FOR Toro_TEST3
-#    if(0.0349 < t*dt < 0.0351 or t == 1): ##FOR Toro_TEST4 or Toro_TEST5
+#    if(0.249 < t*dt < 0.251 or t == 1): ##FOR Toro_Test1---Shock Tube
+    if(0.199 < t*dt < 0.201 or t == 1): ##FOR Toro_Test1 GodunovMethod---Shock Tube 
+#    if(0.148 < t*dt < 0.152 or t == 1 or t == 10 ): ##FOR Toro_Test2
+#    if(0.01198 < t*dt < 0.0121 or t == 1): ##FOR Toro_Test3
+#    if(0.0349 < t*dt < 0.0351 or t == 1): ##FOR Toro_Test4 or Toro_Test5
       print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
       plt.suptitle(' time = '  + str(dt*t) + '\t timestep = '+ str(dt) )
       plt.subplot(2,2,1)

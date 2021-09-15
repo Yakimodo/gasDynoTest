@@ -107,7 +107,7 @@ def initialConditions(sim_type, sim_details, xc, N, q):
       for j in range(N):
         if (j <= (N-1)/2.): #LEFT STATE
           rho.append(1.)
-          u.append(0.)
+          u.append(.75) #0 or 0.75
           Pressure.append(1.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
