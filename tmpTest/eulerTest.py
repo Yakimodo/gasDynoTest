@@ -8,13 +8,13 @@ EFIX = 0
 MOVIE = 0
 HEAT = 0
 
-N = 200
+N = 1001
 L = 1. #domain_length
-CFL = 0.25 #Courant-Fredrichs-Lewy condition
-dx = L / (2.*(N-1)) #spatial resolution
-dt = CFL*dx #time step
+dx = L / ((N-1)) #spatial resolution
+#CFL = 0.09 #Courant-Fredrichs-Lewy condition
+#dt = CFL*dx #time step
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
-T_end = 500 #number of steps
+T_end = 1500 #number of steps
 gamma = 1.4 #gravity
 xc = np.linspace(-L/2, L/2, N)
 
@@ -33,7 +33,13 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 
-q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, N, q_zeros)
+q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
+
+#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'twoShock', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'flat', xc, N, q_zeros)
 q_new_a = np.zeros((q.shape[0],q.shape[1]))
@@ -66,11 +72,14 @@ for t in range(T_begin, T_end+1):
   pl = (gamma-1)*(El-0.5*rhol*ul**2)#P[2,:-1]
   pr = (gamma-1)*(Er-0.5*rhor*ur**2)#P[2,:-1]
   P = (gamma-1)*(q[2,:]-0.5*q[0,:]*u**2)
-
+  e = P / ((gamma - 1)*q[0,:])
   for k in range(N+1):
     u_hat[k] = (np.sqrt(rhol[k])*ul[k] + np.sqrt(rhor[k])*ur[k]) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k]))
     H_hat[k] = ((El[k] + pl[k]) / np.sqrt(rhol[k]) + (Er[k] + pr[k]) / np.sqrt(rhor[k])) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k])) 
+#    print('\nu_hat = ' + str(u_hat))
+#    print('\nH_hat = ' + str(H_hat))
     c_hat[k] = np.sqrt((gamma-1)*(H_hat[k]-0.5*u_hat[k]**2))
+#    print('\nc_hat = ' + str(c_hat))
 
   
     a[1,k] = (gamma-1)*((H_hat[k]-u_hat[k]**2)*dq1[k] + u_hat[k]*dq2[k]-dq3[k]) / c_hat[k]**2
@@ -98,9 +107,9 @@ for t in range(T_begin, T_end+1):
         for k in range(N+1): #spatial variable
           W[w,j,k] = a[w,k] * R[w,j,k]
    
-    print('a = \n' + str(a))
-    print('R = \n' + str(R))
-    print('W = \n' + str(W))
+#    print('a = \n' + str(a))
+#    print('R = \n' + str(R))
+#    print('W = \n' + str(W))
     
     amdq[:,:] = 0.
     apdq[:,:] = 0.
@@ -111,15 +120,23 @@ for t in range(T_begin, T_end+1):
           amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
           apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
 
-    print('amdq = \n' + str(amdq))
-    print('apdq = \n' + str(apdq))
+#    print('\ncharacteristic speeds 1-wave= ' + str(s[0,:]))
+#    print('\ncharacteristic speeds 2-wave= ' + str(s[1,:]))
+#    print('\ncharacteristic speeds 3-wave= ' + str(s[2,:])+'\n')
+#    print('max characteristic speed = ' + str(max(s.max(),0)) + '\n')
 
+#    print('amdq = \n' + str(amdq))
+#    print('apdq = \n' + str(apdq))
+
+#    CFL = 0.09 #Courant-Fredrichs-Lewy condition
+    dt = dx/max(s.max(),0.) #time step
+    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
     if (HEAT == 0):
       for j in range(eqNum): 
         for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
           q_new_a[j,k+1] = q[j,k+1] - dt/dx * (amdq[j,k] + apdq[j,k])
        #qn+1 = qn - dt/dx*(leftFluctuations + rightFluctuations)     
-      print('q_new_a = ' + str(q_new_a))
+#      print('q_new_a = ' + str(q_new_a))
 
 #    q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap')
 
@@ -137,24 +154,59 @@ for t in range(T_begin, T_end+1):
 
   if(MOVIE == 0):  
 #    if(t%75 == 0 or t == 1): 
-    if(t%5 == 0 or t == 1): 
-      print('pl' + str(pl))
-      print('rhol' + str(rhol))
-      print('ul' + str(ul))
-      print('ur' + str(ur))
-      plt.figure(1)
-      plt.title(' time  = ' + str(dt*t) )
-#      plt.plot(xc, q_new[0, :len(xc)], label = 'hnew')
-#      plt.plot(xc, q_new[1, :len(xc)], label = 'hunew') # / q[0, :len(xc)])
+#    if(t%5 == 0 or t == 1): 
+    if(0.249 < t*dt < 0.251 or t == 1): ##FOR Toro_TEST1---Shock Tube
+#    if(0.148 < t*dt < 0.152 or t == 1 or t == 10 ): ##FOR Toro_TEST2
+#    if(0.01198 < t*dt < 0.0121 or t == 1): ##FOR Toro_TEST3
+#    if(0.0349 < t*dt < 0.0351 or t == 1): ##FOR Toro_TEST4 or Toro_TEST5
+      plt.suptitle(' time = '  + str(dt*t) + '\t timestep = '+ str(dt) )
+      plt.subplot(2,2,1)
+      plt.title('Mass Density' )
       plt.plot(xc, q[0, :len(xc)], label = 'density')
+      plt.axvline(x=0., color='k', linestyle='--')  #(max(xc)/2.))
+
+      plt.subplot(2,2,2)
+      plt.title('Velocity')
       plt.plot(xc, u[:len(xc)], label = 'velocity')# / q[0, :len(xc)])
+      plt.axvline(x=0., color='k', linestyle='--')  #(max(xc)/2.))
+
+      plt.subplot(2,2,3)
+      plt.title('Pressure')
       plt.plot(xc, P[:len(xc)], label = 'pressure')# / q[0, :len(xc)])
       plt.axvline(x=0., color='k', linestyle='--')  #(max(xc)/2.))
-      plt.legend()
-      if (HEAT == 1):
-        plt.figure(2)
-        plt.plot(xc, Q_heat[:len(xc)])
-      plt.show()
+
+      plt.subplot(2,2,4)
+      plt.title('Internal Energy')
+      plt.plot(xc, e[:len(xc)], label = 'internal energy')
+      plt.axvline(x=0., color='k', linestyle='--')  #(max(xc)/2.))
+#      plt.legend()
+#    plt.title('mass density' )
+#    cp = plt.contourf(rho[:,:])
+#    plt.colorbar(cp)
+#    plt.subplot(2,2,2)
+#    plt.title('Pressure' )
+#    cp = plt.contourf(P[:,:])
+#    plt.colorbar(cp)
+    plt.show()
+
+#      print('pl' + str(pl))
+#      print('rhol' + str(rhol))
+#      print('ul' + str(ul))
+#      print('ur' + str(ur))
+#      plt.figure(1)
+#      plt.title(' time and timestep = ' + str(dt*t) + str(dt) )
+##      plt.plot(xc, q_new[0, :len(xc)], label = 'hnew')
+##      plt.plot(xc, q_new[1, :len(xc)], label = 'hunew') # / q[0, :len(xc)])
+#      plt.plot(xc, q[0, :len(xc)], label = 'density')
+#      plt.plot(xc, u[:len(xc)], label = 'velocity')# / q[0, :len(xc)])
+#      plt.plot(xc, P[:len(xc)], label = 'pressure')# / q[0, :len(xc)])
+#      plt.plot(xc, e[:len(xc)], label = 'internal energy')
+#      plt.axvline(x=0., color='k', linestyle='--')  #(max(xc)/2.))
+#      plt.legend()
+#      if (HEAT == 1):
+#        plt.figure(2)
+#        plt.plot(xc, Q_heat[:len(xc)])
+#      plt.show()
 
   if(MOVIE == 1):  
     plt.figure(1)
@@ -164,6 +216,7 @@ for t in range(T_begin, T_end+1):
     plt.plot(xc, q[0, :len(xc)], label = 'density')
     plt.plot(xc, u[:len(xc)], label = 'velocity')# / q[0, :len(xc)])
     plt.plot(xc, P[:len(xc)], label = 'pressure')# / q[0, :len(xc)])
+    plt.plot(xc, e[:len(xc)], label = 'internal energy')
 #    plt.plot(xc, q_new[0, :len(xc)], label = 'hnew')
 #    plt.plot(xc, q_new[1, :len(xc)], label = 'hunew') # / q[0, :len(xc)])
     plt.axvline(x=0.)  #(max(xc)/2.))

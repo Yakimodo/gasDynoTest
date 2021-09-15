@@ -96,23 +96,110 @@ def initialConditions(sim_type, sim_details, xc, N, q):
       q[1, j+1] = u[j]
       q[2, j+1] = Z[j]
 
-######_________Gas Dynamics_______________
+######____________________________________############
+######_________GAS DYNAMICS_______________############
+######____________________________________############
+
   if (sim_type == 'gasDyno'):
 
     if (sim_details == 'shockTube'):
       print('====SHOCK TUBE=====')
       for j in range(N):
-        if (j > (N-1)/2.): #LEFT STATE
+        if (j <= (N-1)/2.): #LEFT STATE
+          rho.append(1.)
           u.append(0.)
-          rho.append(3.)
-          Pressure.append(3.) #N * k_B * Temp[i])
+          Pressure.append(1.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
-        elif (j <= (N-1)/2.): #RIGHT STATE
+        elif (j > (N-1)/2.): #RIGHT STATE
+          rho.append(0.125)
           u.append(0.)
+          Pressure.append(0.1) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
+
+    if (sim_details == 'ToroPg151_Test2'):
+      print('====ToroPg151_Test2=====')
+      for j in range(N):
+        if (j <= (N-1)/2.): #LEFT STATE
           rho.append(1.)
-          Pressure.append(1.) #N * k_B * Temp[i])
+          u.append(-2.)
+          Pressure.append(0.4) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+  
+        elif (j > (N-1)/2.): #RIGHT STATE
+          rho.append(1.)
+          u.append(2.)
+          Pressure.append(0.4) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
+
+    if (sim_details == 'ToroPg151_Test3'):
+      print('====ToroPg151_Test3=====')
+      for j in range(N):
+        if (j <= (N-1)/2.): #LEFT STATE
+          rho.append(1.)
+          u.append(0.)
+          Pressure.append(1000.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+  
+        elif (j > (N-1)/2.): #RIGHT STATE
+          rho.append(1.)
+          u.append(0.)
+          Pressure.append(0.01) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
+
+    if (sim_details == 'ToroPg151_Test4'):
+      print('====ToroPg151_Test4=====')
+      for j in range(N):
+        if (j <= (N-1)/2.): #LEFT STATE
+          rho.append(1.)
+          u.append(0.)
+          Pressure.append(0.01) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+  
+        elif (j > (N-1)/2.): #RIGHT STATE
+          rho.append(1.)
+          u.append(0.)
+          Pressure.append(100.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
+
+    if (sim_details == 'ToroPg151_Test5'):
+      print('====ToroPg151_Test5=====')
+      for j in range(N):
+        if (j <= (N-1)/2.): #LEFT STATE
+          rho.append(5.99924)
+          u.append(19.5975)
+          Pressure.append(460.894) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+  
+        elif (j > (N-1)/2.): #RIGHT STATE
+          rho.append(5.99242)
+          u.append(-6.19633)
+          Pressure.append(46.0950) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
