@@ -14,7 +14,7 @@ dx = L / ((N-1)) #spatial resolution
 #CFL = 0.09 #Courant-Fredrichs-Lewy condition
 #dt = CFL*dx #time step
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
-T_end = 1500 #number of steps
+T_end = 8000 #number of steps
 gamma = 1.4 #gravity
 xc = np.linspace(-L/2, L/2, N)
 
@@ -33,12 +33,11 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 
-#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros)
+q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, N, q_zeros)
-q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
-
-#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'twoShock', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'flat', xc, N, q_zeros)
@@ -49,6 +48,8 @@ q_new_b = np.zeros((q.shape[0],q.shape[1]))
 #  q2 = energy density
 
 for t in range(T_begin, T_end+1):
+  if (t%100 == 0):
+    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
 
   q = fl.Mat_ghostCells(q, N, 'extrap' )
 #  q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap' )
@@ -127,10 +128,11 @@ for t in range(T_begin, T_end+1):
 
 #    print('amdq = \n' + str(amdq))
 #    print('apdq = \n' + str(apdq))
-
+    S_abs = np.absolute(s)
+#    print('max(abs(s)) = ' + str(max(S_abs.max(), 0)))
 #    CFL = 0.09 #Courant-Fredrichs-Lewy condition
-    dt = dx/max(s.max(),0.) #time step
-    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
+    dt = dx/max(S_abs.max(),0.) #time step
+#    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
     if (HEAT == 0):
       for j in range(eqNum): 
         for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
@@ -155,10 +157,11 @@ for t in range(T_begin, T_end+1):
   if(MOVIE == 0):  
 #    if(t%75 == 0 or t == 1): 
 #    if(t%5 == 0 or t == 1): 
-    if(0.249 < t*dt < 0.251 or t == 1): ##FOR Toro_TEST1---Shock Tube
-#    if(0.148 < t*dt < 0.152 or t == 1 or t == 10 ): ##FOR Toro_TEST2
+#    if(0.249 < t*dt < 0.251 or t == 1): ##FOR Toro_TEST1---Shock Tube
+    if(0.148 < t*dt < 0.152 or t == 1 or t == 10 ): ##FOR Toro_TEST2
 #    if(0.01198 < t*dt < 0.0121 or t == 1): ##FOR Toro_TEST3
 #    if(0.0349 < t*dt < 0.0351 or t == 1): ##FOR Toro_TEST4 or Toro_TEST5
+      print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
       plt.suptitle(' time = '  + str(dt*t) + '\t timestep = '+ str(dt) )
       plt.subplot(2,2,1)
       plt.title('Mass Density' )
