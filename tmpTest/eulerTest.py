@@ -33,9 +33,9 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 
-q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
+#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
-#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
+q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
@@ -77,10 +77,7 @@ for t in range(T_begin, T_end+1):
   for k in range(N+1):
     u_hat[k] = (np.sqrt(rhol[k])*ul[k] + np.sqrt(rhor[k])*ur[k]) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k]))
     H_hat[k] = ((El[k] + pl[k]) / np.sqrt(rhol[k]) + (Er[k] + pr[k]) / np.sqrt(rhor[k])) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k])) 
-#    print('\nu_hat = ' + str(u_hat))
-#    print('\nH_hat = ' + str(H_hat))
     c_hat[k] = np.sqrt((gamma-1)*(H_hat[k]-0.5*u_hat[k]**2))
-#    print('\nc_hat = ' + str(c_hat))
 
   
     a[1,k] = (gamma-1)*((H_hat[k]-u_hat[k]**2)*dq1[k] + u_hat[k]*dq2[k]-dq3[k]) / c_hat[k]**2
@@ -107,10 +104,6 @@ for t in range(T_begin, T_end+1):
       for w in range(waveNum):
         for k in range(N+1): #spatial variable
           W[w,j,k] = a[w,k] * R[w,j,k]
-   
-#    print('a = \n' + str(a))
-#    print('R = \n' + str(R))
-#    print('W = \n' + str(W))
     
     amdq[:,:] = 0.
     apdq[:,:] = 0.
@@ -121,17 +114,14 @@ for t in range(T_begin, T_end+1):
           amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
           apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
 
-#    print('\ncharacteristic speeds 1-wave= ' + str(s[0,:]))
-#    print('\ncharacteristic speeds 2-wave= ' + str(s[1,:]))
-#    print('\ncharacteristic speeds 3-wave= ' + str(s[2,:])+'\n')
-#    print('max characteristic speed = ' + str(max(s.max(),0)) + '\n')
-
-#    print('amdq = \n' + str(amdq))
-#    print('apdq = \n' + str(apdq))
     S_abs = np.absolute(s)
-#    print('max(abs(s)) = ' + str(max(S_abs.max(), 0)))
-#    CFL = 0.09 #Courant-Fredrichs-Lewy condition
-    dt = dx/max(S_abs.max(),0.) #time step
+    CFL = 1. #Courant-Fredrichs-Lewy condition
+    if (abs(min(s.min(),0)) > max(s.max(),0)):
+      dt = CFL*dx/max(S_abs.max(),0.) #time step
+    else:
+      dt = CFL*dx/max(s.max(),0.)
+
+    print('\nstep number = ' +str(t) + '  max speed = ' + str(dx/dt))
 #    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
     if (HEAT == 0):
       for j in range(eqNum): 
