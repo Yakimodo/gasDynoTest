@@ -1,0 +1,627 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.10.8)  30 SEP 2021 09:30
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**EulerEquations.tex
+(./EulerEquations.tex
+LaTeX2e <2020-02-02> patch level 2
+L3 programming layer <2020-02-14>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+)
+\c@part=\count167
+\c@section=\count168
+\c@subsection=\count169
+\c@subsubsection=\count170
+\c@paragraph=\count171
+\c@subparagraph=\count172
+\c@figure=\count173
+\c@table=\count174
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen134
+)
+(/usr/share/texlive/texmf-dist/tex/latex/apacite/apacite.sty
+Package: apacite 2013/07/21 v6.03 APA citation
+\c@BibCnt=\count175
+\bibleftmargin=\skip49
+\bibindent=\skip50
+\bibparsep=\skip51
+\bibitemsep=\skip52
+\biblabelsep=\skip53
+)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip16
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen135
+\Gin@req@width=\dimen136
+)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count176
+\float@exts=\toks15
+\float@box=\box45
+\@float@everytoks=\toks16
+\@floatcapt=\box46
+)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
+Package: mathtools 2020/01/17 v1.23 mathematical typesetting tools
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count177
+\calc@Bcount=\count178
+\calc@Adimen=\dimen137
+\calc@Bdimen=\dimen138
+\calc@Askip=\skip54
+\calc@Bskip=\skip55
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count179
+\calc@Cskip=\skip56
+)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty
+Package: mhsetup 2017/03/31 v1.3 programming setup (MH)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2020/01/20 v2.17e AMS math features
+\@mathmargin=\skip57
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks17
+\ex@=\dimen139
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen140
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count180
+LaTeX Info: Redefining \frac on input line 227.
+\uproot@=\count181
+\leftroot@=\count182
+LaTeX Info: Redefining \overline on input line 389.
+\classnum@=\count183
+\DOTSCASE@=\count184
+LaTeX Info: Redefining \ldots on input line 486.
+LaTeX Info: Redefining \dots on input line 489.
+LaTeX Info: Redefining \cdots on input line 610.
+\Mathstrutbox@=\box47
+\strutbox@=\box48
+\big@size=\dimen141
+LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
+\macc@depth=\count185
+\c@MaxMatrixCols=\count186
+\dotsspace@=\muskip17
+\c@parentequation=\count187
+\dspbrk@lvl=\count188
+\tag@help=\toks18
+\row@=\count189
+\column@=\count190
+\maxfields@=\count191
+\andhelp@=\toks19
+\eqnshift@=\dimen142
+\alignsep@=\dimen143
+\tagshift@=\dimen144
+\tagwidth@=\dimen145
+\totwidth@=\dimen146
+\lineht@=\dimen147
+\@envbody=\toks20
+\multlinegap=\skip58
+\multlinetaggap=\skip59
+\mathdisplay@stack=\toks21
+LaTeX Info: Redefining \[ on input line 2859.
+LaTeX Info: Redefining \] on input line 2860.
+)
+LaTeX Info: Thecontrolsequence`\('isalreadyrobust on input line 129.
+LaTeX Info: Thecontrolsequence`\)'isalreadyrobust on input line 129.
+LaTeX Info: Thecontrolsequence`\['isalreadyrobust on input line 129.
+LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 129.
+\g_MT_multlinerow_int=\count192
+\l_MT_multwidth_dim=\dimen148
+\origjot=\skip60
+\l_MT_shortvdotswithinadjustabove_dim=\dimen149
+\l_MT_shortvdotswithinadjustbelow_dim=\dimen150
+\l_MT_above_intertext_sep=\dimen151
+\l_MT_below_intertext_sep=\dimen152
+\l_MT_above_shortintertext_sep=\dimen153
+\l_MT_below_shortintertext_sep=\dimen154
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/adjustbox.sty
+Package: adjustbox 2019/01/04 v1.2 Adjusting TeX boxes (trim, clip, ...)
+
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
+
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks22
+\XKV@tempa@toks=\toks23
+)
+\XKV@depth=\count193
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/adjcalc.sty
+Package: adjcalc 2012/05/16 v1.1 Provides advanced setlength with multiple back
+-ends (calc, etex, pgfmath)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/trimclip.sty
+Package: trimclip 2018/04/08 v1.1 Trim and clip general TeX material
+
+(/usr/share/texlive/texmf-dist/tex/latex/collectbox/collectbox.sty
+Package: collectbox 2012/05/17 v0.4b Collect macro arguments as boxes
+\collectedbox=\box49
+)
+\tc@llx=\dimen155
+\tc@lly=\dimen156
+\tc@urx=\dimen157
+\tc@ury=\dimen158
+Package trimclip Info: Using driver 'tc-pdftex.def'.
+
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/tc-pdftex.def
+File: tc-pdftex.def 2019/01/04 v2.2 Clipping driver for pdftex
+))
+\adjbox@Width=\dimen159
+\adjbox@Height=\dimen160
+\adjbox@Depth=\dimen161
+\adjbox@Totalheight=\dimen162
+\adjbox@pwidth=\dimen163
+\adjbox@pheight=\dimen164
+\adjbox@pdepth=\dimen165
+\adjbox@ptotalheight=\dimen166
+
+(/usr/share/texlive/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty
+Package: ifoddpage 2016/04/23 v1.1 Conditionals for odd/even page detection
+\c@checkoddpage=\count194
+)
+(/usr/share/texlive/texmf-dist/tex/latex/varwidth/varwidth.sty
+Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
+\@vwid@box=\box50
+\sift@deathcycles=\count195
+\@vwid@loff=\dimen167
+\@vwid@roff=\dimen168
+))
+(/usr/share/texlive/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip61
+\bibsep=\skip62
+LaTeX Info: Redefining \cite on input line 694.
+LaTeX Info: Redefining \citeauthor on input line 712.
+LaTeX Info: Redefining \citeyear on input line 735.
+\c@NAT@ctr=\count196
+)
+(/usr/share/texlive/texmf-dist/tex/latex/mhchem/mhchem.sty
+Package: mhchem 2018/06/22 v4.08 for typesetting chemical formulae
+
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2020-02-14 L3 programming layer (loader) 
+
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
+File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
+\l__kernel_color_stack_int=\count197
+\l__pdf_internal_box=\box51
+))
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty
+Package: l3keys2e 2020-02-14 LaTeX2e option processing using LaTeX3 keys
+)
+(/usr/share/texlive/texmf-dist/tex/latex/chemgreek/chemgreek.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+Package: xparse 2020-02-14 L3 Experimental document command parser
+\l__xparse_current_arg_int=\count198
+\g__xparse_grabber_int=\count199
+\l__xparse_m_args_int=\count266
+\l__xparse_v_nesting_int=\count267
+)
+Package: chemgreek 2020/01/16 v1.1a interface for upright Greek letters for use
+ in chemistry (CN)
+\l__chemgreek_tmpa_int=\count268
+\g__chemgreek_tmpa_int=\count269
+)
+\l__mhchem_ce_distanceFromLastComma_int=\count270
+\__mhchem_arrow_extPgfLength_skip=\skip63
+\mhchem@minispace@tmp=\skip64
+\mhchem@minibackspace@tmp=\skip65
+\mhchem@bondwidth=\skip66
+\mhchem@bondheight=\skip67
+\mhchem@smallbondwidth@tmpA=\skip68
+\mhchem@smallbondwidth@tmpB=\skip69
+\mhchem@smallbondwidth=\skip70
+\mhchem@bondtmp@minussidebearingleft=\skip71
+\mhchem@bondtmp@minussidebearingright=\skip72
+\l__mhchem_option_version_int=\count271
+\mhchem@option@minusmathsidebearingleft=\dimen169
+\mhchem@option@minusmathsidebearingright=\dimen170
+\mhchem@option@minustextsidebearingleft=\dimen171
+\mhchem@option@minustextsidebearingright=\dimen172
+)
+(./EulerEquations.aux)
+\openout1 = `EulerEquations.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+\c@maskedRefs=\count272
+
+(/usr/share/texlive/texmf-dist/tex/latex/apacite/english.apc
+File: english.apc 2013/07/21 v6.03 apacite language file
+LaTeX Info: Redefining \BPBI on input line 129.
+LaTeX Info: Redefining \BHBI on input line 130.
+)
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count273
+\scratchdimen=\dimen173
+\scratchbox=\box52
+\nofMPsegments=\count274
+\nofMParguments=\count275
+\everyMPshowfont=\toks24
+\MPscratchCnt=\count276
+\MPscratchDim=\dimen174
+\MPnumerator=\count277
+\makeMPintoPDFobject=\count278
+\everyMPtoPDFconversion=\toks25
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+
+Package chemgreek Info: Activating mapping `default' on line 19.
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 21.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 21.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) [1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
+Package epstopdf Info: Source file: <CharacteristicCurve.eps>
+(epstopdf)                    date: 2021-09-07 17:45:09
+(epstopdf)                    size: 307876 bytes
+(epstopdf)             Output file: <CharacteristicCurve-eps-converted-to.pdf>
+(epstopdf)                    date: 2021-09-07 17:46:10
+(epstopdf)                    size: 384635 bytes
+(epstopdf)             Command: <repstopdf --outfile=CharacteristicCurve-eps-co
+nverted-to.pdf CharacteristicCurve.eps>
+(epstopdf)             \includegraphics on input line 151.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./CharacteristicCurve-eps-converted-to.
+pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+
+<CharacteristicCurve-eps-converted-to.pdf, id=23, 411.5375pt x 240.9pt>
+File: CharacteristicCurve-eps-converted-to.pdf Graphic file (type pdf)
+<use CharacteristicCurve-eps-converted-to.pdf>
+Package pdftex.def Info: CharacteristicCurve-eps-converted-to.pdf  used on inpu
+t line 151.
+(pdftex.def)             Requested size: 205.76825pt x 120.44969pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3]
+Package epstopdf Info: Source file: <RiemannProblem.eps>
+(epstopdf)                    date: 2021-09-06 14:32:18
+(epstopdf)                    size: 187249 bytes
+(epstopdf)             Output file: <RiemannProblem-eps-converted-to.pdf>
+(epstopdf)                    date: 2021-09-06 14:35:15
+(epstopdf)                    size: 249281 bytes
+(epstopdf)             Command: <repstopdf --outfile=RiemannProblem-eps-convert
+ed-to.pdf RiemannProblem.eps>
+(epstopdf)             \includegraphics on input line 195.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./RiemannProblem-eps-converted-to.pdf):
+ PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<RiemannProblem-eps-converted-to.pdf, id=27, 473.77pt x 331.2375pt>
+File: RiemannProblem-eps-converted-to.pdf Graphic file (type pdf)
+<use RiemannProblem-eps-converted-to.pdf>
+Package pdftex.def Info: RiemannProblem-eps-converted-to.pdf  used on input lin
+e 195.
+(pdftex.def)             Requested size: 142.1321pt x 99.37201pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[4 <./CharacteristicCurve-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <CharacteristicFanRP.eps>
+(epstopdf)                    date: 2021-09-06 17:00:12
+(epstopdf)                    size: 228215 bytes
+(epstopdf)             Output file: <CharacteristicFanRP-eps-converted-to.pdf>
+(epstopdf)                    date: 2021-09-06 17:00:52
+(epstopdf)                    size: 287435 bytes
+(epstopdf)             Command: <repstopdf --outfile=CharacteristicFanRP-eps-co
+nverted-to.pdf CharacteristicFanRP.eps>
+(epstopdf)             \includegraphics on input line 209.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./CharacteristicFanRP-eps-converted-to.
+pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+
+<CharacteristicFanRP-eps-converted-to.pdf, id=35, 562.1pt x 342.27875pt>
+File: CharacteristicFanRP-eps-converted-to.pdf Graphic file (type pdf)
+<use CharacteristicFanRP-eps-converted-to.pdf>
+Package pdftex.def Info: CharacteristicFanRP-eps-converted-to.pdf  used on inpu
+t line 209.
+(pdftex.def)             Requested size: 168.6313pt x 102.6844pt.
+[5 <./RiemannProblem-eps-converted-to.pdf> <./CharacteristicFanRP-eps-converted
+-to.pdf>]
+Package epstopdf Info: Source file: <WaveDistortion.eps>
+(epstopdf)                    date: 2021-09-08 09:11:56
+(epstopdf)                    size: 300325 bytes
+(epstopdf)             Output file: <WaveDistortion-eps-converted-to.pdf>
+(epstopdf)                    date: 2021-09-08 09:12:23
+(epstopdf)                    size: 363733 bytes
+(epstopdf)             Command: <repstopdf --outfile=WaveDistortion-eps-convert
+ed-to.pdf WaveDistortion.eps>
+(epstopdf)             \includegraphics on input line 252.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./WaveDistortion-eps-converted-to.pdf):
+ PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<WaveDistortion-eps-converted-to.pdf, id=45, 413.545pt x 243.91125pt>
+File: WaveDistortion-eps-converted-to.pdf Graphic file (type pdf)
+<use WaveDistortion-eps-converted-to.pdf>
+Package pdftex.def Info: WaveDistortion-eps-converted-to.pdf  used on input lin
+e 252.
+(pdftex.def)             Requested size: 206.77199pt x 121.95532pt.
+[6 <./WaveDistortion-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <ShockWave.eps>
+(epstopdf)                    date: 2021-09-08 10:50:52
+(epstopdf)                    size: 275941 bytes
+(epstopdf)             Output file: <ShockWave-eps-converted-to.pdf>
+(epstopdf)                    date: 2021-09-08 10:53:41
+(epstopdf)                    size: 340648 bytes
+(epstopdf)             Command: <repstopdf --outfile=ShockWave-eps-converted-to
+.pdf ShockWave.eps>
+(epstopdf)             \includegraphics on input line 277.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./ShockWave-eps-converted-to.pdf): PDF 
+inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<ShockWave-eps-converted-to.pdf, id=53, 430.60875pt x 361.35pt>
+File: ShockWave-eps-converted-to.pdf Graphic file (type pdf)
+<use ShockWave-eps-converted-to.pdf>
+Package pdftex.def Info: ShockWave-eps-converted-to.pdf  used on input line 277
+.
+(pdftex.def)             Requested size: 215.30383pt x 180.67456pt.
+[7 <./ShockWave-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <RarefactionShock.eps>
+(epstopdf)                    date: 2021-09-08 11:11:50
+(epstopdf)                    size: 262581 bytes
+(epstopdf)             Output file: <RarefactionShock-eps-converted-to.pdf>
+(epstopdf)                    date: 2021-09-08 11:13:25
+(epstopdf)                    size: 330574 bytes
+(epstopdf)             Command: <repstopdf --outfile=RarefactionShock-eps-conve
+rted-to.pdf RarefactionShock.eps>
+(epstopdf)             \includegraphics on input line 288.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./RarefactionShock-eps-converted-to.pdf
+): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<RarefactionShock-eps-converted-to.pdf, id=62, 389.455pt x 353.32pt>
+File: RarefactionShock-eps-converted-to.pdf Graphic file (type pdf)
+<use RarefactionShock-eps-converted-to.pdf>
+Package pdftex.def Info: RarefactionShock-eps-converted-to.pdf  used on input l
+ine 288.
+(pdftex.def)             Requested size: 214.2009pt x 194.3266pt.
+Package epstopdf Info: Source file: <RarefactionWave.eps>
+(epstopdf)                    date: 2021-09-08 11:31:30
+(epstopdf)                    size: 248650 bytes
+(epstopdf)             Output file: <RarefactionWave-eps-converted-to.pdf>
+(epstopdf)                    date: 2021-09-08 11:31:51
+(epstopdf)                    size: 315306 bytes
+(epstopdf)             Command: <repstopdf --outfile=RarefactionWave-eps-conver
+ted-to.pdf RarefactionWave.eps>
+(epstopdf)             \includegraphics on input line 311.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./RarefactionWave-eps-converted-to.pdf)
+: PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<RarefactionWave-eps-converted-to.pdf, id=63, 349.305pt x 338.26375pt>
+File: RarefactionWave-eps-converted-to.pdf Graphic file (type pdf)
+<use RarefactionWave-eps-converted-to.pdf>
+Package pdftex.def Info: RarefactionWave-eps-converted-to.pdf  used on input li
+ne 311.
+(pdftex.def)             Requested size: 192.11833pt x 186.04562pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[8 <./RarefactionShock-eps-converted-to.pdf>] [9 <./RarefactionWave-eps-convert
+ed-to.pdf>]
+Package epstopdf Info: Source file: <RankineHugoniot.eps>
+(epstopdf)                    date: 2021-09-09 11:56:29
+(epstopdf)                    size: 253099 bytes
+(epstopdf)             Output file: <RankineHugoniot-eps-converted-to.pdf>
+(epstopdf)                    date: 2021-09-09 11:57:22
+(epstopdf)                    size: 318458 bytes
+(epstopdf)             Command: <repstopdf --outfile=RankineHugoniot-eps-conver
+ted-to.pdf RankineHugoniot.eps>
+(epstopdf)             \includegraphics on input line 363.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./RankineHugoniot-eps-converted-to.pdf)
+: PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<RankineHugoniot-eps-converted-to.pdf, id=76, 299.1175pt x 174.6525pt>
+File: RankineHugoniot-eps-converted-to.pdf Graphic file (type pdf)
+<use RankineHugoniot-eps-converted-to.pdf>
+Package pdftex.def Info: RankineHugoniot-eps-converted-to.pdf  used on input li
+ne 363.
+(pdftex.def)             Requested size: 164.51512pt x 96.05916pt.
+[10 <./RankineHugoniot-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <ElementaryWaveSolutions.eps>
+(epstopdf)                    date: 2021-09-09 14:06:50
+(epstopdf)                    size: 254151 bytes
+(epstopdf)             Output file: <ElementaryWaveSolutions-eps-converted-to.p
+df>
+(epstopdf)                    date: 2021-09-09 14:09:06
+(epstopdf)                    size: 309824 bytes
+(epstopdf)             Command: <repstopdf --outfile=ElementaryWaveSolutions-ep
+s-converted-to.pdf ElementaryWaveSolutions.eps>
+(epstopdf)             \includegraphics on input line 469.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./ElementaryWaveSolutions-eps-converted
+-to.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> all
+owed
+<ElementaryWaveSolutions-eps-converted-to.pdf, id=84, 572.1375pt x 401.5pt>
+File: ElementaryWaveSolutions-eps-converted-to.pdf Graphic file (type pdf)
+<use ElementaryWaveSolutions-eps-converted-to.pdf>
+Package pdftex.def Info: ElementaryWaveSolutions-eps-converted-to.pdf  used on 
+input line 469.
+(pdftex.def)             Requested size: 314.67659pt x 220.82567pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[11] [12 <./ElementaryWaveSolutions-eps-converted-to.pdf>]
+Overfull \hbox (9.62607pt too wide) in paragraph at lines 550--551
+[]\OT1/cmr/m/n/10 A non-conservative form most com-monly used is with the $\OML
+/cmm/m/it/10 primitive \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 variables$\OT1/cmr
+/m/n/10 .
+ []
+
+[13]
+
+LaTeX Warning: Reference `K1K3Prim' on page 14 undefined on input line 587.
+
+
+Overfull \hbox (7.1671pt too wide) in paragraph at lines 587--588
+\OT1/cmr/m/n/10 Inspecting the $[][]$ and $[][]$ eigen-vec-tors, shown in equa-
+tion [], for the primitive-
+ []
+
+[14] [15]
+Package epstopdf Info: Source file: <Approx_RP_GodFlux_IBVP.eps>
+(epstopdf)                    date: 2021-09-21 08:35:49
+(epstopdf)                    size: 270688 bytes
+(epstopdf)             Output file: <Approx_RP_GodFlux_IBVP-eps-converted-to.pd
+f>
+(epstopdf)                    date: 2021-09-21 08:37:16
+(epstopdf)                    size: 312835 bytes
+(epstopdf)             Command: <repstopdf --outfile=Approx_RP_GodFlux_IBVP-eps
+-converted-to.pdf Approx_RP_GodFlux_IBVP.eps>
+(epstopdf)             \includegraphics on input line 630.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./Approx_RP_GodFlux_IBVP-eps-converted-
+to.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allo
+wed
+<Approx_RP_GodFlux_IBVP-eps-converted-to.pdf, id=109, 558.085pt x 372.39125pt>
+File: Approx_RP_GodFlux_IBVP-eps-converted-to.pdf Graphic file (type pdf)
+<use Approx_RP_GodFlux_IBVP-eps-converted-to.pdf>
+Package pdftex.def Info: Approx_RP_GodFlux_IBVP-eps-converted-to.pdf  used on i
+nput line 630.
+(pdftex.def)             Requested size: 279.04182pt x 186.19516pt.
+(./EulerEquations.bbl [16 <./Approx_RP_GodFlux_IBVP-eps-converted-to.pdf>])
+[17] (./EulerEquations.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 6235 strings out of 481239
+ 103706 string characters out of 5920377
+ 365270 words of memory out of 5000000
+ 21398 multiletter control sequences out of 15000+600000
+ 542467 words of font info for 62 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 38i,15n,39p,1018b,305s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
+0.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmti10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb
+>
+Output written on EulerEquations.pdf (17 pages, 3449391 bytes).
+PDF statistics:
+ 181 PDF objects out of 1000 (max. 8388607)
+ 119 compressed objects within 2 object streams
+ 0 named destinations out of 1000 (max. 500000)
+ 51 words of extra memory for PDF output out of 10000 (max. 10000000)
+

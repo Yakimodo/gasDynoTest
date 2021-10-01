@@ -1,0 +1,100 @@
+\begin{thebibliography}{13}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Benilov and Naidis(2003)]{Benilov:2003}
+M.~S. Benilov and G.~V. Naidis.
+\newblock {Modelling of low-current discharges in atmospheric-pressure air
+  taking account of non-equilibrium effects}.
+\newblock \emph{J. Phys. D: Appl. Phys.}, 36\penalty0 (15):\penalty0
+  1834--1841, 2003.
+\newblock \doi{10.1088/0022-3727/36/15/314}.
+
+\bibitem[{da Silva} and {Pasko}(2013)]{daSilva:2013a}
+C.~L. {da Silva} and V.~P. {Pasko}.
+\newblock Dynamics of streamer-to-leader transition at reduced air densities
+  and its implications for propagation of lightning leaders and gigantic jets.
+\newblock \emph{J. Geophys. Res.}, 118\penalty0 (24):\penalty0 13,561--13,590,
+  2013.
+\newblock ISSN 2169-8996.
+\newblock \doi{10.1002/2013JD020618}.
+
+\bibitem[{Hagelaar} and {Pitchford}(2005)]{Hagelaar:2005}
+G.~J.~M. {Hagelaar} and L.~C. {Pitchford}.
+\newblock {Solving the Boltzmann equation to obtain electron transport
+  coefficients and rate coefficients for fluid models}.
+\newblock \emph{Plasma Sources Sci. Technol.}, 14:\penalty0 722--733, November
+  2005.
+\newblock \doi{10.1088/0963-0252/14/4/011}.
+
+\bibitem[{Lehtinen} and {Inan}(2007)]{Lehtinen:2007}
+N.~G. {Lehtinen} and U.~S. {Inan}.
+\newblock {Possible persistent ionization caused by giant blue jets}.
+\newblock \emph{Geophys. Res. Lett.}, 34:\penalty0 L08804, April 2007.
+\newblock \doi{10.1029/2006GL029051}.
+
+\bibitem[Liu(2010)]{Liu:2010a}
+N.~Y. Liu.
+\newblock {Model of sprite luminous trail caused by increasing streamer
+  current}.
+\newblock \emph{Geophys. Res. Lett.}, 37:\penalty0 L04102, February 2010.
+\newblock \doi{10.1029/2009GL042214}.
+
+\bibitem[Liu(2012)]{Liu:2012a}
+N.~Y. Liu.
+\newblock Multiple ion species fluid modeling of sprite halos and the role of
+  electron detachment of {O$^-$} in their dynamics.
+\newblock \emph{J. Geophys. Res.}, 117:\penalty0 A03308, 2012.
+\newblock \doi{10.1029/2011JA017062}.
+
+\bibitem[Luque and {Gordillo-V{\'a}zquez}({2012})]{Luque:2012}
+A.~Luque and F.~J. {Gordillo-V{\'a}zquez}.
+\newblock {Mesospheric electric breakdown and delayed sprite ignition caused by
+  electron detachment}.
+\newblock \emph{Nat. Geosci.}, {5}:\penalty0 22--25, {2012}.
+\newblock \doi{10.1038/ngeo1314}.
+
+\bibitem[Malag{\'o}n-Romero and Luque(2019)]{Malagon:2019}
+Alejandro Malag{\'o}n-Romero and Alejandro Luque.
+\newblock Spontaneous emergence of space stems ahead of negative leaders in
+  lightning and long sparks.
+\newblock \emph{Geophysical research letters}, 46\penalty0 (7):\penalty0
+  4029--4038, 2019.
+
+\bibitem[Morrow and Lowke(1997)]{Morrow:1997b}
+R.~Morrow and J.~J. Lowke.
+\newblock Streamer propagation in air.
+\newblock \emph{J. Phys. D: Appl. Phys.}, 30:\penalty0 614--627, 1997.
+
+\bibitem[Naidis(2005)]{Naidis:2005}
+G.~V. Naidis.
+\newblock Conditions for inception of positive corona discharges in air.
+\newblock \emph{J. Phys. D: Appl. Phys.}, 38:\penalty0 2211--2214, 2005.
+
+\bibitem[Popov(2001)]{Popov:2001}
+N.~A. Popov.
+\newblock {Investigation of the mechanism for rapid heating of nitrogen and air
+  in gas discharges}.
+\newblock \emph{Plasma Phys. Rep.}, 27\penalty0 (10):\penalty0 886--896, 10
+  2001.
+\newblock \doi{10.1134/1.1409722}.
+
+\bibitem[{Riousset} et~al.(2010){Riousset}, {Pasko}, and
+  {Bourdon}]{Riousset:2010}
+J.~A. {Riousset}, V.~P. {Pasko}, and A.~{Bourdon}.
+\newblock {Air-density-dependent model for analysis of air heating associated
+  with streamers, leaders, and transient luminous events}.
+\newblock \emph{J. Geophys. Res.}, 115:\penalty0 A12321, December 2010.
+\newblock \doi{10.1029/2010JA015918}.
+
+\bibitem[Shi et~al.(2016)Shi, Liu, and Rassoul]{Shi:2016a}
+F.~Shi, N.~Y. Liu, and H.~K. Rassoul.
+\newblock Properties of relatively long streamers initiated from an isolated
+  hydrometeor.
+\newblock \emph{J. Geophys. Res. Atmos.}, 121:\penalty0 7284--7295, 2016.
+\newblock \doi{10.1002/2015JD024580}.
+
+\end{thebibliography}

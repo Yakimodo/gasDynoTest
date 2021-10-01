@@ -1,0 +1,248 @@
+\documentclass[]{article}
+\usepackage[]{apacite}
+\usepackage{url} %this package should fix any errors with URLs in refs.
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[export]{adjustbox}
+\usepackage[authoryear]{natbib}
+\bibliographystyle{plainnat}
+\usepackage[version=4]{mhchem}
+
+%opening
+\title{Streamer-to-Leader Dynamics}
+\author{Jacob Koile}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+	The dynamics of the streamer-to-leader transition are well studied theoretically and experimentally, however, this process in regards to leader formation and propagation has little been observed in nature. The insight gathered from artificial studies of this transition have given lightning scientists a better understanding of the timeline and importance of the micro-processes required for the transition to occur. We analyze the JGR:Atmospheres article \citet{daSilva:2013a} in which the streamer-to-spark and -leader transition are analyzed in varying dry air densities in relation to the transient phenomenon known as (Gigantic) Jets. By fully understanding this study (and the studies therein), we aim to determine the most critical features of the transition process. We then apply these most critical features in our 2D model of a singly propagating streamer, in order to better the understanding of the initiation processes of a leader inside a thundercloud.
+	
+\end{abstract}
+
+\section{Method}
+	In \citet{daSilva:2013a}, their model is developed under the assumptions that (1) axial variations along the channel are negligible compared to radial, and so justifies the use of a 1-D radial system, (2) the electrical current of a propagating leader is fed by the streamer zone processes, and (3) the streamer-to-leader transition takes place on a time scale based on the channel temperature reaching a value of $\approx$ 2000 K. 
+	
+	The initial conditions:
+	\begin{itemize}
+		\item Leader stem emulated by a solitary plasma channel embedded in an unperturbed atmosphere of 79\% N$_2$ and 21\% O$_2$ at room temperature (T $\approx$ 300 K) and ground pressure.
+		\item Plasma channel has a radial Gaussian distribution with a peak electron density value of 2x10$^{14}$ cm$^{-3}$, 1/e radius of 0.3 mm.
+		\item \textbf{Charge neutrality is ensured by setting the initial density of O$^2_+$ equal to the electron density and all other ion densities to zero.}
+		\item Scaling laws are used for simulations at different altitudes.
+		\item The model allows for the actual value of N to reduce due to gas expansion and to increases due to dissociation.
+	\end{itemize}
+
+	These initial conditions are set to that of a single streamer channel which in their study is the leader head (stem). The two simulations are divided by what is held constant: (1) the \textit{constant field case} is deemed a streamer-to-spark transition where the field is held constant by electrodes in an external circuit and (2) the \textit{constant current case} is the streamer-to-spark transition where the constant, sustained current is collectively produced by all the streamers in the streamer zone.
+	
+	They implement the Euler equations to represent the gas dynamics at play inside the channel. These equations are presented and subsequently broken down into pieces below:
+	
+	\begin{equation}
+	\frac{\partial\rho}{\partial t} + \nabla \cdot (\rho v) = 0
+	\end{equation} 
+	\begin{equation}
+	\frac{\partial \rho v}{\partial t} + \nabla \cdot (\rho v v) = -\nabla p + \frac{1}{3} \mu_{\nu} \nabla(\nabla \cdot v) + \mu_{\nu} \nabla^2v 
+	\end{equation}
+	\begin{equation}
+	\frac{\partial \epsilon}{\partial t} + \nabla \cdot [(\epsilon + p)v] = Q_{eff}^T + \nabla \cdot(\kappa^*_T\nabla T) 
+	\end{equation}	 
+	\begin{equation}
+	\frac{\partial \epsilon_V}{\partial t} + \nabla \cdot (\epsilon_Vv) = Q_{eff}^V + \nabla \cdot(D_V\nabla\epsilon_V) 
+	\end{equation}
+	\begin{equation}
+	\epsilon = \frac{5}{2} N k_B T + \frac{1}{2}\rho \vec{v} \cdot \vec{v} 
+	\end{equation}
+	\begin{equation}
+	\epsilon_V = \frac{n_{N_2} \hbar \omega}{exp(\frac{\hbar \omega}{k_B T_V})-1}
+	\end{equation}
+	\begin{equation}
+	p = N k_B T
+	\end{equation}
+	
+	
+	Equation (1) accounts for mass transport (or is otherwise recognized as the mass continuity equation) where $\rho$ represents the mass density determined from all neutral species and $v$ is the bulk velocity. Equation (2) is the momentum density continuity equation accounting for Newton's Second Law by including the necessary contributions of pressure, $p$, and viscosity, $\mu_{\nu}$, categorized as the surface forces on the gas. Equation (3) is the translational energy continuity equation which accounts for the balance of its advection, its heat supply, $Q_{eff}^T$ (the effective rate of energy deposition) or Joule heating, and the transportation of this heat via conduction, $\kappa^*_T$ (the thermal conductivity without the contribution of vibrationally excited nitrogen molecules). The dissociation of O$_2$ and N$_2$ both contribute significantly more to thermal conductivity than other chemical reactions. Equation (4) is the vibrational energy continuity equation which, similar to the previous equation, accounts for advection, Joule heating, and diffusion, $D_V$, which is a function of T and scales with air density (N/N$_0$). Both energies are calculated as functions of the translational and vibrational temperatures, respectively. Equation (7) is the equation of state and closes the system. 
+	
+	Utilizing two separate equations to describe the movement through time of translational and vibrational energy densities is important because the timescale of N$_2$ vibrational energy relaxation  molecules occurs on a significantly longer time scale than the channel heating timescale. It may be worth mentioning that all other vibrational energy relaxation of active and inactive particles found in plasma discharge in air are on the same timescale as air heating.  
+	
+	The continuity equations (1)-(4) and the drift-diffusion-reaction equation (following) are solved with finite differences via second-order midpoint integration in time (2$^{nd}$ Order Runge-Kutta) and the advection terms are discretized with first-order upwind method.
+	
+	Their kinetic scheme is extensive, including 21 species of neutrals, excited electronic states, electrons, negative ions, and positive ions. All model species are described by the drift-diffusion-reaction equation. These equations are needed because inside the gas dynamics equations (3) and (4), the rate of energy deposition is calculated using the updated values of each species. Neutral species are assumed to diffuse with same coefficient as vibrationally excited species. The reactions in which electron number density is determined:
+	\[ S_e = (\nu_{ion} + \nu_{step} + \nu_{assoc} + \nu_{det} - \nu_{a2} - \nu_{a3})n_e.\]
+	The rate coefficients in the reaction table (106 total reactions) depend on four quantities: E, N, T, T$_V$. Under conditions of vibrational nonequilibrium, which most of the transition is under, the rates of electron-impact processes are greatly accelerated due to \textbf{super-elastic collisions with vibrationally excited N$_2$}. This effect is accounted for by an equation presented within the text which is a function of E, N, and T$_V$ and applied to reactions R1-R4 (direct and stepwise ionization) and R8 (two-body dissociate attachment). The nonequilibrium also facilitates the dissociation of N$_2$ which is accounted for via a two-temperature rate coefficient that is a function of T and T$_V$, and applied to reaction R58.
+	
+	The rate of energy transferred from electrical current produced in the streamer zone to translation and vibrational degrees of freedom (DOF) are accounted for in equations (3) and (4) as $Q_{eff}^{T,V}$, respectively. The rate of energy loss from plasma species to neutrals is given by $Q = (\sigma_i + \sigma_e) E^2$. All ionic volumetric power, $\sigma_i E^2$, is assumed to transfer directly into translational DOF. Electronic power, on the other hand, is partitioned into the following three channels, from $Q_e = (\eta_V + \eta_L + \eta_E)\sigma_eE^2$:
+	\begin{enumerate}
+		\item \textbf{Excitation of vibrations}, $Q_V,\eta_V$; accounts for the first 8 vibrational levels in N$_2$.
+		\item \textbf{Elastic collisions}, $Q_L,\eta_L$; with N$_2$ and O$_2$, including excitation of rotations in both. Also including vibrations of O$_2$, which quickly relax into translational energy.
+		\item \textbf{Excitation of electronic states}, $Q_E,\eta_E$; comprises direct and stepwise ionization, excitation of electronic states including metastables, and dissociation. 
+	\end{enumerate}
+	Each of these have a dependence on EN$_0$/N and are calculated using BOLSIG+. The exchange rate of energy between electrons and neutrals that comes from collisional quenching is, in previous literature, typically 30\% of Q$_E$. Quenching is a process by which an excited atom/molecules is returned to its ground state through (1) collisions with other atoms/molecules or (2) along a down-hill energy path that involves several coupled vibrational and electronic energy states. However to compare and be more thorough, they calculate this value directly from the associated chemical reactions an approach cited within by \citet{Popov:2001} that better accounts for scaling with air density. There are two tables presented in the text within which display the pertinent reactions to $Q_E$ and $Q_T$. A major contribution to $Q_T$, or fast heating, comes from quenching of electronically excited N$_2$. Fast-heating has additional contributions from electron-ion recombination, electron impact dissociation, and collisional quenching of excited O$_2$ molecules.
+	
+	They further discuss a mechanism to increase the temperature of the system through three different rate of energy exchanges between vibrational and translation DOF under strong vibrational nonequilibrium, $T_V \ll T$, where high-energy vibrational levels are reasonably populated. These are explained as follows. (1) Vibrational-translational energy relaxation ($Q_{VT}$) takes into account the energy deposition of the energy that relaxes from the lowest vibrational level into translational energy mainly due to quenching of atomic oxygen. The rate of energy exchange is
+	
+	\[ Q_{VT} = \frac{\epsilon_V(T_V) - \epsilon_V(T)}{\tau_{VT}}. \]
+	Where $\epsilon_V(T_V)$ is the local value of vibrational energy and $\epsilon_V(T)$ is the equilibrium value. The time scale of VT energy relaxation, $\tau_{VT}$, is defined as:
+	
+	\[ \frac{1}{\tau_{VT}} = \big[1 - exp\big(-\frac{\hbar\omega}{k_BT_V}\big)\big]\sum_{j}k_j^{VT}n_j\ell_j, \] where $k_j^{VT}$ is the rate of deactivation of the first excited vibrational state of N$_2$ in collisions with the j$^{th}$ species (\ce{N_2(\nu =1 ) + M_j -> N_2(\nu=0) + M_j}) and $\ell_j$ is the Losev correction factor. (2) Vibrational-vibrational energy exchange from the collision of two vibrationally excited $N_2$ molecules where energy is transported both up and down the ``vibrational ladder''. They note that if only single-quantum exchanges at every step up the ``ladder'' is assumed there is a given excess energy that is lost to translation DOF. From this assumption, there is some $Q_{VT}$ from $Q_{VV}$ proportional to the flux of quanta in the vibrational energy space. During strong vibrational nonequilibrium, (3) there is an increase in the rate of dissociation of $N_2$ which is accounted for as discussed previously by the two-temperature rate coefficient which occurs when the timescale of vibrational-translation relaxation is longer than that of dissociation.
+
+\section{Analysis}	
+	Starting with the first simulation case, streamer-to-spark transition, where the axial electric field is held constant which is otherwise known as the channel-controlled framework. It is meant to model a streamer that has bridged a short gap and is used to calibrate the air-heating model used in the streamer-to-spark transition. They validate it by calculating the breakdown times following the approach by \citet{Naidis:2005} and \citet{Riousset:2010}. The gap breakdown time is defined as the time taken to heat the streamer channel up to 5000 K. Their model includes three-body ion-ion recombination reactions which dominate over two-body recombination reactions at ground pressure and room temperature. These both play a significant role in determining breakdown time at ground pressure and lower electric fields (18-22 kV/cm; where $E_k$ $\approx$ 28.51 kV/cm \citep{Benilov:2003}). However, the role of three-body reactions is reduced with a reduction of ambient pressure. 
+	
+	When a streamer bridges a gap between two electrodes holding the electric field constant, a leader does not form, but a spark does. For the streamer-to-spark transition, \citet{daSilva:2013a} notes that at a reasonable fraction of the conventional breakdown threshold, the transition is triggered by kinetic mechanisms alone, i.e. no gas expansion. Since the applied electric field is 19 kV/cm, a value below that of breakdown, there is a net loss of electrons due to two-body dissociative attachment,
+	\begin{center} 
+		\ce{O_2 + e -> O^- + O}. 
+	\end{center} From the resulting accumulation of O$^-$ ions, the detachment rate increases, particularly
+
+	\begin{center} \ce{O^- + N_2 -> N_2O + e}. \end{center}
+	For this reaction there is a strong dependence on the reduced electric field ($E/N$) and the ratio of O$^-$ ion to electron densities ($n_{O^-}/n_e$). \textbf{The frequencies of detachment and electron-impact ionization overcome the two-body attachment frequency on a timescale of electron detachment from O$^-$ ions.} At this point, the kinetic rate of electron production become positive. This causes a slight perturbation of electron density and initializes the thermal-ionizational (TI) instability.
+	
+	The TI instability is dominantly triggered by detachment for the streamer-to-spark transition, differently than the streamer-to-leader transition. With increased electron density,  conductivity increases and because the electric field is held constant, there is a subsequent increase in Joule heating. This leads to an increase in gas temperature (translational temperature) and the subsequent expansion of the channel which in turn lowers the neutral gas density and hence increases in the reduced field value. This increases ionization and then leads to a further increase in electron density which closes the loop. The increase of temperature increases the rates of vibrational-translational (VT) energy relaxation which causes the gas temperature to rise even more. The increase in temperature increases rates of ionization that are solely functions of temperature, such as dissociation and associative ionization (which plays a major role in streamer-to-leader transition). 
+
+	It is important to note that the increase of the reduced electric field and temperature both contribute to a greater production of electrons, however the electric field plays a more dominant role in the streamer-to-spark transition. This is simply because the electric field is held constant and so the rate of electron generation never ceases which leads to an unstable system. Analysis of the breakdown time showed it to scale as 1/N$_{amb}$ (the timescale of detachment) as opposed to the expected 1/N$_{amb}^2$ (the timescale of Joule heating). This is only possible because at lower air pressures, three-body attachment and electron-ion recombination have even less importance than their secondary role in the transition at ground pressure.
+	
+	The constant field model is also used to analyze the dependence \textit{fast heating} has on the axial electric field strength. Fast heating is well referenced in literature and gets its name because it is essentially instantaneous when compared with air heating from VT relaxation. Fast heating accounts for the energy given to neutrals in chemical reactions from three different groups: (1) loss of electron through electron-ion recombination, (2) electron-impact dissocation, and (3) collisional quenching of metastables; the energies of which are given in Table 2 and the rates in Table A1, inside the article. From the study, \citet{daSilva:2013a} determined that at moderate electric fields, most electronic power is spent on dissociation and excitation of N$_2(B)$ and that the electronic power necessary to excite electronic states is roughly independent of pressure. The electronic power spent on gas heating, however, is reduced by a factor of $\sim$ 2 from 0 km to 70 km altitude due to the lessened effectiveness of quenching of N$_2$ excited electronic states, or each excited states respective quenching altitude (presented inside the paper). 
+	%At ground pressure, the main source of air heating is the quenching of O($^1D$), which dominates in strong electric fields and includes the vibrational energy exchange of O$_2$($b,\nu$), dissociation, and quenching of N$_2(B)$. At 70 km altitude the main source of air heating is similar to ground however the quenching altitudes of excited $N_2$ come into play.
+	%From the reduction of quenching efficiency of N$_2(B)$ and N$_2(C)$, compared to ground, they determine the quenching altitude of N$_2(B)$ to be 66 km.
+	
+	The streamer-to-leader model is, in general, more physically realistic because the feeding of a constant current to the leader head is justifiable by experimental results (laboratory leader, rocket-triggered lightning). The transition begins with a temperature rise due to the fast-heating mechanism. This in turn produces an acceleration in the rates of VT relaxation and a change in the ionization mechanism from the interplay of $\nu_{ion}$, $\nu_{a2}$, and $\nu_{det}$ to $\nu_{assoc}$. These two processes result in a stronger rise in temperature which initiates the TI instability and a hot leader channel with a \textit{stationary} temperature of $\sim$ 5000 K is formed. One of the main differences in this model is that the electric field, not being held constant, drops to $\sim$ 0.5 kV/cm and so \textbf{the conductivity is maintained by thermal ionization mechanisms} ($\nu_{assoc}$ and $\nu_{rec}$). Once the leader channel is formed, the dominant mechanism for air heating is VT relaxation. They classify the transition time as the time to heat the channel up to a temperature of 2000 K. At this moment, there is a strong reduction in air density and hence an increase in the reduced electric field, although not to the value of the constant field case. Also, there is an increase in the density of charged particles, a characteristic of the TI instability. Since the associative ionization reaction
+	
+	\begin{center}
+		\ce{N + O -> NO^+ + e}
+	\end{center}
+	is dominant at the time of transition, NO$^+$ becomes the predominant ion, overtaking O$_2^+$. A further characteristic of this time is that all negative and complex ions disappear. Also, because almost all O$_2$ dissociates (two-body attachment), the dominant ionization mechanism becomes stepwise ionization surpassing even two-body attachment. Joule heating's energy deposition leads, as previously stated, to a reduction in neutral density with a greater amount occurring axially where also there is in increase in electron production. These processes result in the discharge channel contracting which leads to an enhancement of the electronic power deposition. Therefore from the contraction, pressure increases to its peak value at the transition time whereby it presumes to equalize across the channel on a timescale of the speed of sound divided by the initial channel radius. For time well before the pressure equalization, the air heating is isochoric (or volume constant) and at a time after it isobaric (or constant pressure). The former of the two heats faster because the deposited volumetric power contributes soley to the temperature rise, whereas the latter contributes to to temperature rise and gas expansion. 
+	
+	The nonuniformity in electron density is smoothed due to ambipolar diffusion, which has a timescale that is proportional to the channel radius squared. So, as the channel constricts this timescale is lessened, placing a bound on the TI instability. Since air heating is the most important process that drives the streamer-to-leader transition, a timescale for heat conduction, $\tau_{\kappa_T}$, is necessarily introduced. At room temperature, its value is 700 $\mu$s, but in the hot, contracted channel the timescale is on the order of the transition. Being that temperature-dependent ionization processes are dominant at this time, heat conduction places, too, a limit on the growth rate of the TI instability. 
+	
+	At near-ground pressures (lower altitudes) the transition timescale is inversely proportional to squared air ambient density and therefore with the same proportionality as three-body attachment, the conductive region size follows the same. So at these altitudes the leader velocity is constant.
+	
+	\textbf{Neglecting effects of radial dynamics, equation (3) can be written as $Nk_B\Delta T / \tau_h \sim (\gamma - 1)\eta_T\sigma_eE^2$.} Similarity laws allow the assumption that $\sigma_e$ and $E$ both scale proportionally to N, i.e. scale with ambient air density. Therefore the prediction that $\tau_h = \tau_{h,0} N_0^2/N_{amb}^2$ is justifiable. However, at low pressures the heating time is longer and so in equation (3), the Joule heating term is balanced by the radial advection and heat conduction, $Q_{eff}^T = \nabla \cdot {(\epsilon + p) {v}} + \nabla \cdot {\kappa_T^* \nabla T} $
+	
+	The electric field, in the 1D constant-current model, is calculated from:
+	
+	\[ E = \frac{I}{\int_{0}^{\infty} \sigma(r)2\pi r dr}\]
+	and so it has an inverse proportionality to electron density. A short time after the initialization of the simulated of the constant-current model, there is a drop in electron density inside the channel because of the two-body dissociative attachment mechanism. The channel electric field value then lessens, in this case to $\sim$ 0.5 kV/cm and so the dominant ionization mechanism must convert from electron-impact to thermal ionization for the streamer-to-leader transition. This is a key difference between the constant-field and constant-current TI instabilities (i.e. $S_e(E/N) -> S_e(T)$).
+	
+	The streamer-to-leader timescale may be physically interpreted as the time it takes a developed leader to increase by a distance $\Delta l_s$, which is governed by processes in the streamer zone. Streamers, cold (room temperature) plasma filaments, are produced in the high field region around the tip of the leader. Three-body attachment dominates electron loss inside the streamer zone, $\sim$10$^{-7}$ s at ground pressure, which when multiplied by the streamer velocity gives an estimate of the conductive region size ($\sim$1 cm at ground pressure). Therefore the leader propagation speed is given by
+	\[ v_L = \frac{\Delta l_s}{\tau_h}.\]
+	In determining the leader tip length scale, they mention that their assumption of its reliance on the three-body attachment timescale is justified, however \textbf{it is determined physically by the simultaneous action of several processes and its evaluation more complex}. They observe from their results that at near ground pressures the breakdown time scales as $\propto$ 1/N$^2_{amb}$, which is evident in Figure 15b at altitudes where the $\tau_h$ $\le$ $\tau_c$ and speed has a small dependence on altitude. From the same figure, they show that the transition will not occur when the timescale is greater than that of heat conduction. The reason for these two observations is as follows. When the timescale for air heating is greater than pressure leveling, there is a delay in the process because the volumetric power is distributed radially at a greater rate and so slows the transition. When the air heating timescale is greater than that of heat conduction the channel cannot contract and therefore the transition cannot occur.
+	
+	Following these observations, they then relate their findings to Gigantic Jet (GJ) leaders. This atmospheric phenomenon is understood as being closely related to cloud-to-ground (CG) lightning however in this case it is cloud-to-ionosphere lightning. The vertical structuring of Jets has been proposed to consist of a leader with a streamer corona (streamer zone) emanating from its tip, again similar to CG lightning. The streamer zone becomes longer as the leader propagates upward, which is understood from scaling laws. So, they point out, there exists an altitude where the streamer zone connects to the ionosphere which completes the circuit. \citet{daSilva:2013a} points out that it is more important to parameterize leader speed with respect to current density as opposed to electric current, as in typical. The reason being is that the streamer-to-leader transition is based mainly on Joule heating. Current density is a function of electric current and the cross-sectional area through which it passes, which is a function of $r_c$. Therefore the scaling of leader speed with ambient air density comes from the relations of the timescales of pressure leveling and heat conduction and the channel radius, both of which increase with an increase in $r_c$. The value of $r_c$ used by \citet{daSilva:2013a} is based on laboratory experiments whereas a leader  in a thundercloud environment may form with a radius much larger and therefore the altitudes at which air heating is greater than pressure leveling and heat conduction may be higher that what is shown in Figure 15b and therefore the Joule heating timescale may be an effective timescale for air heating at higher altitudes. They also expound upon the apparent GJ acceleration with increasing altitude, which from the knowledge of slower air heating at lower pressures, this acceleration does not make sense. This can be explained by the combining effects of a somewhat constant leader speed and the expansion of the streamer zone. They do point out that a leader cannot bridge the gap to the ionosphere because at these low air pressures heat conduction is on a shorter timescale than air heating. 
+	
+	
+	
+	\section{Comparison}
+	Now, we compare and contrast our code/model to the code/model used by \citet{daSilva:2013a} in order to better understand the simil . To do this we put forth questions to answer:
+	\begin{enumerate}
+		\item How is our approach different than their approach?
+		\item Which physics are important but not in the code?
+		\item Which is realistic?
+		\item What are the advantanges and disadvantages of each approach?
+		\item Why do we want to try this approach?
+		\item What important physics can be obtained from taking a different approach?
+		\item What simplifications can be made?
+	\end{enumerate}
+
+	\noindent \textbf{Answer to question (1)}
+
+	 A most obvious difference \textbf{(a)} lies in the fact that our model focuses on a different part of the same process. Their streamer-to-leader transition model is a leader head fed by a constant sustained current driven by the ionization processes from an external streamer zone. Our model focuses on the dynamics of a streamer and the said ionization processes that generate the electric current during the formation and propagation.
+	 
+	 \textbf{(b)} A further difference is that our approach uses a 2D model with cylindrical symmetry as opposed to their 1D radial model. The 1D radial model is justified by the constancy of the axial (longitudinal) dynamics inside the channel. Whereas in our our model, the streamer channel does vary axially \citep{Shi:2016a} by, namely, electric field, current density, and electron density. These three quantities help drive certain kinetic and thermal processes which in turn increase the conduction current and lead to accelerated gas heating. This difference is crucial because inside the simulated leader head. \citet{daSilva:2013a} kept constant the electric field in the streamer-to-spark transition model and in the streamer-to-leader transition, the current is kept constant. Keeping the conduction current constant is not necessarily realistic because \citet{Liu:2010a} and \citet{Shi:2016a} have shown that an accelerating, expanding streamer has an exponentially increasing current.
+	 
+	 The main components of a full-scale, realistic plasma discharge in air is made up of electrodynamic, hydrodynamic, and thermodynamic processes that must be accounted for to make for a richer understanding of these phenomena. \textbf{(c)} Their model includes thermodynamic processes (i.e. they account for a change in temperature of the gas) that our model does not. An obvious disadvantage in including these processes, in regards to our 2D model, is that it will take up more memory. 
+	 
+	 \textbf{(d)} They implement a larger set of chemical kinetics that is essential to realistically physical model for plasma discharges in air. They include 21 different chemical species in different forms (neutral, electrically excited, vibrationally excited, ions, electrons) compared to our four species (neutral, negative ions, positive ions, electrons). This allows them to include a plethora of different kinetic processes (106 reactions) that may be essential to the streamer-to-leader transition. Although, from \citet[Figure 11]{daSilva:2013a} and throughout Section 4 of the article, it is understood that only certain reactions dominate. The reactions they include are functions of reduced electric field, temperature (vibrational, translational, electron, ion), and/or partial pressure of nitrogen or oxygen. Some of these reactions become very important at the high temperatures of the transition and also during strong vibrational nonequilibrium. 
+	 
+	 Streamers are considered cold plasma discharges (T $\sim$ 300K) and therefore the dominant kinetic reactions, included in \citet{daSilva:2013a}, at high gas temperatures are unnecessary for a model focused on the streamer during initiation and initial propagation. This means that streamers are governed mainly by electronic processes and do not produce, in a short time period ($\sim$ 10 ns), significant thermal- or hydrodynamic phenomena. However, because of the increase in conduction current that is evident in an accelerating and expanding streamer, the process of gas heating may play a larger role than previously thought. The electric field near the initiation point of a long streamer can increase to a value greater than that of breakdown, as is evident in \citet{Shi:2016a}. In that same study, the maximum current growth rate was large enough that a conduction current of $\sim$ 90 A was achievable at $\sim$ 100 ns. So with a large electric field value at the initiation point and large conduction current, Joule heating will become significant and could potentially heat the channel during a period of $\sim$ 100 ns to temperatures of T $\geq$ 2000 K, leading quickly to a streamer-to-leader transition. Once the electric current in a singly propagating positive streamer (our model) reaches a value of 100 A, the timescale for the transition may be less than 10 ns \citep[Figure 15a]{daSilva:2013a}. 
+	 %
+	 It is important to note that on the timescale of a long streamer in our model ($\sim$ 100 ns), the vibrational temperature does rise to T$_V$ \textgreater 1000 K in the streamer head and channel \citep{Gallimberti:1979}. The vibrational relaxation of N$_2$ takes place on timescales that can be equivalent to or greater than the channel heating time \citep{Benilov:2003}. Therefore, if the channel heating timescale is less than 100 ns, the energy obtained from its relaxation will come into play and therefore may have to be considered. However, our model will be focused on observing the rise in temperature, not the complete transition and therefore will not need to consider the volumetric power that is obtained via vibrational-translational relaxation or the vibrational-dissociation coupling.
+	 
+	 \noindent \textbf{Answers to question (2), (3), and (4)}
+	 
+	 The \textbf{(a)} thermodynamics for our streamer simulation, are not accounted for as they should be for a streamer-to-leader transition model. For this to be properly accounted for we will use the first three of the four Euler equations along with an equation of state. From \citet[Figure 2a]{daSilva:2013a}, we see that as the translational temperature increases, viscoity and thermal conductivity play an increasing role. Equations (2) and (3) account for viscosity and thermal conductivity and so if the streamer channel reaches temperatures of T $\sim$ 4000 K, these will need to be included. Our model, however, will look for a considerable increase in temperature and not necessarily simulate the full transition and therefore viscosity and thermal conductivity will be excluded. The power dissipated by the electric current inside of the streamer will be distributed among the DOF of the gas which will need to be determined by BOLSIG+, similar to \citet[Figure 3]{daSilva:2013a}. The Euler equations and volumetric power for our model will be the following:
+	 	
+	 \begin{equation}
+	 \frac{\partial\rho}{\partial t} + \nabla \cdot (\rho v) = 0,
+	 \end{equation} 
+	 \begin{equation}
+	 \frac{\partial \rho v}{\partial t} + \nabla \cdot (\rho v v) = -\nabla p,  
+	 \end{equation}
+	 \begin{equation}
+	 \frac{\partial \epsilon}{\partial t} + \nabla \cdot [(\epsilon + p)v] = Q_{eff}^T,  
+	 \end{equation}	 
+	 \begin{equation}
+	 p = N k_B T,
+	 \end{equation}
+	 \begin{equation}
+	 Q_{eff}^T = Q_T + Q_L, 
+	 \end{equation}
+	
+	 where $Q_T$ represents fast heating and $Q_L$ represents what was already stated in the Model section of this write-up. Fast heating, will be considered instantaneous \textbf{why?} and is determined by the often cited relation $Q_T$ = 0.3 $Q_E$. BOLSIG+ \citep{Hagelaar:2005} will be used in partitioning how much of the electronic volumetric power is made up of excitation of electronic states, $Q_E$, and elastic collision, $Q_L$. We neglect the volumetric power from the ionic current because we assume ions to me immobile as a simplification to our model. 
+	
+	 \textbf{(b)} To direct our focus on important timescales in our model, we  analyze \citet[Table 4]{daSilva:2013a}. Out of the ten timescales listed, the processes that will become important in our streamer-to-leader transition model are detachment, pressure leveling, and air heating. As is mentioned in the \textit{Analysis} section of this paper, two-body attachment dominates at low electric field values until there is sufficient build-up of O$^-$ ions which in turn leads to the generation of electrons via detachment. Detachment, electron-impact ionization, and dissociative attachment are the dominant air ionization mechanisms until the translational temperature begins to rise, which marks the beginning of the streamer-to-leader transition. At this point, the dominant air ionization mechanism switches to associative ionization, which leads to a stronger rise in temperature and is one of the characteristics of the TI instability. Because a necessary characteristic of the transition is the ionization mechanism transferring from a function of reduced electric field to thermal ionization and since we are only simulating the pre-transition phase, thermal ionization is unimportant. Pressure leveling is a process that becomes important when investigating the gas-dynamic expansion. If we use the same pressure-leveling timescale relation as in \citet{daSilva:2013a} with a channel radius value an order of magnitude lower, we see that pressure leveling becomes important on a timescale of $\sim$ 100 ns. Ambipolar diffusion and heat conduction, both effect air heating by placing a bound on the TI instability development, i.e. not allowing it to heat the channel indefinitely, however, since we are focused on the heating phase of the channel and not the transition itself these two timescales are unimportant along with $\tau_{VT}$ and $\tau_{VV}$ as stated above. 
+	 
+	 \textbf{(c)} As somewhat drawn upon in (b), we will need to account for more kinetic processes that are not currently in our model. In our code, we include electron-impact ionization, two- and three-body attachment, and electron-ion and ion-ion recombination, and to do so we use look-up tables with coefficients cited from \citet{Morrow:1997b}. To account for the electron sources leading up to the transition, we must include detachment (as stated in (b)). Since the dominant electron detachment reaction involves O$^-$, a necessary inclusion to the code must be accounting for the dynamics of this ion which is generated via two-body dissociative attachment.  
+	 %\citet[Table 2]{daSilva:2013a} shows 17 different kinetic reactions with their associated energy release into gas heating, making up three different processes (as noted in the \textit{Analysis} section). 
+	 
+	 \textbf{(d)} To account for the different reactions necessary for an accurate simulation of the streamer-to-leader transition, we should include the same species that constituted the model in \citet{daSilva:2013a}. However, the arduousness of including 21 different species becomes evident in a 2D model compared to their 1D model and therefore simplifications must be made. \citet{Liu:2012a} uses a model similar to \citet{Lehtinen:2007} where the species are grouped into categories: M (neutrals N$_2$ and O$_2$), M$_{ac}$ (active neutrals such O and N; excited species), M$_x$ (cluster molecules), M$^-$ (light negative ions: O$^-$ and O$^{2}_{-}$), M$_x^-$ (heavy negative ions, formed from M$^-$ ions reacting with neutral species), M$^+$ (light positive ions; O$^+_2$, NO$^+$, and N$_{2}^{+}$), M$_x^+$ (heavy positive ions; O$^2_+$N$_2$), and n$_e$ (electron density). The neutrality condition of course must be maintained. The 2D model as it is now accounts for the essential groupings of species and therefore all that will need to be added is the O$^-$ ion.
+	 
+	 Recently \citet{Malagon:2019} reported on spontaneous leader stem emergence due to the so-called attachment instability. They take into account thermodynamics and hydrodynamics of the gas discharge plasma by using the first 3 of 4 Euler equations. There 2-D model is a streamer launched from a ``leader stem'' (an electrode connected to an external circuit). They take into account electron-impact ionization, attachment/detachment, and water cluster formation and breaking. Although it has been stated that we will account for the first three of these mentioned micro-processes, the presence of water in our model may need to be added because the clustering of water around negative ions can effectively suppress electron detachment and therefore can greatly influence the evolution of the electron density \citep{Malagon:2019,Luque:2017b,Gallimberti:1979}. However, since the most probable type of negative ion to be hydrated is O$_2^-$ \citep{Luque:2017b,Gallimberti:1979}, and O$^-$ plays a larger role in detachment, the effects of humidity may be negligible.
+	 %   
+     %The leader channel, in their model, is placed within a background chemical composition (4:1 N$_2$:O$_2$) similar to that of air and held at pressures of either ground of 70 km altitude. They include  To include the following processes they place their channel, that is a radial Gaussian distribution containing electrons and O$_2^+$ ions, inside an unperturbed atmosphere of 79\% N$_2$ and 21\% O$_2$. These processes are listed below:
+ 
+ 	\noindent \textbf{Answers to question (5) and (6)}
+ 	
+ 	The purpose of taking the suggested approaches, will help better understand the initial formation of a leader as opposed to leader propagation. A model replicating streamer initiation from a hydrometeor inside a weak electric that includes thermodynamics (the Euler equations mentioned) and takes into account electron detachment, will be able to better determine the physics of leader initiation. Also, as opposed to keeping fixed the electric current, the accelerating and expanding streamer (as noted before) creates an exponential increasing current which may play a role in determining a more realistic air heating timescale.
+ 	
+ 	\noindent \textbf{Answer to question (7)}
+ 	
+ 	Since, we are looking at the pre-transition phase of the streamer-to-leader transition, we will be able to make simplifications, some of which have already been mentioned. \textbf{(a)} We first, as mentioned, will be able to simplify the Euler equations greatly by eliminating the vibrational energy continuity equation and the thermal conductivity and visocity terms. \textbf{(b)} We will not need to worry about vibrational-translation relaxation, vibration-dissociation coupling, nor ionic current Joule heating, which, in neglecting, makes for a less memory intensive code. \textbf{(c)} Since we are not accounting for vibrational energy density, there will be no need to include the accleration factor tacked onto electron-impact processes due to the super elastic collisions with vibrationally excited N$_2$. \textbf{(d)} Also, to help with the speed of the simulation, we will use a look-up table in regards to electron-detachment which is a process based on the reduced electric field \citet{Luque:2012}.
+ 	
+ 	\section{Final Remarks}
+ 	
+ 	To be added to the code:
+ 	\begin{enumerate}
+ 		\item Euler Equations
+ 		\item Continuity Equation for O$^-$
+ 		\item BOLSIG+ values for $\eta_{E}$ and $\eta_L$ to use in determining volumetric power
+ 		\item Look-up table for kinetic rate constant of electron detachment
+ 		\item Increase of domain size
+ 		\item Boundary conditions for possible NS initiation?
+ 	\end{enumerate}
+
+ 	
+ 	
+ 
+ 
+
+	
+%\paragraph{end}	
+%	A streamer initiated from an isolated plasma patch (hydrometeor) will have different characteristics depending on the polarity of the streamer, the patch geometry, and ambient electric field value. The head electric field increases with a stronger ambient field and so too does the current of the streamer. The initiation point plays an important role in the streamer-to-leader
+	
+%	Streamer-to-spark transition plays out under the assumption of constant electric field within the bridged streamer channel. At first the field within the channel, a function of the neutral density, is low and so two-body attachment, $\nu_{a2}$, is greater than electron impact ionization, $\nu_i$ which in turn lowers the electron density. However, on the timescales of the detachment frequency, $\nu_{det}$, the combined rates of $\nu_{det}$ and $\nu_i$ overcome two-body attachment and a thermal-ionizational instability begins. The diagram below best represents the mechanism:
+	
+%	$Q_e$ is Joule heating due to the conduction current. As the temperature increases the neutral gas density decreases and which leads to an increased field value and increased kinetic rates of electron production. For streamer-to-spark transition the electric field channel is more important than the temperature channel because the electric field is held constant. In this case, the electric field held constant and with a sufficiently strong value ($\geq E_k$) leads to an unstable TI instability. In \citep{daSilva:2013a} they discover from the "constant electric field" case that the breakdown-time is proportional to the inverse of the ambient air density as opposed to the assumed inverse squared proportionality known from the Joule heating process. They note that \textbf{the proportionality to 1/$N_{amb}$ is only possible because three-body attachment and electron-ion recombination, which play a secondary role in the transition at ground pressure, have even less importance at reduced air pressures.} Also, \textbf{Detachment reactions play a major role in nanosecond time-range spark formation in laboratory discharges.}
+	
+%	The constant-field simulations allowed \citep{daSilva:2013a} to show the dependence of the fast-heating mechanism on the axial electric field strength. Fast-heaing accounts for the energy released to neutrals in chemical reactions. The main components of this are quenching of exited electronic states and electron-impact dissociation. $\eta_E$ and $\eta_T$ and the fractions of electronic power spend on \textit{excitation of electronic states} and \textit{gas heating}, respectively. $\eta_E$ is roughly independent of pressure and most of the electronic power at moderate electric fields is spent on dissociation and excitation of N$_2(B)$. $\eta_T$ is heavily dependent on pressure; at ground pressure the maine source of air heating is the quenching of O($^{1}D)$ and N$_2(B)$. Quenching is a process by which an excited atom/molecules is returned to its ground state through (1) collisions with other atoms/molecules or (2) along a down-hill energy path that involves several coupled vibrational and electronic energy states. At low pressures, air heating's main contributions come from quenching of O($^{1}D)$, dissociation, and quenching of N$_2(B)$. Quenching altitudes show that no air heating comes from quenching of N$_2(C)$ at 70 km and N$_2(B)$ is half its value at ground pressure.
+	
+%	Streamer-to-leader transition occurs under the constant current assumption, fed from the streamer zone to the leader head and channel. The transition begins with a temperature rise (translational, ion, and vibrational) amd a small rise in electron temperature. These are all due to the fast heating mechanism, which causes two things. (1) an acceleration in the rates of the vibrational-translational relaxation (Q$_{VT}$, Q$_{VV}$, and Q$_{D}$) and (2) a qualitative chance in the air ionization mechanism from a combination of $\nu_i$, $\nu_{a2}$, and $\nu_{det}$  to $\nu_{assoc}$. This gives a stronger rise in temperature and dominates the TI instability for this system. This forms a hot ($\approx$ 5000 K) leader channel with an axial electric field of $\approx$ 0.5 kV/cm and so conductivity is maintained via thermal ionization mechanisms ($\nu_{assoc}$ and $\nu_{rec}$). The strong vibrational non-equilibrium, an important part of this system, results in a predominance of Q$_D$ over Q$_{VT}$ and Q$_{VV}$.
+	
+%	The timescale for the streamer-to-leader transition is defined as the time needed to heat the channel up to a temp of 2000 K. For I = 1 A, at ground pressure, $\tau$ = 0.29 $\mu s$. At this moment there is strong reduction in air density and increase in pressure (i.e. less neutrals more charged particles, characteristic of TI instability). R5, an associative reaction is the dominant mechanism of electron production at high temperatures. This leads to NO$^+$ becoming the dominant ion over O$_2^+$ and negative and complex ions disappear. Practically all O$_2$ dissociates (also there is a strong raise in density of N atoms) and for this reason stepwise ionization overcomes direct ionization and eventually it overcomes $\nu_{a2}$ because of the absence of O$_2$. 
+	
+%	A key role in the streamer-to-leader transition is played by the channel's radial dynamics. There is radially propagating pressure wave, equalizing the pressure on a time scale of a few microseconds. The time scale, $\tau_c$, is a function of the speed of sound compared to the initial plasma channel radius. For t \textless $\tau_c$ air heating is isochoric (constant volume) whereas for t \textgreater $\tau_c$ air heating is isobaric. Isochoric is faster because Q, or the rate at which energy is transferred from electrical current to translational and vibrational degrees of freedom, contributes only to temperature rise whereas for the other it contributes to temperature rise and gas expansion.
+	
+	%A bound on the TI instability is given by the time scale of ambipolar diffusion which is proportional to the radius of the channel squared. So upon contraction the time scale of diffusion reaches that of the streamer-to-leader transition time scale. \textbf{Air heating is the most significant process that drives the transition}. Thus, they introduce a time scale for heat conduction which is on the same time scale as the transition when the channel is hot and contracted.
+	
+	%The largest discrepancies in the TI instability occurring at constant current, instead of constant electric field come from\[ 
+	%E = \frac{I}{\int_{0}^{\infty}\sigma (r)2\pi r dr},
+	 %\]
+	 %where E is proportional to 1/n$_e$. Essentially leading to the kinetic electron production rate being dependent on the decrease in neutral air density and hence an increase in electric field. However, the constant current leads to a drop in the electric field and so the rise in temperature is necessary for the streamer-to-leader transition. \textbf{After the development of the TI instability, S$_e$(T) is independent of E and inside the hot channel, electron production is due to associative ionization between N and O atoms and so S$_e$(T) is independent of n$_e$}.
+	 
+	 %$\Delta l_s$ is the length by which a leader increases by the transition time, the size of which is determined by dynamics in the streamer zone. Electron losses in the streamer zone are dictated by three-body attachment and therefore the length of the conducting section behind the streamer tips can be estimated as $\Delta l_s$ = v$_s \tau_{a3}$
+		
+%	This report focuses on the theoretical study of this transition presented within \citet{daSilva:2013a}. We first 
+
+\bibliography{ref.bib}
+\end{document}

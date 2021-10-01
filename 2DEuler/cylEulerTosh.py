@@ -21,11 +21,11 @@ TITLE = 'shockTube-3q'
 
 M = 100
 N = 100
-L = 1. #domain_length
+L = 0.1 #domain_length
 CFL = 0.75 #Courant-Fredrichs-Lewy condition
-dr = L / (2.*(M-1)) #spatial res in r
-dz = L / (2.*(N-1)) #spatial res in z
-dt = CFL*dr #time step
+dr = L / (M-1) #spatial res in r
+dz = L / (N-1) #spatial res in z
+#dt = CFL*dr #time step
 print('dt = ' + str(dt))
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
 T_end = 501 #number of steps
@@ -202,6 +202,8 @@ for t in range(T_begin, T_end+1):
 #  print('amdqf = \n' + str(np.round(amdqf,2))) 
 #  print('apdqf = \n' + str(np.round(apdqf,2))) 
 
+
+  dt = CFL * min((dr/ #time step
   q_new_a[:,:,:] = 0.
   for j in range(eqNum): 
     for m in range(M): #q = q.shape[0],q.shape[1],q.shape[2] (eqnum,n+2,m+2)

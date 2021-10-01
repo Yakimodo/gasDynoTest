@@ -105,14 +105,16 @@ def initialConditions(sim_type, sim_details, xc, N, q):
     if (sim_details == 'shockTube'):
       print('====SHOCK TUBE=====')
       for j in range(N):
-        if (j <= (N-1)/2.): #LEFT STATE
+#        if (j <= (N-1)/2.): #LEFT STATE
+        if (xc[j] <= 0.3): #TORO LEFT STATE 
           rho.append(1.)
           u.append(.75) #0 or 0.75
           Pressure.append(1.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
-        elif (j > (N-1)/2.): #RIGHT STATE
+#        elif (j > (N-1)/2.): #RIGHT STATE
+        elif (xc[j] > 0.3): #TORO RIGHT STATE 
           rho.append(0.125)
           u.append(0.)
           Pressure.append(0.1) #N * k_B * Temp[i])
