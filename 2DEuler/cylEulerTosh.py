@@ -26,7 +26,7 @@ CFL = 0.75 #Courant-Fredrichs-Lewy condition
 dr = L / (M-1) #spatial res in r
 dz = L / (N-1) #spatial res in z
 #dt = CFL*dr #time step
-print('dt = ' + str(dt))
+#print('dt = ' + str(dt))
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
 T_end = 501 #number of steps
 gamma = 1.4 #gravity
@@ -144,6 +144,25 @@ for t in range(T_begin, T_end+1):
       H_hatR[m,n] = ((ElR[m,n] + plR[m,n]) / np.sqrt(rholR[m,n]) + (ErR[m,n] + prR[m,n]) / np.sqrt(rhorR[m,n])) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n])) #(M+1,N+1)
       c_hatR[m,n] = np.sqrt((gamma-1)*(H_hatR[m,n]-0.5*(u_hat[m,n]**2 + v_hat[m,n]**2))) #(M+1,N+1)
 
+
+####---NECESSARY ADDITION TO DETERMINE PROPER TIME STEP---###
+  for m in range(M): #r
+    for n in range(N+1): #z
+      u_hat[m,n] = (np.sqrt(rholR[m,n])*ul[m,n] + np.sqrt(rhorR[m,n])*ur[m,n]) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n]))
+#      H_hatR[m,n] = ((ElR[m,n] + plR[m,n]) / np.sqrt(rholR[m,n]) + (ErR[m,n] + prR[m,n]) / np.sqrt(rhorR[m,n])) / (np.sqrt(rholR[m,n]) + np.sqrt(rhorR[m,n])) 
+#      c_hatR[m,n] = np.sqrt((gamma-1)*(H_hatR[m,n]-0.5*(u_hat[m,n]**2+v_hat[m,n]**2)))
+
+  for m in range(M+1): #r
+    for n in range(N): #z
+#      if (DIM == 2): 
+      v_hat[m,n] = (np.sqrt(rholZ[m,n])*vl[m,n] + np.sqrt(rhorZ[m,n])*vr[m,n]) / (np.sqrt(rholZ[m,n]) + np.sqrt(rhorZ[m,n]))
+      H_hatZ[m,n] = ((ElZ[m,n] + plZ[m,n]) / np.sqrt(rholZ[m,n]) + (ErZ[m,n] + prZ[m,n]) / np.sqrt(rhorZ[m,n])) / (np.sqrt(rholZ[m,n]) + np.sqrt(rhorZ[m,n])) 
+      c_hatZ[m,n] = np.sqrt((gamma-1)*(H_hatZ[m,n]-0.5*(u_hat[m,n]**2+v_hat[m,n]**2)))
+      sg[0,m,n] = v_hat[m,n] - c_hatZ[m,n]
+      sg[1,m,n] = v_hat[m,n]
+      sg[2,m,n] = v_hat[m,n]
+      sg[3,m,n] = v_hat[m,n] + c_hatZ[m,n]
+
   
   dq1R, dq2R, dq3R, dq4R = fl.JumpSplit(q, 'gasDyno', DIM, 'r')
 
@@ -200,10 +219,13 @@ for t in range(T_begin, T_end+1):
           apdqf[j,m,n] += max(sf[w,m,n],0) * Wf[w,j,m,n]   
 
 #  print('amdqf = \n' + str(np.round(amdqf,2))) 
-#  print('apdqf = \n' + str(np.round(apdqf,2))) 
+#  print('apdqf = \n' + str(np.round(apdqf,2)))
+  sf_max = abs(sf).max()
+  sg_max = abs(sg).max()
+  smT = min(dr/sf_max, dz/sg_max)
 
+  dt = CFL * smT #time step
 
-  dt = CFL * min((dr/ #time step
   q_new_a[:,:,:] = 0.
   for j in range(eqNum): 
     for m in range(M): #q = q.shape[0],q.shape[1],q.shape[2] (eqnum,n+2,m+2)

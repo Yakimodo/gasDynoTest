@@ -7,19 +7,24 @@ import function_list_Test as fl
 EFIX = 0
 MOVIE = 0
 HEAT = 0
-RADIAL = 0
+RADIAL = 1
+if (RADIAL == 1):
+  print('radial solution')
+else:
+  print('cartesian solution')
 TITLE = 'shockTube'
+#TITLE = 'shockTubeTest'
 #TITLE = 'constant'
 #TITLE = 'twoShock'
 
 
-N = 100
-L = 10. #domain_length
-CFL = 0.6 #Courant-Fredrichs-Lewy condition
-dr = L / (2.*(N-1)) #spatial resolution
-dt = CFL*dr #time step
+N = 1000
+L = 1. #domain_length
+CFL = 0.9 #Courant-Fredrichs-Lewy condition
+dr = L / (N-1) #spatial resolution
+#dt = CFL*dr #time step
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
-T_end = 500 #number of steps
+T_end = 5000 #number of steps
 gamma = 1.4 #gravity
 kB = 1.38e-23
 rc = np.linspace(0., L, N+1)
@@ -64,6 +69,10 @@ for t in range(T_begin, T_end+1):
     q = fl.Mat_ghostCells(q, N, 'extrap')
   if (RADIAL == 1):
     q = fl.Mat_ghostCells(q, N, 'wall')
+#    print('\n####___FIRST PRINT____###')
+#    print('\nq = ' + str(q))
+#    print('\nq_new_a = ' + str(q_new_a))     
+#    print('\nq_new_b = ' + str(q_new_b))     
 
   EfOld = []
   for j in range(N):
@@ -107,7 +116,6 @@ for t in range(T_begin, T_end+1):
     u_hat[k] = (np.sqrt(rhol[k])*ul[k] + np.sqrt(rhor[k])*ur[k]) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k]))
     H_hat[k] = ((El[k] + pl[k]) / np.sqrt(rhol[k]) + (Er[k] + pr[k]) / np.sqrt(rhor[k])) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k])) 
     c_hat[k] = np.sqrt((gamma-1)*(H_hat[k]-0.5*u_hat[k]**2))
-
   
     a[1,k] = (gamma-1)*((H_hat[k]-u_hat[k]**2)*dq1[k] + u_hat[k]*dq2[k]-dq3[k]) / c_hat[k]**2
     a[2,k] = (dq2[k] + (c_hat[k] - u_hat[k])*dq1[k] - c_hat[k]*a[1,k]) / (2*c_hat[k])
@@ -127,66 +135,108 @@ for t in range(T_begin, T_end+1):
     R[2,1,k] = u_hat[k] + c_hat[k]
     R[2,2,k] = H_hat[k] + u_hat[k]*c_hat[k]
 
-  print(R)
+#  print(R)
   if (EFIX == 0):
-    for j in range(eqNum):
+    print('NO EFIX')
+###___Harten-Hyman Entropy Fix___###
+  elif (EFIX == 1):
+    print('YES HH EFIX')
+    l = np.zeros((eqNum, N+1))
+    beta = np.zeros((eqNum, N+1))
+    for k in range(N+1):
+      l[0,k] = u[k] - c[k]
+      l[1,k] = u[k]
+      l[2,k] = u[k] + c[k]
+
+    transonic = 0
+    tran_pos_row = 0
+    tran_pos_col = 0
+    for w in range(waveNum):
+      for k in range(N):
+        if(l[w,k] < 0. < l[w,k+1]):
+          transonic += 1
+          beta[w,k] = (s[w,k] - l[w,k+1]) / (l[w,k+1] - l[w,k])
+          s[w,k+1] = beta[w,k]*l[w,k]
+          s[w,k] = (1-beta[w,k])*l[w,k+1]
+          tran_pos_row = w
+          tran_pos_col = k
+
+  for j in range(eqNum):
+    for w in range(waveNum):
+      for k in range(N+1): #spatial variable
+        W[w,j,k] = a[w,k] * R[w,j,k]
+
+  amdq[:,:] = 0.
+  apdq[:,:] = 0.
+
+  for j in range(eqNum):
+    for k in range(N-1):
       for w in range(waveNum):
-        for k in range(N+1): #spatial variable
-          W[w,j,k] = a[w,k] * R[w,j,k]
-    
-    amdq[:,:] = 0.
-    apdq[:,:] = 0.
- 
-    for j in range(eqNum): 
-      for k in range(N-1):
-        for w in range(waveNum):
+        if (EFIX == 1 and transonic > 0 and w == tran_pos_row and k == tran_pos_col):
+          amdq[j,k] += s[w,k+1] * W[w,j,k+1]
+          apdq[j,k] += s[w,k] * W[w,j,k]
+        else:
           amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
-          apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
+          apdq[j,k] += max(s[w,k],0) * W[w,j,k]
 
-    if (HEAT == 0):
-      if (RADIAL == 0):
-        for j in range(eqNum): 
-          for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
-            q_new_a[j,k+1] = q[j,k+1] - dt/dr * (amdq[j,k] + apdq[j,k])   
+  s_max = abs(s).max()
 
-      if (RADIAL == 1):    
-        for j in range(eqNum): 
-          for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
-            q_new_a[j,k+1] = q[j,k+1] - 0.5*dt/dr * (amdq[j,k] + apdq[j,k])   
-
-            if (j == 0):
-              q_new_b[j,k+1] = q_new_a[j,k+1] - 0.5*dt * (1/rc[k+1] * q_new_a[1,k+1])
-            elif (j == 1):
-              q_new_b[j,k+1] = q_new_a[j,k+1] - 0.5*dt * (1/rc[k+1] * (q_new_a[1,k+1]**2/q_new_a[0,k+1]))
-            elif (j == 2):
-              q_new_b[j,k+1] = q_new_a[j,k+1] - 0.5*dt * (1/rc[k+1] * ((q_new_a[2,k+1]+P[k+1])*(q_new_a[1,k+1]/q_new_a[0,k+1])))
-       
-       #qn+1 = qn - dt/dr*(leftFluctuations + rightFluctuations)    
-
-#    q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap')
-
-#    print(q_new_a.shape[0],q_new_a.shape[1], q_new_b.shape[0],q_new_b.shape[1],len(Q_heat))
-    if (HEAT == 1):
+  dt = CFL*(dr/s_max)
+#dt = CFL*dr #time step
+  if (HEAT == 0):
+    if (RADIAL == 0):
       for j in range(eqNum): 
         for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
-          q_new_a[j,k+1] = q[j,k+1] - 0.5*dt/dr * (amdq[j,k] + apdq[j,k])
-      q_new_b = q_new_a
+          q_new_a[j,k+1] = q[j,k+1] - dt/dr * (amdq[j,k] + apdq[j,k])   
 
-      for k in range(N-1): #q = q.shape[0],q.shape[1] (eqNum,N+2)
-        q_new_b[2,k+1] = q_new_a[j,k+1] + 0.5 * dt * Q_heat[k]
+    if (RADIAL == 1):    
+      for j in range(eqNum): 
+        for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
+          q_new_a[j,k+1] = q[j,k+1] - 0.5*dt/dr * (amdq[j,k] + apdq[j,k])   
+
+    
+      q_new_a = fl.Mat_ghostCells(q_new_a, N, 'wall')
+      for j in range(eqNum): 
+        for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
+          if (j == 0):
+            q_new_b[j,k+1] = q_new_a[j,k+1] - 0.5*dt * (1/rc[k+1] * q_new_a[1,k+1])
+          elif (j == 1):
+            q_new_b[j,k+1] = q_new_a[j,k+1] - 0.5*dt * (1/rc[k+1] * (q_new_a[1,k+1]**2/q_new_a[0,k+1]))
+          elif (j == 2):
+            q_new_b[j,k+1] = q_new_a[j,k+1] - 0.5*dt * (1/rc[k+1] * ((q_new_a[2,k+1]+P[k+1])*(q_new_a[1,k+1]/q_new_a[0,k+1])))
+    
+#    print('\n####___SECOND PRINT____###')
+#    print('\nq = ' + str(q))
+#    print('\nq_new_a = ' + str(q_new_a))     
+#    print('\nq_new_b = ' + str(q_new_b))     
+     #qn+1 = qn - dt/dr*(leftFluctuations + rightFluctuations)    
+
+#  q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap')
+
+#  print(q_new_a.shape[0],q_new_a.shape[1], q_new_b.shape[0],q_new_b.shape[1],len(Q_heat))
+###DOES NOT HAVE RADAIL METHOD___###
+  if (HEAT == 1):
+    for j in range(eqNum): 
+      for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
+        q_new_a[j,k+1] = q[j,k+1] - 0.5*dt/dr * (amdq[j,k] + apdq[j,k])
+    q_new_b = q_new_a
+
+    for k in range(N-1): #q = q.shape[0],q.shape[1] (eqNum,N+2)
+      q_new_b[2,k+1] = q_new_a[j,k+1] + 0.5 * dt * Q_heat[k]
 ###___PLOTTING___###
 
   if(MOVIE == 0):  
 #    if(t%75 == 0 or t == 1): 
-    if(t%75 == 0 or t == 1): 
-      print('pl' + str(pl))
-      print('rhol' + str(rhol))
-      print('cl' + str(cl))
-      print('cr' + str(cr))
-      print('ul' + str(ul))
-      print('ur' + str(ur))
+    if(t%T_end == 0 or 0.24 < t*dt < 0.26 or t == 1): 
+      print('\nStep Number = ' + str(t) + ' Time = ' + str(t*dt) + ' dt = ' + str(dt))
+#      print('pl' + str(pl))
+#      print('rhol' + str(rhol))
+#      print('cl' + str(cl))
+#      print('cr' + str(cr))
+#      print('ul' + str(ul))
+#      print('ur' + str(ur))
       plt.figure(1)
-      plt.title(' time  = ' + str(dt*t) )
+#      plt.title(' time  = ' + str(dt*t) )
 #      plt.plot(rc, q_new[0, :len(rc)], label = 'hnew')
 #      plt.plot(rc, q_new[1, :len(rc)], label = 'hunew') # / q[0, :len(rc)])
       plt.plot(rc, q[0, :len(rc)], label = 'density')
@@ -196,7 +246,8 @@ for t in range(T_begin, T_end+1):
       plt.legend()
 
       plt.figure(1)
-      plt.plot(rc, Q_heat[:len(rc)])
+      if (HEAT == 1):
+        plt.plot(rc, Q_heat[:len(rc)])
 #      plt.plot(rc, EfOld[:len(rc)], label = 'EF')
 #      plt.plot(rc, JOld[:len(rc)], label = 'Current Density')
 #      plt.plot(rc, Temp[1:], label = 'Temperature')
@@ -230,7 +281,10 @@ for t in range(T_begin, T_end+1):
 #  EfOld = EfNew
 #  JOld = JNew
   if (HEAT == 0):
-    q = q_new_a
+    if (RADIAL == 0):
+      q = q_new_a
+    if (RADIAL == 1):
+      q = q_new_b
   elif (HEAT == 1):
     q = q_new_b
 #  print('q = ' + str(q))

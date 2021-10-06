@@ -239,12 +239,34 @@
 	\subsection{Non-Linearities and Shock Waves}
 		For non-linear hyperbolic conservation law systems, such as the case is with the Gas dynamics equations, the outcome has different properties when compared to the linear case. Using the basic initial value problem (IVP)
 		\begin{equation}
-			u_t + f(u)_x  \mbox{, } u(x,0) = u_0(x),
+			u_t + f(u)_x  \mbox{, } \mbox{  }u(x,0) = u_0(x),
 			\label{IVP1}
 		\end{equation} we explain these different properties in the following sections.
 	
+		\subsubsection{Construction of Solutions on Characteristics}
+			Consider characteristics curves $ x = x(t) $ satisfying the IVP
+			\begin{equation}
+				\frac{dx}{dt} = \lambda(u) \mbox{, } x(0) = x_0,
+				\label{2.88}
+			\end{equation}
+			where $ \lambda(u) = f'(u) $. By regarding both\textit{u} and \textit{x} as functions of \textit{t}, we find the total derivative  of \textit{u} along \textit{x(t)}, namely
+			\begin{equation}
+				\frac{du}{dt} = u_t + \lambda(u)u_x = 0.
+			\end{equation}	
+			In words, \textit{u} is constant along the characteristic curves satisfying (\ref{2.88}) and therefore the slope $ \lambda(u) $ is constant along the characteristic. Hence the characteristic curves are straight lines. The value of \textit{u} along each curve is the value of \textit{u} at the initial point $ x(0) = x_0 $ and so we write
+			\begin{equation}
+				u(x,t) = u_0(x).
+				\label{analytSol1}
+			\end{equation}
+			Now the slope $ \lambda(u) $ of the characteristic may then be evaluated at $ x_0 $ so that the solution of the characteristics curves of the IVP (\ref{2.88}) are
+			\begin{equation}
+				x = x_0 + \lambda(u_0(x_0))t.
+				\label{analytSol2}
+			\end{equation}
+			Equations (\ref{analytSol1}) and (\ref{analytSol2}) are the analytic solutions to the IVP. The point $ x_0 $ depends on the given point $ (x,t) $.
+				
 		\subsubsection{Wave Steepening and Shock Waves}
-			In particular the characteristic speed $ \lambda $ becomes $ \lambda(u) $, or a function of the solution which creates wave distortion. In Figure \ref{WaveDistortion}, we see a smooth initial profile with the initial data $ u_0 $ along with the initial points $ x_0 $. If we consider a convex flux function, $ \lambda^{'}(u) = f^{''}(u) > 0 $, then the characteristic speed  is an increasing function of $ u $.
+			The characteristic speed $ \lambda $ becomes $ \lambda(u) $, or a function of the solution which creates wave distortion. In Figure \ref{WaveDistortion}, we see a smooth initial profile with the initial data $ u_0 $ along with the initial points $ x_0 $. If we consider a convex flux function, $ \lambda^{'}(u) = f^{''}(u) > 0 $, then the characteristic speed  is an increasing function of $ u $. In the case of non-linear systems of conservation laws, the character of the flux function (convex, concave, or neither) is determined by the Equation of State.
 	 
 			\begin{figure}[h] 	
 				\centering
@@ -253,16 +275,17 @@
 				\caption{}
 				\label{WaveDistortion}
 			\end{figure}
-			The higher values of $ u_0$ will therefore travel faster than the lower values. The region to the left of $ x_0^(3) $ is called the \textit{expansive region} and to the right is called the \textit{compressive region}. In the \textit{expansive region}, the characteristic speed $ \lambda_x > 0$, whereas in the \textit{compressive region} $ \lambda_x < 0 $. At a latter time, we would see that the expansive region will have a broader, flatter profile whereas the compressive region will tend to be steeper and narrower. When the characteristics in the compressive region intersect, the wave breaks or becomes a shock wave. A shock wave in air is a small transition layer of very rapid change of physical quantities such as pressure, density, and temperature. Breaking first occurs on the characteristic for which $ \lambda_x(x_0) $ is negative and $ |\lambda_x(x_0) $ is a maximum.
+			The higher values of $ u_0$ will therefore travel faster than the lower values. The region to the left of $ x_0^{(3)} $ is called the \textit{expansive region} and to the right is called the \textit{compressive region}. In the \textit{expansive region}, the characteristic speed $ \lambda_x > 0$ meaning as \textit{x} increases so to does the wave speed. Whereas in the \textit{compressive region} $ \lambda_x < 0 $. At a latter time, we would see that the expansive region will have a broader, flatter profile whereas the compressive region will tend to be steeper and narrower. When the characteristics in the compressive region intersect, the wave breaks or becomes a shock wave. A shock wave in air is a small transition layer of very rapid change of physical quantities such as pressure, density, and temperature. Breaking first occurs on the characteristic for which $ \lambda_x(x_0) $ is negative and $ |\lambda_x(x_0)| $ is a maximum.
 	
 			To take into account the shock wave, a formula is derived from the integral form of the conservation law system,
 			\begin{equation}
-				\frac{d}{dt}\int_{x_L}^{x_R}u(x,t)dx = f(u(x_L, t)) - f(u(x_R,t))
-			\end{equation}, so that the shock wave can be modeled as a mathematical discontinuity. The formula is known as the \textit{Rankine-Hugoniot Condition},
+				\frac{d}{dt}\int_{x_L}^{x_R}u(x,t)dx = f(u(x_L, t)) - f(u(x_R,t)),
+			\end{equation}so that the shock wave can be modeled as a mathematical discontinuity (\textit{Shock Wave thickness can be an issue, see Landau and Lifshitz 1959 pp 337-341}). The formula is known as the \textit{Rankine-Hugoniot Condition},
 			\begin{equation}
 				\Delta f = S \Delta u,
+				\label{RHC}
 			\end{equation}
-			which algebraically relates the jumps between the the left and right fluxes, $ \Delta f $, the left and right conserved variables, $ \Delta u $, and the speed, $ S $, of the discontinuity.
+			where \textit{S} is the speed of the discontinuity. The equation algebraically relates the jumps between the the left and right fluxes, $ \Delta f $, the left and right conserved variables, $ \Delta u $, and the speed, $ S $, of the discontinuity.
 	
 		\subsubsection{The Entropy Condition}
 	

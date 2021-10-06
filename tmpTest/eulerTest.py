@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import function_list_Test as fl
 
 #Harten-Hyman Entropy Fix
-EFIX = 1
+EFIX = 0
 if (EFIX == 0):
   print('NO EFIX')
 else:
@@ -41,9 +41,9 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 
-q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
+#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
-#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
+q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
@@ -56,8 +56,6 @@ q_new_b = np.zeros((q.shape[0],q.shape[1]))
 #  q2 = energy density
 
 for t in range(T_begin, T_end+1):
-  if (t%100 == 0):
-    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
 
   q = fl.Mat_ghostCells(q, N, 'extrap' )
 #  q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap' )
@@ -111,52 +109,54 @@ for t in range(T_begin, T_end+1):
     R[2,2,k] = H_hat[k] + u_hat[k]*c_hat[k]
 
 
+#  if (EFIX == 0):
+#    for j in range(eqNum):
+#      for w in range(waveNum):
+#        for k in range(N+1): #spatial variable
+#          W[w,j,k] = a[w,k] * R[w,j,k]
+#    
+#    amdq[:,:] = 0.
+#    apdq[:,:] = 0.
+# 
+#    for j in range(eqNum): 
+#      for k in range(N-1):
+#        for w in range(waveNum):
+#          amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
+#          apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
+#
+#    S_abs = np.absolute(s)
+#    CFL = 1. #Courant-Fredrichs-Lewy condition
+#    if (abs(min(s.min(),0)) > max(s.max(),0)):
+#      dt = CFL*dx/max(S_abs.max(),0.) #time step
+#    else:
+#      dt = CFL*dx/max(s.max(),0.)
+#
+##    print('\nstep number = ' +str(t) + '  max speed = ' + str(dx/dt))
+##    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
+#    if (HEAT == 0):
+#      for j in range(eqNum): 
+#        for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
+#          q_new_a[j,k+1] = q[j,k+1] - dt/dx * (amdq[j,k] + apdq[j,k])
+#       #qn+1 = qn - dt/dx*(leftFluctuations + rightFluctuations)     
+##      print('q_new_a = ' + str(q_new_a))
+#
+##    q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap')
+#
+##    print(q_new_a.shape[0],q_new_a.shape[1], q_new_b.shape[0],q_new_b.shape[1],len(Q_heat))
+#    if (HEAT == 1):
+#      for j in range(eqNum): 
+#        for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
+#          q_new_a[j,k+1] = q[j,k+1] - 0.5 * dt/dx * (amdq[j,k] + apdq[j,k])
+##      q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap' )
+#      q_new_b = q_new_a
+#      for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
+#        q_new_b[2,k+1] = q_new_a[2,k+1] + 0.5 * dt * Q_heat[k] 
+
   if (EFIX == 0):
-    for j in range(eqNum):
-      for w in range(waveNum):
-        for k in range(N+1): #spatial variable
-          W[w,j,k] = a[w,k] * R[w,j,k]
-    
-    amdq[:,:] = 0.
-    apdq[:,:] = 0.
- 
-    for j in range(eqNum): 
-      for k in range(N-1):
-        for w in range(waveNum):
-          amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
-          apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
-
-    S_abs = np.absolute(s)
-    CFL = 1. #Courant-Fredrichs-Lewy condition
-    if (abs(min(s.min(),0)) > max(s.max(),0)):
-      dt = CFL*dx/max(S_abs.max(),0.) #time step
-    else:
-      dt = CFL*dx/max(s.max(),0.)
-
-#    print('\nstep number = ' +str(t) + '  max speed = ' + str(dx/dt))
-#    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
-    if (HEAT == 0):
-      for j in range(eqNum): 
-        for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
-          q_new_a[j,k+1] = q[j,k+1] - dt/dx * (amdq[j,k] + apdq[j,k])
-       #qn+1 = qn - dt/dx*(leftFluctuations + rightFluctuations)     
-#      print('q_new_a = ' + str(q_new_a))
-
-#    q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap')
-
-#    print(q_new_a.shape[0],q_new_a.shape[1], q_new_b.shape[0],q_new_b.shape[1],len(Q_heat))
-    if (HEAT == 1):
-      for j in range(eqNum): 
-        for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
-          q_new_a[j,k+1] = q[j,k+1] - 0.5 * dt/dx * (amdq[j,k] + apdq[j,k])
-#      q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap' )
-      q_new_b = q_new_a
-      for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
-        q_new_b[2,k+1] = q_new_a[2,k+1] + 0.5 * dt * Q_heat[k] 
-
-
+    print('NO EFIX')
 ###___Harten-Hyman Entropy Fix___###
-  if (EFIX == 1):
+  elif (EFIX == 1):
+    print('YES HH EFIX')
     l = np.zeros((eqNum, N+1))
     beta = np.zeros((eqNum, N+1))
     for k in range(N+1):
@@ -177,51 +177,53 @@ for t in range(T_begin, T_end+1):
           tran_pos_row = w
           tran_pos_col = k
 
-    for j in range(eqNum):
-      for w in range(waveNum):
-        for k in range(N+1): #spatial variable
-          W[w,j,k] = a[w,k] * R[w,j,k]
-    
-    amdq[:,:] = 0.
-    apdq[:,:] = 0.   
+  for j in range(eqNum):
+    for w in range(waveNum):
+      for k in range(N+1): #spatial variable
+        W[w,j,k] = a[w,k] * R[w,j,k]
+  
+  amdq[:,:] = 0.
+  apdq[:,:] = 0.   
  
-    for j in range(eqNum): 
-      for k in range(N-1):
-        for w in range(waveNum):
-          if (transonic > 0 and w == tran_pos_row and k == tran_pos_col):
-            amdq[j,k] += s[w,k+1] * W[w,j,k+1]
-            apdq[j,k] += s[w,k] * W[w,j,k]   
-          else:
-            amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
-            apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
+  for j in range(eqNum): 
+    for k in range(N-1):
+      for w in range(waveNum):
+        if (EFIX == 1 and transonic > 0 and w == tran_pos_row and k == tran_pos_col):
+          amdq[j,k] += s[w,k+1] * W[w,j,k+1]
+          apdq[j,k] += s[w,k] * W[w,j,k]   
+        else:
+          amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
+          apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
 
-    S_abs = np.absolute(s)
-    CFL = 1. #Courant-Fredrichs-Lewy condition
-    if (abs(min(s.min(),0)) > max(s.max(),0)):
-      dt = CFL*dx/max(S_abs.max(),0.) #time step
-    else:
-      dt = CFL*dx/max(s.max(),0.)
+  S_abs = np.absolute(s)
+  CFL = 1. #Courant-Fredrichs-Lewy condition
+  if (abs(min(s.min(),0)) > max(s.max(),0)):
+    dt = CFL*dx/max(S_abs.max(),0.) #time step
+  else:
+    dt = CFL*dx/max(s.max(),0.)
 
-    print('\nstep number = ' +str(t) + '  max speed = ' + str(dx/dt))
+  if (t%100 == 0):
     print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
-    if (HEAT == 0):
-      for j in range(eqNum): 
-        for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
-          q_new_a[j,k+1] = q[j,k+1] - dt/dx * (amdq[j,k] + apdq[j,k])
+#  print('\nstep number = ' +str(t) + '  max speed = ' + str(dx/dt))
+#  print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
+  if (HEAT == 0):
+    for j in range(eqNum): 
+      for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
+        q_new_a[j,k+1] = q[j,k+1] - dt/dx * (amdq[j,k] + apdq[j,k])
        #qn+1 = qn - dt/dx*(leftFluctuations + rightFluctuations)     
 #      print('q_new_a = ' + str(q_new_a))
 
 #    q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap')
 
 #    print(q_new_a.shape[0],q_new_a.shape[1], q_new_b.shape[0],q_new_b.shape[1],len(Q_heat))
-    if (HEAT == 1):
-      for j in range(eqNum): 
-        for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
-          q_new_a[j,k+1] = q[j,k+1] - 0.5 * dt/dx * (amdq[j,k] + apdq[j,k])
-#      q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap' )
-      q_new_b = q_new_a
-      for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
-        q_new_b[2,k+1] = q_new_a[2,k+1] + 0.5 * dt * Q_heat[k] 
+  if (HEAT == 1):
+    for j in range(eqNum): 
+      for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
+        q_new_a[j,k+1] = q[j,k+1] - 0.5 * dt/dx * (amdq[j,k] + apdq[j,k])
+#    q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap' )
+    q_new_b = q_new_a
+    for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
+      q_new_b[2,k+1] = q_new_a[2,k+1] + 0.5 * dt * Q_heat[k] 
 
 ###___PLOTTING___###
 

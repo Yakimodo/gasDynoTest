@@ -78,18 +78,41 @@ def initialConditions(sim_type, sim_details, xc, N, q):
     if (sim_details == 'shockTube'):
       print('====SHOCK TUBE=====')
       for j in range(N):
-        if (j <= (N-1)/2.): #LEFT STATE
+        if (xc[j] <= 0.4): #LEFT STATE
           u.append(0.)
-          rho.append(3.)
-          Pressure.append(3.) #N * k_B * Temp[i])
+          rho.append(1.)
+          Pressure.append(1.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 #          Ndens.append(0.01*np.exp(-np.abs((xc[j]-xc[np.int((N-1)/2)]))**2 / 0.2))
  
-        elif (j > (N-1)/2.): #RIGHT STATE
+        elif (xc[j] > 0.4): #RIGHT STATE
+          u.append(0.)
+          rho.append(0.125)
+          Pressure.append(0.1) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+#          Ndens.append(0.01**np.exp(-np.abs((xc[j]-xc[np.int((N-1)/2)]))**2 / 0.2))
+
+        q[0, j+1] = rho[j]
+        q[1, j+1] = rho[j]*u[j] #u[j]
+        q[2, j+1] = engyDens[j] #Pressure[j]
+
+    if (sim_details == 'shockTubeTest'):
+      print('====SHOCK TUBE TEST=====')
+      for j in range(N):
+        if (j <= (N-1)/2): #LEFT STATE
           u.append(0.)
           rho.append(1.)
           Pressure.append(1.) #N * k_B * Temp[i])
+          engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
+          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+#          Ndens.append(0.01*np.exp(-np.abs((xc[j]-xc[np.int((N-1)/2)]))**2 / 0.2))
+ 
+        elif (j > (N-1)/2): #RIGHT STATE
+          u.append(0.)
+          rho.append(0.125)
+          Pressure.append(0.1) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 #          Ndens.append(0.01**np.exp(-np.abs((xc[j]-xc[np.int((N-1)/2)]))**2 / 0.2))
