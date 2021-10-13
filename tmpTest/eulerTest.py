@@ -3,6 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import function_list_Test as fl
+from matplotlib import gridspec
 
 #Harten-Hyman Entropy Fix
 EFIX = 0
@@ -41,9 +42,9 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 
-#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
+q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
-q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
@@ -84,6 +85,8 @@ for t in range(T_begin, T_end+1):
   cr = np.sqrt(gamma*pr/rhor) ##----------------------
   c = np.sqrt(gamma*P/rho)
   e = P / ((gamma - 1)*q[0,:])
+
+
   for k in range(N+1):
     u_hat[k] = (np.sqrt(rhol[k])*ul[k] + np.sqrt(rhor[k])*ur[k]) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k]))
     H_hat[k] = ((El[k] + pl[k]) / np.sqrt(rhol[k]) + (Er[k] + pr[k]) / np.sqrt(rhor[k])) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k])) 
@@ -108,55 +111,12 @@ for t in range(T_begin, T_end+1):
     R[2,1,k] = u_hat[k] + c_hat[k]
     R[2,2,k] = H_hat[k] + u_hat[k]*c_hat[k]
 
-
-#  if (EFIX == 0):
-#    for j in range(eqNum):
-#      for w in range(waveNum):
-#        for k in range(N+1): #spatial variable
-#          W[w,j,k] = a[w,k] * R[w,j,k]
-#    
-#    amdq[:,:] = 0.
-#    apdq[:,:] = 0.
-# 
-#    for j in range(eqNum): 
-#      for k in range(N-1):
-#        for w in range(waveNum):
-#          amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
-#          apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
-#
-#    S_abs = np.absolute(s)
-#    CFL = 1. #Courant-Fredrichs-Lewy condition
-#    if (abs(min(s.min(),0)) > max(s.max(),0)):
-#      dt = CFL*dx/max(S_abs.max(),0.) #time step
-#    else:
-#      dt = CFL*dx/max(s.max(),0.)
-#
-##    print('\nstep number = ' +str(t) + '  max speed = ' + str(dx/dt))
-##    print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
-#    if (HEAT == 0):
-#      for j in range(eqNum): 
-#        for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
-#          q_new_a[j,k+1] = q[j,k+1] - dt/dx * (amdq[j,k] + apdq[j,k])
-#       #qn+1 = qn - dt/dx*(leftFluctuations + rightFluctuations)     
-##      print('q_new_a = ' + str(q_new_a))
-#
-##    q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap')
-#
-##    print(q_new_a.shape[0],q_new_a.shape[1], q_new_b.shape[0],q_new_b.shape[1],len(Q_heat))
-#    if (HEAT == 1):
-#      for j in range(eqNum): 
-#        for k in range(N): #q = q.shape[0],q.shape[1] (eqnum,n+2)
-#          q_new_a[j,k+1] = q[j,k+1] - 0.5 * dt/dx * (amdq[j,k] + apdq[j,k])
-##      q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap' )
-#      q_new_b = q_new_a
-#      for k in range(N): #q = q.shape[0],q.shape[1] (eqNum,N+2)
-#        q_new_b[2,k+1] = q_new_a[2,k+1] + 0.5 * dt * Q_heat[k] 
-
   if (EFIX == 0):
-    print('NO EFIX')
+    pass
+#    print('NO EFIX')
 ###___Harten-Hyman Entropy Fix___###
   elif (EFIX == 1):
-    print('YES HH EFIX')
+#    print('YES HH EFIX')
     l = np.zeros((eqNum, N+1))
     beta = np.zeros((eqNum, N+1))
     for k in range(N+1):
@@ -235,27 +195,57 @@ for t in range(T_begin, T_end+1):
 #    if(0.148 < t*dt < 0.152 or t == 1 or t == 10 ): ##FOR Toro_Test2
 #    if(0.01198 < t*dt < 0.0121 or t == 1): ##FOR Toro_Test3
 #    if(0.0349 < t*dt < 0.0351 or t == 1): ##FOR Toro_Test4 or Toro_Test5
+
       print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
+####____Subplots___###
+#      fig,((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)#, figsize=(5, 5))
+##      ax = plt.gca()
+##      #sets the ratio to 1
+##      ax.set_aspect(1)
+#      ax1.scatter(xc, q[0, :len(xc)], label = 'density')
+#      ax2.scatter(xc, u[:len(xc)], label = 'velocity')# / q[0, :len(xc)])
+#      ax3.scatter(xc, P[:len(xc)], label = 'pressure')# / q[0, :len(xc)])
+#      ax4.scatter(xc, e[:len(xc)], label = 'internal energy')
+#      plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
+
       plt.suptitle(' time = '  + str(dt*t) + '\t timestep = '+ str(dt) )
+
       plt.subplot(2,2,1)
+      ax = plt.gca()
+      #sets the ratio to 1
+      ax.set_aspect(1)
       plt.title('Mass Density' )
-      plt.plot(xc, q[0, :len(xc)], label = 'density', linestyle = 'dotted')
+#      plt.plot(xc, q[0, :len(xc)], label = 'density', linestyle = 'dotted')
+      plt.scatter(xc, q[0, :len(xc)], label = 'density')
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,2)
+      ax = plt.gca()
+      #sets the ratio to 1
+      ax.set_aspect(1)
       plt.title('Velocity')
-      plt.plot(xc, u[:len(xc)], label = 'velocity', linestyle = 'dotted')# / q[0, :len(xc)])
+#      plt.plot(xc, u[:len(xc)], label = 'velocity', linestyle = 'dotted')# / q[0, :len(xc)])
+      plt.scatter(xc, u[:len(xc)], label = 'velocity')# / q[0, :len(xc)])
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,3)
+      ax = plt.gca()
+      #sets the ratio to 1
+      ax.set_aspect(1)
       plt.title('Pressure')
-      plt.plot(xc, P[:len(xc)], label = 'pressure', linestyle = 'dotted')# / q[0, :len(xc)])
+#      plt.plot(xc, P[:len(xc)], label = 'pressure', linestyle = 'dotted')# / q[0, :len(xc)])
+      plt.scatter(xc, P[:len(xc)], label = 'pressure')# / q[0, :len(xc)])
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,4)
+      ax = plt.gca()
+      #sets the ratio to 1
+      ax.set_aspect(1)
       plt.title('Internal Energy')
-      plt.plot(xc, e[:len(xc)], label = 'internal energy', linestyle = 'dotted')
+#      plt.plot(xc, e[:len(xc)], label = 'internal energy', linestyle = 'dotted')
+      plt.scatter(xc, e[:len(xc)], label = 'internal energy')
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
+
 #      plt.legend()
 #    plt.title('mass density' )
 #    cp = plt.contourf(rho[:,:])
