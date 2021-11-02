@@ -1,4 +1,4 @@
-###====This is a test euler program, if broken try eulerEqs.py
+##====This is a test euler program, if broken try eulerEqs.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -42,9 +42,9 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 
-q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
+#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
-#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
+q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
@@ -86,7 +86,6 @@ for t in range(T_begin, T_end+1):
   c = np.sqrt(gamma*P/rho)
   e = P / ((gamma - 1)*q[0,:])
 
-
   for k in range(N+1):
     u_hat[k] = (np.sqrt(rhol[k])*ul[k] + np.sqrt(rhor[k])*ur[k]) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k]))
     H_hat[k] = ((El[k] + pl[k]) / np.sqrt(rhol[k]) + (Er[k] + pr[k]) / np.sqrt(rhor[k])) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k])) 
@@ -116,25 +115,63 @@ for t in range(T_begin, T_end+1):
 #    print('NO EFIX')
 ###___Harten-Hyman Entropy Fix___###
   elif (EFIX == 1):
+    
 #    print('YES HH EFIX')
-    l = np.zeros((eqNum, N+1))
-    beta = np.zeros((eqNum, N+1))
-    for k in range(N+1):
-      l[0,k] = u[k] - c[k]
-      l[1,k] = u[k]
-      l[2,k] = u[k] + c[k]
+    ll = np.zeros((2, N+1))
+#    sl = np.zeros((2, N+1))
+    lr = np.zeros((2, N+1))
+#    sr = np.zeros((2, N+1))
+#    beta = np.zeros((eqNum, N+1))
 
-    transonic = 0
+    rhoml = rhol[:] + a[0,:] 
+    rhomr = rhor[:] - a[2,:]
+    uml = ( rhol[:]*ul[:] + a[0,:]*(u_hat[:] - c_hat[:] )) / (rhol[:] + a[0,:])
+    umr = ( rhor[:]*ur[:] - a[2,:]*(u_hat[:] + c_hat[:] )) / (rhor[:] - a[2,:])
+    Pml = (gamma-1)*(El[:] + a[0,:]*(H_hat[:]-u_hat[:]*c_hat[:]) - 0.5*rhoml[:]*uml[:]**2)
+    Pmr = (gamma-1)*(Er[:] - a[2,:]*(H_hat[:] + u_hat[:]*c_hat[:]) - 0.5*rhomr[:]*umr[:]**2)
+    cml = np.sqrt(gamma*Pml/rhoml)
+    cmr = np.sqrt(gamma*Pmr/rhomr)
+
+    for k in range(N+1):  
+      ll[0,k] = u[k] - c[k]
+      ll[1,k] = uml[k] - cml[k] 
+      lr[0,k] = u[k] + c[k]
+      lr[1,k] = umr[k] + cmr[k]
+
+      if (ll[0,k] < 0 < ll[1,k]):
+        transonic = 1
+        print('\nleft transonic')
+      if (lr[0,k] < 0 < lr[1,k]):
+        transonic = 2
+        print('right transonic')
+
+
+#    transonic = 0
     tran_pos_row = 0
     tran_pos_col = 0
-    for w in range(waveNum):
-      for k in range(N):
-        if(l[w,k] < 0. < l[w,k+1]):
-          transonic += 1
-          beta[w,k] = (s[w,k] - l[w,k+1]) / (l[w,k+1] - l[w,k])
-          s[w,k+1] = beta[w,k]*l[w,k]
-          s[w,k] = (1-beta[w,k])*l[w,k+1]
-          tran_pos_row = w
+    for k in range(N):
+      if(transonic == 1):
+        if(ll[0,k] < 0. < ll[1,k]):
+#           transonic += 1
+#          beta[0,k] = (ll[1,k] - s[0,k]) / (ll[1,k] - ll[0,k])
+#          print('\ns[0,k and k+1] before HH = ' + str(s[0,k]) + '\t' +str(s[0,k+1]))
+#          sl[1,:] = beta[0,k]*ll[0,k]
+#          sl[0,:] = (1-beta[0,k])*ll[1,k]
+#          print('\ns[0,k and k+1] after HH = ' + str(s[0,k]) + '\t' + str(s[0,k+1]))
+          beta = (ll[1,k] - s[0,k]) / (ll[1,k] - ll[0,k])
+          print('\ns[0,k and k+1] before HH = ' + str(s[0,k]) + '\t' +str(s[0,k+1]))
+          sl1 = beta*ll[0,k]
+          sl2 = (1-beta)*ll[1,k]
+          print('\ns[0,k and k+1] after HH = ' + str(s[0,k]) + '\t' + str(s[0,k+1]))
+          tran_pos_row = 0
+          tran_pos_col = k
+      if(transonic == 2):
+        if(lr[0,k] < 0. < lr[1,k]):
+#           transonic += 1
+          beta[eqNum-1,k] = (s[eqNum-1,k] - lr[0,k]) / (lr[1,k] - lr[0,k])
+          sr[0,:] = beta[eqNum-1,k]*lr[1,k]
+          sr[0,:] = (1-beta[eqNum-1,k])*lr[0,k]
+          tran_pos_row = eqNum-1
           tran_pos_col = k
 
   for j in range(eqNum):
@@ -148,11 +185,11 @@ for t in range(T_begin, T_end+1):
   for j in range(eqNum): 
     for k in range(N-1):
       for w in range(waveNum):
-        if (EFIX == 1 and transonic > 0 and w == tran_pos_row and k == tran_pos_col):
-          amdq[j,k] += s[w,k+1] * W[w,j,k+1]
-          apdq[j,k] += s[w,k] * W[w,j,k]   
+        if (EFIX == 1 and transonic > 0 and w == tran_pos_row):# and k == tran_pos_col):
+          amdq[j,k] += sl1 * W[w,j,k+1] #k+1
+          apdq[j,k] += sl2 * W[w,j,k] #k
         else:
-          amdq[j,k] += min(s[w,k+1],0) * W[w,j,k+1]
+          amdq[j,k] += min(s[w,:].min(),0) * W[w,j,k+1]
           apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
 
   S_abs = np.absolute(s)
@@ -213,37 +250,45 @@ for t in range(T_begin, T_end+1):
       plt.subplot(2,2,1)
       ax = plt.gca()
       #sets the ratio to 1
-      ax.set_aspect(1)
+#      ax.set_aspect(1)
       plt.title('Mass Density' )
 #      plt.plot(xc, q[0, :len(xc)], label = 'density', linestyle = 'dotted')
       plt.scatter(xc, q[0, :len(xc)], label = 'density')
+      plt.xlim(0,1)
+      plt.ylim(0,1.1)
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,2)
       ax = plt.gca()
       #sets the ratio to 1
-      ax.set_aspect(1)
+#      ax.set_aspect(1./1.8)
       plt.title('Velocity')
 #      plt.plot(xc, u[:len(xc)], label = 'velocity', linestyle = 'dotted')# / q[0, :len(xc)])
       plt.scatter(xc, u[:len(xc)], label = 'velocity')# / q[0, :len(xc)])
+      plt.xlim(0,1)
+      plt.ylim(-0.1,1.7)
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,3)
       ax = plt.gca()
       #sets the ratio to 1
-      ax.set_aspect(1)
+#      ax.set_aspect(1)
       plt.title('Pressure')
 #      plt.plot(xc, P[:len(xc)], label = 'pressure', linestyle = 'dotted')# / q[0, :len(xc)])
       plt.scatter(xc, P[:len(xc)], label = 'pressure')# / q[0, :len(xc)])
+      plt.xlim(0,1)
+#      plt.ylim(0,1)
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,4)
       ax = plt.gca()
-      #sets the ratio to 1
-      ax.set_aspect(1)
+#      #sets the ratio to 1
+      ax.set_aspect(1./2.)
       plt.title('Internal Energy')
 #      plt.plot(xc, e[:len(xc)], label = 'internal energy', linestyle = 'dotted')
       plt.scatter(xc, e[:len(xc)], label = 'internal energy')
+      plt.xlim(0,1)
+      plt.ylim(1.8,3.8)
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
 #      plt.legend()
