@@ -1,5 +1,5 @@
 #======function_list.py contains:
-#---initialConditions(sim_type, sim_details, xc, N, q):
+#---initialConditions(sim_type, sim_details, xo, xc, N, q):
 #---Mat_ghostCells(q, N, BC)
 #---fill_ghosts(q, N, Type)
 #---JumpSplit(q, N, sim_type):
@@ -30,7 +30,7 @@ kB = 1.38e-23
 gamma = 1.4 #air == 7/5
 beta = 0.2
 
-def initialConditions(sim_type, sim_details, xc, N, q):
+def initialConditions(sim_type, sim_details, xc, xo, N, q):
   ##--Initial Conditions----
   xmax = max(xc)
   xmin = min(xc)
@@ -106,7 +106,7 @@ def initialConditions(sim_type, sim_details, xc, N, q):
       print('====SHOCK TUBE=====')
       for j in range(N):
 #        if (j <= (N-1)/2.): #LEFT STATE
-        if (xc[j] <= 0.3*max(xc)): #TORO LEFT STATE 
+        if (xc[j] <= xo*max(xc)): #TORO LEFT STATE 
           rho.append(1.)
           u.append(.75) #0 or 0.75
           Pressure.append(1.) #N * k_B * Temp[i])
@@ -114,7 +114,7 @@ def initialConditions(sim_type, sim_details, xc, N, q):
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
 #        elif (j > (N-1)/2.): #RIGHT STATE
-        elif (xc[j] > 0.3*max(xc)): #TORO RIGHT STATE 
+        elif (xc[j] > xo*max(xc)): #TORO RIGHT STATE 
           rho.append(0.125)
           u.append(0.)
           Pressure.append(0.1) #N * k_B * Temp[i])
@@ -149,14 +149,14 @@ def initialConditions(sim_type, sim_details, xc, N, q):
     if (sim_details == 'ToroPg151_Test3'):
       print('====ToroPg151_Test3=====')
       for j in range(N):
-        if (j <= (N-1)/2.): #LEFT STATE
+        if (xc[j] <= xo*max(xc)): #LEFT STATE
           rho.append(1.)
           u.append(0.)
           Pressure.append(1000.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
-        elif (j > (N-1)/2.): #RIGHT STATE
+        elif (xc[j] > xo*max(xc)): #RIGHT STATE
           rho.append(1.)
           u.append(0.)
           Pressure.append(0.01) #N * k_B * Temp[i])
@@ -170,17 +170,17 @@ def initialConditions(sim_type, sim_details, xc, N, q):
     if (sim_details == 'ToroPg151_Test4'):
       print('====ToroPg151_Test4=====')
       for j in range(N):
-        if (j <= (N-1)/2.): #LEFT STATE
-          rho.append(1.)
-          u.append(0.)
-          Pressure.append(0.01) #N * k_B * Temp[i])
+        if (xc[j] <= xo*max(xc)): #LEFT STATE
+          rho.append(5.9924)
+          u.append(19.5975)
+          Pressure.append(460.894) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
-        elif (j > (N-1)/2.): #RIGHT STATE
-          rho.append(1.)
-          u.append(0.)
-          Pressure.append(100.) #N * k_B * Temp[i])
+        elif (xc[j] > xo*max(xc)): #RIGHT STATE
+          rho.append(5.99242)
+          u.append(-6.19633)
+          Pressure.append(46.0950) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
           c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 

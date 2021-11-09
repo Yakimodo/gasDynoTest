@@ -18,7 +18,7 @@ HEAT = 0
 
 N = 101
 L = 1. #domain_length
-dx = L / ((N-1)) #spatial resolution
+dx = L / (N-1) #spatial resolution
 CFL = 0.9 #Courant-Fredrichs-Lewy condition
 #dt = CFL*dx #time step
 T_begin = 1 #step number [important in determining xi = x/t ----> (in this case) --> xc/(t*dt)]
@@ -41,11 +41,11 @@ s = np.zeros((eqNum, N+1))
 amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
-
-#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, N, q_zeros) ##ToroPg151_Test1
+xo = 0.4 #position of initial discontinuity
+#q, u, P = fl.initialConditions('gasDyno', 'shockTube', xc, 0.3, N, q_zeros) ##ToroPg151_Test1
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
-q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, N, q_zeros)
-#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, N, q_zeros)
+#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, 0.5, N, q_zeros)
+q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, 0.4, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'twoShock', xc, N, q_zeros)
@@ -57,6 +57,7 @@ q_new_b = np.zeros((q.shape[0],q.shape[1]))
 #  q2 = energy density
 
 for t in range(T_begin, T_end+1):
+  print('\nfor stepnumber = ' + str(t)) 
 
   q = fl.Mat_ghostCells(q, N, 'extrap' )
 #  q_new_a = fl.Mat_ghostCells(q_new_a, N, 'extrap' )
@@ -91,10 +92,10 @@ for t in range(T_begin, T_end+1):
     H_hat[k] = ((El[k] + pl[k]) / np.sqrt(rhol[k]) + (Er[k] + pr[k]) / np.sqrt(rhor[k])) / (np.sqrt(rhol[k]) + np.sqrt(rhor[k])) 
     c_hat[k] = np.sqrt((gamma-1)*(H_hat[k]-0.5*u_hat[k]**2))
 
-  
+   
     a[1,k] = (gamma-1)*((H_hat[k]-u_hat[k]**2)*dq1[k] + u_hat[k]*dq2[k]-dq3[k]) / c_hat[k]**2
-    a[2,k] = (dq2[k] + (c_hat[k] - u_hat[k])*dq1[k] - c_hat[k]*a[1,k]) / (2*c_hat[k])
-    a[0,k] = dq1[k] - a[1,k] - a[2,k]
+    a[0,k] = (-dq2[k] + (c_hat[k] + u_hat[k])*dq1[k] - c_hat[k]*a[1,k]) / (2*c_hat[k])
+    a[2,k] = dq1[k] - a[0,k] - a[1,k]
   
     s[0,k] = u_hat[k] - c_hat[k]
     s[1,k] = u_hat[k]
@@ -113,15 +114,19 @@ for t in range(T_begin, T_end+1):
   if (EFIX == 0):
     pass
 #    print('NO EFIX')
+
 ###___Harten-Hyman Entropy Fix___###
   elif (EFIX == 1):
-    
 #    print('YES HH EFIX')
     ll = np.zeros((2, N+1))
-#    sl = np.zeros((2, N+1))
+ #   sl = np.zeros((2, N+1))
     lr = np.zeros((2, N+1))
-#    sr = np.zeros((2, N+1))
-#    beta = np.zeros((eqNum, N+1))
+ #   sr = np.zeros((2, N+1))
+ #   ll = np.zeros((1,N+1))
+ #   lr = np.zeros((1,N+1))
+    beta = 0.#np.zeros((eqNum, N+1))
+    sl1 = 0.
+    sl2 = 0.
 
     rhoml = rhol[:] + a[0,:] 
     rhomr = rhor[:] - a[2,:]
@@ -132,42 +137,45 @@ for t in range(T_begin, T_end+1):
     cml = np.sqrt(gamma*Pml/rhoml)
     cmr = np.sqrt(gamma*Pmr/rhomr)
 
+#    for k in range(N+1):  
     for k in range(N+1):  
       ll[0,k] = u[k] - c[k]
       ll[1,k] = uml[k] - cml[k] 
-      lr[0,k] = u[k] + c[k]
-      lr[1,k] = umr[k] + cmr[k]
 
-      if (ll[0,k] < 0 < ll[1,k]):
+      lr[1,k] = u[k] + c[k]
+      lr[0,k] = umr[k] + cmr[k]
+
+    for k in range(N):
+      if (ll[0,k] < 0. < ll[1,k]):
         transonic = 1
         print('\nleft transonic')
-      if (lr[0,k] < 0 < lr[1,k]):
+        print('lkl = ' + str(ll[0,k]))
+        print('lkr = ' + str(ll[1,k]))
+       
+      if (lr[0,k] < 0 < lr[0,k+1]):
         transonic = 2
-        print('right transonic')
+        print('\nright transonic')
 
 
 #    transonic = 0
     tran_pos_row = 0
     tran_pos_col = 0
-    for k in range(N):
-      if(transonic == 1):
+    if(transonic == 1):
+      for k in range(N):
         if(ll[0,k] < 0. < ll[1,k]):
 #           transonic += 1
-#          beta[0,k] = (ll[1,k] - s[0,k]) / (ll[1,k] - ll[0,k])
-#          print('\ns[0,k and k+1] before HH = ' + str(s[0,k]) + '\t' +str(s[0,k+1]))
-#          sl[1,:] = beta[0,k]*ll[0,k]
-#          sl[0,:] = (1-beta[0,k])*ll[1,k]
-#          print('\ns[0,k and k+1] after HH = ' + str(s[0,k]) + '\t' + str(s[0,k+1]))
           beta = (ll[1,k] - s[0,k]) / (ll[1,k] - ll[0,k])
-          print('\ns[0,k and k+1] before HH = ' + str(s[0,k]) + '\t' +str(s[0,k+1]))
+#          print('\ns[0,k and k+1] before HH = ' + str(s[0,k]) + '\t' +str(s[0,k+1]))
           sl1 = beta*ll[0,k]
           sl2 = (1-beta)*ll[1,k]
-          print('\ns[0,k and k+1] after HH = ' + str(s[0,k]) + '\t' + str(s[0,k+1]))
-          tran_pos_row = 0
-          tran_pos_col = k
+          print('sl1 = ' + str(sl1))
+          print('sl2 = ' + str(sl2))
+
+        tran_pos_row = 0
+#        tran_pos_col = k
+
       if(transonic == 2):
         if(lr[0,k] < 0. < lr[1,k]):
-#           transonic += 1
           beta[eqNum-1,k] = (s[eqNum-1,k] - lr[0,k]) / (lr[1,k] - lr[0,k])
           sr[0,:] = beta[eqNum-1,k]*lr[1,k]
           sr[0,:] = (1-beta[eqNum-1,k])*lr[0,k]
@@ -178,22 +186,35 @@ for t in range(T_begin, T_end+1):
     for w in range(waveNum):
       for k in range(N+1): #spatial variable
         W[w,j,k] = a[w,k] * R[w,j,k]
-  
+
   amdq[:,:] = 0.
-  apdq[:,:] = 0.   
- 
+  apdq[:,:] = 0.
+
+  sMin = np.zeros((eqNum, N+1)) #same dims as s (speeds)
+  sMax = np.zeros((eqNum, N+1)) #same dims as s (speeds)
+  for w in range(waveNum):
+    sMin[w,:] = min(s[w,:].min(),0.)
+    sMax[w,:] = max(s[w,:].max(),0.)
+
   for j in range(eqNum): 
     for k in range(N-1):
       for w in range(waveNum):
-        if (EFIX == 1 and transonic > 0 and w == tran_pos_row):# and k == tran_pos_col):
+        if (EFIX == 1 and transonic == 1 and w == tran_pos_row):# and k == tran_pos_col):
+#          amdq[j,k] += sl[1,k] * W[w,j,k+1] #k+1
+#          apdq[j,k] += sl[0,k] * W[w,j,k] #k
           amdq[j,k] += sl1 * W[w,j,k+1] #k+1
-          apdq[j,k] += sl2 * W[w,j,k] #k
+#          apdq[j,k] += sMax[w,k] * W[w,j,k] #k
         else:
-          amdq[j,k] += min(s[w,:].min(),0) * W[w,j,k+1]
-          apdq[j,k] += max(s[w,k],0) * W[w,j,k]   
+#          amdq[j,k] += sMin[w,k] * W[w,j,k+1]
+#          apdq[j,k] += sMax[w,k] * W[w,j,k]   
+          if (s[w,k] < 0.):
+            amdq[j,k] += s[w,k] * W[w,j,k+1]
+          else:
+            apdq[j,k] += s[w,k] * W[w,j,k]
+
 
   S_abs = np.absolute(s)
-  CFL = 1. #Courant-Fredrichs-Lewy condition
+#  CFL = 1. #Courant-Fredrichs-Lewy condition
   if (abs(min(s.min(),0)) > max(s.max(),0)):
     dt = CFL*dx/max(S_abs.max(),0.) #time step
   else:
@@ -228,10 +249,10 @@ for t in range(T_begin, T_end+1):
 #    if(t%75 == 0 or t == 1): 
 #    if(t%5 == 0 or t == 1): 
 #    if(0.249 < t*dt < 0.251 or t == 1): ##FOR Toro_Test1---Shock Tube
-    if(0.199 < t*dt < 0.201 or t == 1 or t%100 == 0): ##FOR Toro_Test1 GodunovMethod---Shock Tube 
+#    if(0.19 < t*dt < 0.21 or t == 1 or t%10 == 0): ##FOR Toro_Test1 GodunovMethod---Shock Tube 
 #    if(0.148 < t*dt < 0.152 or t == 1 or t == 10 ): ##FOR Toro_Test2
-#    if(0.01198 < t*dt < 0.0121 or t == 1): ##FOR Toro_Test3
-#    if(0.0349 < t*dt < 0.0351 or t == 1): ##FOR Toro_Test4 or Toro_Test5
+#    if(0.011 < t*dt < 0.013 or t == 1 or t%10 == 0): ##FOR Toro_Test3
+    if(0.034 < t*dt < 0.036 or t == 1 or t%10 == 0): ##FOR Toro_Test4 or Toro_Test5
 
       print('\ntime = ' + str(t*dt) + '\n step number = ' + str(t) + '\tdt = ' + str(dt))
 ####____Subplots___###
@@ -255,7 +276,7 @@ for t in range(T_begin, T_end+1):
 #      plt.plot(xc, q[0, :len(xc)], label = 'density', linestyle = 'dotted')
       plt.scatter(xc, q[0, :len(xc)], label = 'density')
       plt.xlim(0,1)
-      plt.ylim(0,1.1)
+#      plt.ylim(0,1.1)
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,2)
@@ -266,7 +287,7 @@ for t in range(T_begin, T_end+1):
 #      plt.plot(xc, u[:len(xc)], label = 'velocity', linestyle = 'dotted')# / q[0, :len(xc)])
       plt.scatter(xc, u[:len(xc)], label = 'velocity')# / q[0, :len(xc)])
       plt.xlim(0,1)
-      plt.ylim(-0.1,1.7)
+#      plt.ylim(-0.1,1.7)
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,3)
@@ -283,12 +304,12 @@ for t in range(T_begin, T_end+1):
       plt.subplot(2,2,4)
       ax = plt.gca()
 #      #sets the ratio to 1
-      ax.set_aspect(1./2.)
+#      ax.set_aspect(1./2.)
       plt.title('Internal Energy')
 #      plt.plot(xc, e[:len(xc)], label = 'internal energy', linestyle = 'dotted')
       plt.scatter(xc, e[:len(xc)], label = 'internal energy')
       plt.xlim(0,1)
-      plt.ylim(1.8,3.8)
+#      plt.ylim(1.8,3.8)
       plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
 #      plt.legend()
