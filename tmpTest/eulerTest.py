@@ -117,7 +117,65 @@ for t in range(T_begin, T_end+1):
   
 ###___Harten-Hyman Entropy Fix___###
   if (EFIX == 1):
-    sl1, sl2 = HH_EFIX()
+    ll = np.zeros((2, N+1))
+ #   sl = np.zeros((2, N+1))
+    lr = np.zeros((2, N+1))
+ #   sr = np.zeros((2, N+1))
+ #   ll = np.zeros((1,N+1))
+ #   lr = np.zeros((1,N+1))
+    beta = 0.#np.zeros((eqNum, N+1))
+    sll = np.zeros((1,N+1))
+    slr = np.zeros((1,N+1))
+  
+    rhoml = rhol[:] + a[0,:]
+    rhomr = rhor[:] - a[2,:]
+    uml = ( rhol[:]*ul[:] + a[0,:]*(u_hat[:] - c_hat[:] )) / (rhol[:] + a[0,:])
+    umr = ( rhor[:]*ur[:] - a[2,:]*(u_hat[:] + c_hat[:] )) / (rhor[:] - a[2,:])
+    Pml = (gamma-1)*(El[:] + a[0,:]*(H_hat[:]-u_hat[:]*c_hat[:]) - 0.5*rhoml[:]*uml[:]**2)
+    Pmr = (gamma-1)*(Er[:] - a[2,:]*(H_hat[:] + u_hat[:]*c_hat[:]) - 0.5*rhomr[:]*umr[:]**2)
+    cml = np.sqrt(gamma*Pml/rhoml)
+    cmr = np.sqrt(gamma*Pmr/rhomr)
+
+#    for k in range(N+1):  
+    for k in range(N+1):
+      ll[0,k] = u[k] - c[k]
+      ll[1,k] = uml[k] - cml[k]
+  
+      lr[1,k] = u[k] + c[k]
+      lr[0,k] = umr[k] + cmr[k]
+  
+    for k in range(N):
+      if (ll[0,k] < 0. < ll[1,k]):
+        transonic = 1
+        print('\nleft transonic')
+        print('lkl = ' + str(ll[0,k]))
+        print('lkr = ' + str(ll[1,k]))
+  
+      if (lr[0,k] < 0 < lr[0,k+1]):
+        transonic = 2
+        print('\nright transonic')
+  
+  
+  #    transonic = 0
+    tran_pos_row = 0
+    tran_pos_col = 0
+    if(transonic == 1):
+      for k in range(N):
+        if(ll[0,k] < 0. < ll[1,k]):
+  #           transonic += 1
+          beta = (ll[1,k] - s[0,k]) / (ll[1,k] - ll[0,k])
+  #          print('\ns[0,k and k+1] before HH = ' + str(s[0,k]) + '\t' +str(s[0,k+1]))
+          sll[0,:] = beta*ll[0,:]
+          slr[0,:] = (1-beta)*ll[1,:]
+          print('sll = ' + str(sll))
+          print('slr = ' + str(slr))
+  
+          tran_pos_row = 0
+  #        tran_pos_col = k
+
+
+
+#    sl1, sl2 = HH_EFIX()
 #    print('YES HH EFIX')
 ###______________________________###
 
@@ -129,11 +187,11 @@ for t in range(T_begin, T_end+1):
   amdq[:,:] = 0.
   apdq[:,:] = 0.
 
-  sMin = np.zeros((eqNum, N+1)) #same dims as s (speeds)
-  sMax = np.zeros((eqNum, N+1)) #same dims as s (speeds)
-  for w in range(waveNum):
-    sMin[w,:] = min(s[w,:].min(),0.)
-    sMax[w,:] = max(s[w,:].max(),0.)
+#  sMin = np.zeros((eqNum, N+1)) #same dims as s (speeds)
+#  sMax = np.zeros((eqNum, N+1)) #same dims as s (speeds)
+#  for w in range(waveNum):
+#    sMin[w,:] = min(s[w,:].min(),0.)
+#    sMax[w,:] = max(s[w,:].max(),0.)
 
   for j in range(eqNum): 
     for k in range(N):
@@ -141,15 +199,18 @@ for t in range(T_begin, T_end+1):
         if (EFIX == 1 and transonic == 1 and w == tran_pos_row):# and k == tran_pos_col):
 #          amdq[j,k] += sl[1,k] * W[w,j,k+1] #k+1
 #          apdq[j,k] += sl[0,k] * W[w,j,k] #k
-          amdq[j,k] += sl1 * W[w,j,k+1] #k+1
+          amdq[j,k] += sll[w,k] * W[w,j,k+1] #k+1
+          apdq[j,k] += slr[w,k] * W[w,j,k] #k+1
 #          apdq[j,k] += sMax[w,k] * W[w,j,k] #k
         else:
 #          amdq[j,k] += sMin[w,k] * W[w,j,k+1]
-#          apdq[j,k] += sMax[w,k] * W[w,j,k]   
-          if (s[w,k] < 0.):
-            amdq[j,k] += s[w,k] * W[w,j,k+1]
-          else:
-            apdq[j,k] += s[w,k] * W[w,j,k]
+#          apdq[j,k] += sMax[w,k] * W[w,j,k]  
+          amdq[j,k] += min(s[w,k+1],0.) * W[w,j,k+1]
+          apdq[j,k] += max(s[w,k],0.) * W[w,j,k] 
+#          if (s[w,k] < 0.):
+#            amdq[j,k] += s[w,k] * W[w,j,k+1]
+#          else:
+#            apdq[j,k] += s[w,k] * W[w,j,k]
 
 
   S_abs = np.absolute(s)
