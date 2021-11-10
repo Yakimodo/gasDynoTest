@@ -433,6 +433,78 @@ def Riemann(Ql, Qr, u, N):
 
   return flux
 
+def HH_EFIX():
+  ll = np.zeros((2, N+1))
+ #   sl = np.zeros((2, N+1))
+  lr = np.zeros((2, N+1))
+ #   sr = np.zeros((2, N+1))
+ #   ll = np.zeros((1,N+1))
+ #   lr = np.zeros((1,N+1))
+  beta = 0.#np.zeros((eqNum, N+1))
+  sl1 = 0.
+  sl2 = 0.
+
+  rhoml = rhol[:] + a[0,:]
+  rhomr = rhor[:] - a[2,:]
+  uml = ( rhol[:]*ul[:] + a[0,:]*(u_hat[:] - c_hat[:] )) / (rhol[:] + a[0,:])
+  umr = ( rhor[:]*ur[:] - a[2,:]*(u_hat[:] + c_hat[:] )) / (rhor[:] - a[2,:])
+  Pml = (gamma-1)*(El[:] + a[0,:]*(H_hat[:]-u_hat[:]*c_hat[:]) - 0.5*rhoml[:]*uml[:]**2)
+  Pmr = (gamma-1)*(Er[:] - a[2,:]*(H_hat[:] + u_hat[:]*c_hat[:]) - 0.5*rhomr[:]*umr[:]**2)
+  cml = np.sqrt(gamma*Pml/rhoml)
+  cmr = np.sqrt(gamma*Pmr/rhomr)
+
+#    for k in range(N+1):  
+  for k in range(N+1):
+    ll[0,k] = u[k] - c[k]
+    ll[1,k] = uml[k] - cml[k]
+
+    lr[1,k] = u[k] + c[k]
+    lr[0,k] = umr[k] + cmr[k]
+
+  for k in range(N):
+    if (ll[0,k] < 0. < ll[1,k]):
+      transonic = 1
+      print('\nleft transonic')
+      print('lkl = ' + str(ll[0,k]))
+      print('lkr = ' + str(ll[1,k]))
+
+    if (lr[0,k] < 0 < lr[0,k+1]):
+      transonic = 2
+      print('\nright transonic')
+
+
+#    transonic = 0
+  tran_pos_row = 0
+  tran_pos_col = 0
+  if(transonic == 1):
+    for k in range(N):
+      if(ll[0,k] < 0. < ll[1,k]):
+#           transonic += 1
+        beta = (ll[1,k] - s[0,k]) / (ll[1,k] - ll[0,k])
+#          print('\ns[0,k and k+1] before HH = ' + str(s[0,k]) + '\t' +str(s[0,k+1]))
+        sl1 = beta*ll[0,k]
+        sl2 = (1-beta)*ll[1,k]
+        print('sl1 = ' + str(sl1))
+        print('sl2 = ' + str(sl2))
+
+        tran_pos_row = 0
+#        tran_pos_col = k
+
+
+    if(transonic == 2):
+      if(lr[0,k] < 0. < lr[1,k]):
+        beta[eqNum-1,k] = (s[eqNum-1,k] - lr[0,k]) / (lr[1,k] - lr[0,k])
+        sr[0,:] = beta[eqNum-1,k]*lr[1,k]
+        sr[0,:] = (1-beta[eqNum-1,k])*lr[0,k]
+        tran_pos_row = eqNum-1
+        tran_pos_col = k
+
+  return sl1,sl2
+
+
+
+
+
 def VelChange(u, N, t):
   a = []
   for i in range(N):
