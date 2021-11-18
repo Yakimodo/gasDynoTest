@@ -21,7 +21,7 @@
 \maketitle
 
 \begin{abstract}
-	Euler's equations of gas dynamics have been studied by all forms of science since their derivation in the time of Euler. In this paper, we focus on studying this famous set of coupled equations through a computational lens in order to take into account thermal ionization in the 2D streamer model by \citet{Liu:2004b}. The method we choose to use is based on Godunov's Method which uses the solution to the Riemann Problem. 
+	Gas dynamics have been studied by all forms of science since their derivation in the time of Euler. In this paper, we focus on studying this famous set of coupled equations, known as the Euler equations, through a computational lens in order to take into account thermal ionization of a weak plasma discharge in the 2D streamer model by \citet{Liu:2004b}. The method we choose to use, Roe's Method, is based on Godunov's Method which utilizes the solution to the Riemann Problem. 
 
 \end{abstract}
 
@@ -45,9 +45,9 @@
 	p = N k_B T
 	\end{equation}
 
-	Equation (1) accounts for mass transport (or is otherwise recognized as the mass continuity equation) where $\rho$ represents the mass density determined from all neutral species and $v$ is the bulk velocity. Equation (2) is the momentum density continuity equation accounting for Newton's Second Law by including the necessary contributions of pressure, $p$ as the surface force on the gas. Equation (3) is the translational energy continuity equation which accounts for the balance of its advection, its heat supply, $Q_{eff}^T$ (the effective rate of energy deposition) or Joule heating. Equation (4) is the equation. Equation (5) is the equation of state and closes the system.
+	Equation (1) accounts for mass transport (or is otherwise recognized as the mass continuity equation) where $\rho$ represents the mass density determined from all neutral species and $v$ is the bulk velocity. Equation (2) is the momentum density continuity equation accounting for Newton's Second Law by including the necessary contributions of pressure, $p$ as the surface force on the gas. Equation (3) is the translational energy continuity equation which accounts for the balance of its advection, its heat supply, $Q_{eff}^T$ (the effective rate of energy deposition) or Joule heating. Equation (4) is the energy relation. Equation (5) is the equation of state and closes the system.
 	
-	The equations above form a system of non-linear hyperbolic conservation laws that govern the dynamics of a compressible material, such as gases of liquids at high pressures, for which the effects of body forces, viscous forces, and heat flux are neglected. 
+	The equations above form a system of non-linear hyperbolic conservation laws that govern the dynamics of a compressible material, such as gases or liquids at high pressures (\textbf{pressure range????}), for which the effects of body forces, viscous forces, and heat flux are neglected. 
 	
 \section{Set-Up}
 	We use the conservative form of the equations which follows the form:
@@ -113,7 +113,7 @@
 		\frac{\partial w_i}{\partial t} + \lambda_i \frac{\partial w_i}{\partial x} = 0 \mbox{,    } i = 1,...,m.
 	\end{equation}
 
-	Now this system is decoupled with $w_i$ being the single unknown, the characteristic speed is $lambda_i$, and there are m characteristics curves satisfying $m$ ODEs
+	Now this system is decoupled with $w_i$ being the single unknown, the characteristic speed is $\lambda_i$, and there are $ m $ characteristics curves satisfying $m$ ODEs:
 	
 	\begin{equation}
 		\frac{dx}{dt} = \lambda_i, \mbox{for } i = 1,...,m.
@@ -173,7 +173,7 @@
 			\textbf{U}(x,t) = \sum_{i = 1}^{m} w_i(x,t) \textbf{K}^{(i)}.
 			\label{ind_waves}
 		\end{equation}
-		Explicitly, this shows that the function $ w_i(x,t) $ is the coefficient of $ \textbf{K}^{(i)} $ in an eigenvector expansion of the vector \textbf{U}. Thus, given a point $ (x,t) $ in the \textit{x-t} plane, the solution $ \textbf{U}(x,t) $ at this point depends only on the initial data at the \textit{m} points $ x_0^{(i)} = x - \lambda_i t $. The solution \ref{ind_waves} for \textbf{U} can be seen as the superposition of \textit{m} waves, each of which is advected independently without change in shape. The \textit{i}-th wave has shape $ w_i^{(0)}(x) \textbf{K}^{(i)} $ and propagates with speed $ \lambda_i $.
+		Explicitly, this shows that the function $ w_i(x,t) $ is the coefficient of $ \textbf{K}^{(i)} $ in an eigenvector expansion of the vector \textbf{U}. Thus, given a point $ (x,t) $ in the \textit{x-t} plane, the solution $ \textbf{U}(x,t) $ at this point depends only on the initial data at the \textit{m} points $ x_0^{(i)} = x - \lambda_i t $. The solution (\ref{ind_waves}) for \textbf{U} can be seen as the superposition of \textit{m} waves, each of which is advected independently without change in shape. The \textit{i}-th wave has shape $ w_i^{(0)}(x) \textbf{K}^{(i)} $ and propagates with speed $ \lambda_i $.
 	
 	\subsection{The Riemann Problem}
 		The Riemann problem (RP) is a special initial value problem where a discontinuity exists between a grid wall as in Figure \ref{RiemannProblem}. The problem follows as:
@@ -249,7 +249,7 @@
 				\frac{dx}{dt} = \lambda(u) \mbox{, } x(0) = x_0,
 				\label{2.88}
 			\end{equation}
-			where $ \lambda(u) = f'(u) $. By regarding both\textit{u} and \textit{x} as functions of \textit{t}, we find the total derivative  of \textit{u} along \textit{x(t)}, namely
+			where $ \lambda(u) = f'(u) $. By regarding both \textit{u} and \textit{x} as functions of \textit{t}, we find the total derivative  of \textit{u} along \textit{x(t)}, namely
 			\begin{equation}
 				\frac{du}{dt} = u_t + \lambda(u)u_x = 0.
 			\end{equation}	
@@ -335,7 +335,7 @@
 				\caption{}
 				\label{RarefactionWave}
 			\end{figure}
-			The spreading of waves a phenomenon not seen in linear hyperbolic systems with constant coefficients. The entire solution is
+			The spreading of waves is a phenomenon not seen in linear hyperbolic systems with constant coefficients. The entire solution is
 			\begin{equation}
 				\begin{aligned}
 				\left\{
@@ -391,9 +391,9 @@
 			\begin{equation}	
 				U = [\rho, u] \mbox{ } \mbox{, }		
 				\begin{aligned}
-				\left[
+				A =\left[
 					\begin{array}{ll}
-						A = 0 & \rho_0\\
+						 0 & \rho_0\\
 						\frac{a^2}{\rho_0} & 0 
 					\end{array}
 				\right]
@@ -406,9 +406,9 @@
 			Then by applying the \textit{RHC} across the $ \lambda_1 $-wave of speed $ S_1 = \lambda_1 $, we get
 			\begin{equation}						
 				\begin{aligned}
-				\left[
+				A =\left[
 					\begin{array}{ll}
-						A = 0 & \rho_0\\
+						 0 & \rho_0\\
 						\frac{a^2}{\rho_0} & 0 
 					\end{array}
 				\right]
@@ -484,7 +484,7 @@
 			\end{aligned}
 			\label{RPEquation}
 		\end{equation}
-		The similarity solution $ \textbf{U}(x/t) $ of this system, consists of \textit{m+1} constant states separated by \textit{m} waves depicted in Figure \ref{ElementaryWaveSolutions}(A).
+		The similarity solution $ \textbf{U}(x/t) $ of this system, consists of \textit{m+1} constant states separated by \textit{m} waves depicted in Figure \ref{ElementaryWaveSolutions}(A). A similarity solution is the solution to a conservation law that is a function of $ x/t $ alone and is self-similar at different times.
 			
 		\begin{figure}[h] 	
 			\centering
@@ -541,7 +541,7 @@
 					\lambda_i(\textbf{U}_L) <  \lambda_i(\textbf{U}_R).
 				\end{equation}
 			\end{itemize}
-			This type of wave is shown in Figure \ref{ElementaryWaveSolutions}(B(a)
+			This type of wave is shown in Figure \ref{ElementaryWaveSolutions}(B(c)
 		
 \section{Solving the Euler Equations}
 	
@@ -570,7 +570,7 @@
 		\end{equation}
 		The conservation of mass, momentum, and energy are all well known physical laws. 
 		
-		A non-conservative form most commonly used is with the $ primitive-variables $. Which is found by expanding the derivatives in equation \ref{EulerEquations} which leads to, in quasi-linear form
+		A non-conservative form most commonly used is with the $ primitive-variables $. Which is found by expanding the derivatives in equation (\ref{EulerEquations}) which leads to, in quasi-linear form
 		\begin{equation}
 			W_t + A(W) W_x = 0
 		\end{equation}
@@ -589,12 +589,12 @@
 		
 	\subsection{Elementary Wave Solutions of the Riemann Problem}
 		
-		The similarity solution of the Riemann Problem, equation \ref{RPEquation}, is depicted in Figure \ref{ElementaryWaveSolutions}(A), but in this case $ \lambda_i = \lambda_2$ and $ \lambda_m = \lambda_3$. The \textit{star-region} is located between $ \lambda_1 $ and $ \lambda_3 $. The two rays emanating from the wave solutions indicate that the character is still unknown. These three waves separate four constant states. In order to determine the wave-type, each type allowed in the solution, we first analyze the characteristic fields. We find that the $ \textbf{K}^{(2)} $-field is linearly degenerate, indicating this is a contact wave, and the $ \textbf{K}^{(1)} $ and $ \textbf{K}^{(3)} $ are genuinely non-linear, indicating that they can be a shock or rarefaction wave. One does not inherently know, beforehand, the types of waves present in the solution to the Riemann Problem. The only exception being the middle wave, which is always a contact discontinuity.
+		The similarity solution of the Riemann Problem, equation (\ref{RPEquation}), is depicted in Figure \ref{ElementaryWaveSolutions}(A), but in this case $ \lambda_i = \lambda_2$ and $ \lambda_m = \lambda_3$. The \textit{star-region} is located between $ \lambda_1 $ and $ \lambda_3 $. The two rays emanating from the wave solutions indicate that the character is still unknown. These three waves separate four constant states. In order to determine the wave-type, each type allowed in the solution, we first analyze the characteristic fields. We find that the $ \textbf{K}^{(2)} $-field is linearly degenerate, indicating this is a contact wave, and the $ \textbf{K}^{(1)} $ and $ \textbf{K}^{(3)} $ are genuinely non-linear, indicating that they can be a shock or rarefaction wave. One does not inherently know, beforehand, the types of waves present in the solution to the Riemann Problem. The only exception being the middle wave, which is always a contact discontinuity.
 		
 		\subsubsection{Contact Wave}
-			A contact wave is a discontinuous wave across which both \textit{pressure} and \textit{velocity}, which is determined via the \textit{GRIs} for the $ \textbf{K}^{(2)} $-wave shown in equation \ref{GRIsK2}, are constant but density jumps discontinuously as do variables that depend on on density, such specific internal energy, temperature, speed of sound, entropy, etc.
+			A contact wave is a discontinuous wave across which both \textit{pressure} and \textit{velocity} are constant, which is determined via the \textit{GRIs} for the $ \textbf{K}^{(2)} $-wave shown in equation (\ref{GRIsK2}), but density jumps discontinuously as do variables that depend on on density, such specific internal energy, temperature, speed of sound, entropy, etc.
 			\begin{align}
-				\textbf{K}^(2) &= \alpha_2 \begin{bmatrix}
+				\textbf{K}^{(2)} &= \alpha_2 \begin{bmatrix}
 				1 \\
 				0 \\
 				0 \\
@@ -607,20 +607,22 @@
 			where $ \alpha_i $ is the associated wave strengths.
 			
 		\subsubsection{Rarefaction Wave}		
-			Inspecting the $ \textbf{K}^{(1)} $ and  $ \textbf{K}^{(3)} $ eigenvectors, shown in equation \ref{K1K3Prim}, for the primitive-variable formulation shows that $ \rho $, \textit{u}, and \textit{p} change across a rarefaction wave.
+			Inspecting the $ \textbf{K}^{(1)} $ and  $ \textbf{K}^{(3)} $ eigenvectors, shown in equations (\ref{K1Prim}) and (\ref{K3Prim}), for the primitive-variable formulation shows that $ \rho $, \textit{u}, and \textit{p} change across a rarefaction wave.
 			\begin{align}
-				\textbf{K}^(1) &= \alpha_1 \begin{bmatrix}
+				\textbf{K}^{(1)} &= \alpha_1 \begin{bmatrix}
 				1 \\
 				-a/\rho \\
 				a^2 \\
 				\end{bmatrix},
+				\label{K1Prim}
 			\end{align}
 			\begin{align}
-				\textbf{K}^(3) &= \alpha_3 \begin{bmatrix}
+				\textbf{K}^{(3)} &= \alpha_3 \begin{bmatrix}
 				1 \\
 				a/\rho \\
 				a^2 \\
 				\end{bmatrix}.
+				\label{K3Prim}
 			\end{align}
 			In summary, a \textit{rarefaction wave} is a smooth wave associated with the 1- and 3-fields across which $ \rho $, \textit{u}, and \textit{p} change. The wave has a fan-type shape and is enclosed by two bounding characteristics. Across the wave the GRIs apply.
 			
@@ -635,15 +637,58 @@
 		\item The variables selected
 		\item The equations used
 		\item The number of equations
-		\item The technique for the iterative solutions
+		\item The technique for the \textbf{iterative solutions}
 		\item The initial guess
 		\item The way of handling unphysical iterates (i.e. negative pressures)
 	\end{itemize}
 		
 \section{The Method of Godunov for Non-linear Systems}
-		
+	The \textit{REA} Algorithm, below, was originally proposed by \cite{Godunov:1959} as a method for solving the nonlinear Euler equations of gas dynamics.
+	\begin{enumerate}
+		\item \textbf{R}econstruct a piecewise polynomial function. A piecewise constant function that takes the value $ Q_i^n $ in the ith grid cell.
+		\item  \textbf{E}volve the hyperbolic equation exactly or approximately with this data to obtain the solution at a time $ t $ later.
+		\item \textbf{A}verage this function over each grid cell to obtain new cell averages.
+	\end{enumerate}
+	Application in the context of gas dynamics relies upon whether or not the RP with the piecewise constant data can be solved and that the solution consists of a finite set of waves traveling at constant speeds. The solution is pieced together using the solutions to each Riemann Problem provided that the timestep is short enough to not allow any two waves to interact.
+	
+	\subsection{The Wave Propagation Form of Godunov's Method}
+	
+	The most intuitive form of Godunov's method which can be related back to the upwind method is the wave propagation form. In Figure (\ref{WavePropGodMeth}), we two sets of waves emanating from the
+	\begin{figure}[h] 	
+		\centering
+		\includegraphics[scale=.50]{WavePropGodMeth}
+		\caption{The case of a linear system of three equations.}
+		\label{WavePropGodMeth}
+	\end{figure}
+	left, $ Q_{i-1/2} $, and right, $ Q_{i+1/2} $, grid cell walls of $ Q_i $. By following the above described processes, the three waves are obtained. For a linear system, the solution to the Riemann problem can be expressed by a set of waves,
+	\begin{equation}
+		Q_{i} - Q_{i-1} = \sum_{p = 1}^{m} \alpha^p_{i-1/2}r^p = \sum_{p = 1}^{m}W^p_{i-1/2}.
+	\end{equation}
+	By looking at the $ \lambda_2 $ wave's effect on the cell average, we note that after a time $ \Delta t $ the wave modifies the value of $ Q_i $ over a fraction of the grid cell $ \lambda_2 \Delta t / \Delta x $. The effect of this wave of the new cell average is
+	\begin{equation}
+		-\lambda_2 \frac{\Delta t}{\Delta x}W_{i-1/2}^2.
+	\end{equation}
+	The minus sign arises because the wave value $ W_{i-1/2}^2 $ measures the jump from left to right. Each of the waves entering the grid cell of $ Q_{i} $ effects the new cell average, which is found by adding up all of the effects and thus
+	\begin{equation}
+		Q^n_{i+1} = Q_i^n - \frac{\Delta t}{\Delta x} (\lambda_2 W^2_{i-1/2} + \lambda_3 W^3_{i-1/2} + \lambda_1 W^1_{i+1/2})
+	\end{equation}
+	To generalize this formula to a system with $ m $ equations, we introduce the notation
+	\begin{equation}
+		\lambda^+ = max(\lambda, 0) \space \lambda^- = min(\lambda, 0).
+	\end{equation}
+	Supposing that the solution to every Riemann problem consists of $ m $ waves $ W^p $ traveling at speeds $ \lambda_p $, each of which may be negative or positive. The generalized formula is thus
+	\begin{equation}
+		Q^n_{i+1} = Q_i^n - \frac{\Delta t}{\Delta x} \Big[\sum_{p = 1}^{m} (\lambda_p)^+ W^p_{i-1/2} + \sum_{p = 1}^{m}(\lambda_p)^- W^p_{i+1/2} \Big].
+	\end{equation}
+	The shorthand of this formula is as follows	
+	\begin{equation}
+		Q^n_{i+1} = Q_i^n - \frac{\Delta t}{\Delta x} \Big[A^+\Delta Q_{i-1/2} + A^-\Delta Q_{i+1/2} \Big].
+	\end{equation}
+	The shorthand notation symbol $ A^{+,-} \Delta Q_{i\mp1/2}$, or \textit{fluctuation}, should be interpreted as the measure of the net effect of all right(left) going waves from the $ x_{i-1/2} $ ($ x_{i+1/2} $) interface.
+	 
+
 \section{Approximate Riemann Solvers}
-	The process of solving the RP is often quite expensive due to the necessary use of an iterative process to find solutions. The approximate, non-iterative solution provide the necessary items of information for numerical purposes at a fraction of the cost. The two approach types are \textit{approximation to the numerical flux} and \textit{approximation to a state}. The prior is what we use in Roe's Method.
+	The process of solving the RP is often quite expensive due to the necessary use of an iterative process to find solutions. We did not go into depth regarding the process of solving the RP exactly, but what is typically needed is the solution in the star region.  The approximate, non-iterative solution provide the necessary items of information for numerical purposes at a fraction of the cost. The two approach types are \textit{approximation to the numerical flux} and \textit{approximation to a state}. The prior is what we use in Roe's Method.
 		
 	\subsection{Roe's Method}
 	

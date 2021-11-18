@@ -273,7 +273,7 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
         q[1, j+1] = rho[j]*u[j] #u[j]
         q[2, j+1] = engyDens[j] #Pressure[j]
 
-  return q, u, Pressure#,, Z, K, rho
+  return q#, u, Pressure#,, Z, K, rho
 
 def Mat_ghostCells(q, N, BC):
   if(BC == 'extrap'):
