@@ -14,6 +14,7 @@ else:
 
 #Harten-Hyman Entropy Fix
 EFIX = 1
+transonic = 0
 if (EFIX == 0):
   print('NO EFIX')
 else:
@@ -60,7 +61,7 @@ apdq = np.zeros((eqNum, N+1))
 q = fl.initialConditions('gasDyno', 'shockTube', xc, 0.3, N, q_zeros) ##ToroPg151_Test1
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, 0.5, N, q_zeros)
-#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, 0.4, N, q_zeros)
+#q = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, 0.4, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'twoShock', xc, N, q_zeros)
@@ -219,14 +220,14 @@ for t in range(T_begin, T_end+1):
   #    transonic = 0
     tran_pos_row = 0
     tran_pos_col = 0
-    if(transonic == 1):
+    if(transonic == 0):
+      pass
+    elif(transonic == 1):
       for k in range(N):
         if(ll[0,k] < 0. < ll[1,k]):
           beta = (ll[1,k] - s[0,k]) / (ll[1,k] - ll[0,k])
           sll[0,:] = beta*ll[0,:]
-          slr[0,:] = (1-beta)*ll[1,:]
-
-  
+          slr[0,:] = (1-beta)*ll[1,:] 
           tran_pos_row = 0
 
 #    sl1, sl2 = HH_EFIX()
