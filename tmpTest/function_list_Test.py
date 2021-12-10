@@ -44,7 +44,7 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
   K = []
   c_sound = []
   c_water = []
-  c_gas = []
+  #c_gas = []
   Z = []
   gamma1 = gamma - 1  
   g = 1. # gravity for shallow water eqs.
@@ -111,7 +111,7 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           u.append(.75) #0 or 0.75
           Pressure.append(1.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
 #        elif (j > (N-1)/2.): #RIGHT STATE
         elif (xc[j] > xo*max(xc)): #TORO RIGHT STATE 
@@ -119,7 +119,7 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           u.append(0.)
           Pressure.append(0.1) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
         q[0, j+1] = rho[j]
         q[1, j+1] = rho[j]*u[j] #u[j]
@@ -133,14 +133,14 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           u.append(-2.)
           Pressure.append(0.4) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
         elif (j > (N-1)/2.): #RIGHT STATE
           rho.append(1.)
           u.append(2.)
           Pressure.append(0.4) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
         q[0, j+1] = rho[j]
         q[1, j+1] = rho[j]*u[j] #u[j]
@@ -154,14 +154,14 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           u.append(0.)
           Pressure.append(1000.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
         elif (xc[j] > xo*max(xc)): #RIGHT STATE
           rho.append(1.)
           u.append(0.)
           Pressure.append(0.01) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
         q[0, j+1] = rho[j]
         q[1, j+1] = rho[j]*u[j] #u[j]
@@ -175,14 +175,14 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           u.append(19.5975)
           Pressure.append(460.894) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
         elif (xc[j] > xo*max(xc)): #RIGHT STATE
           rho.append(5.99242)
           u.append(-6.19633)
           Pressure.append(46.0950) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
         q[0, j+1] = rho[j]
         q[1, j+1] = rho[j]*u[j] #u[j]
@@ -196,14 +196,14 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           u.append(19.5975)
           Pressure.append(460.894) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
         elif (j > (N-1)/2.): #RIGHT STATE
           rho.append(5.99242)
           u.append(-6.19633)
           Pressure.append(46.0950) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
         q[0, j+1] = rho[j]
         q[1, j+1] = rho[j]*u[j] #u[j]
@@ -217,14 +217,14 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           rho.append(0.5323)
           Pressure.append(0.3) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
         elif (j > (N-1)/2.): #RIGHT STATE
           u.append(1.206)
           rho.append(0.138)
           Pressure.append(0.029) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
         q[0, j+1] = rho[j]
         q[1, j+1] = rho[j]*u[j] #u[j]
@@ -239,14 +239,14 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           rho.append(1.)
           Pressure.append(1.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
         elif (j > (N-1)/2.): #RIGHT STATE
           u.append(1.)
           rho.append(2.)
           Pressure.append(1.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
         q[0, j+1] = rho[j]
         q[1, j+1] = rho[j]*u[j] #u[j]
@@ -260,14 +260,14 @@ def initialConditions(sim_type, sim_details, xc, xo, N, q):
           rho.append(1.)
           Pressure.append(0.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] *  u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
   
         elif (j > (N-1)/2.): #RIGHT STATE
           u.append(0.)
           rho.append(1.)
           Pressure.append(0.) #N * k_B * Temp[i])
           engyDens.append((5./2.)* Pressure[j] + 0.5 * rho[j] * u[j] * u[j])
-          c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
+          #c_gas.append(np.sqrt(gamma*Pressure[j]/rho[j]))
 
         q[0, j+1] = rho[j]
         q[1, j+1] = rho[j]*u[j] #u[j]

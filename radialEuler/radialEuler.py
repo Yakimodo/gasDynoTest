@@ -61,7 +61,8 @@ Ndens = np.array(Ndens)
 
 
 for t in range(T_begin, T_end+1):
-
+  if (t%25 == 0):
+    print('step number = ' + str(t))
   q_new_a = np.empty((q.shape[0],q.shape[1]))
   q_new_b = np.empty((q.shape[0],q.shape[1]))
 
@@ -137,7 +138,8 @@ for t in range(T_begin, T_end+1):
 
 #  print(R)
   if (EFIX == 0):
-    print('NO EFIX')
+    pass
+#    print('NO EFIX')
 ###___Harten-Hyman Entropy Fix___###
   elif (EFIX == 1):
     print('YES HH EFIX')

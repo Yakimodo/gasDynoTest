@@ -15,9 +15,44 @@
 \section{Questions with Answers}
 
 	\begin{itemize}
-		\item At what pressures do the incompressible, inviscid, thermally non-conductive Euler Equations work in?
 		
-		\item To apply Godunov's method on a system of equations we need only determine $ q^\downarrow(q_l, q_r)$, the state along $ x/t = 0 $ based on the Riemann data $ q_l $ and $ q_r $. What does this mean?
+		\item[Question] At what pressures do the incompressible, inviscid, thermally non-conductive Euler Equations work?
+		\subitem\textbf{Answer}
+		
+		
+		\item[Question] To apply Godunov's method on a system of equations we need only determine $ q^\downarrow(q_l, q_r)$, the state along $ x/t = 0 $ based on the Riemann data $ q_l $ and $ q_r $. What does this mean?
+		\subitem\textbf{Answer} The RP centered at $ x_{i-1/2} $ has a similarity solution that is constant along rays $ (x - x_{i-1/2})/(t - t_n) $ = constant,  and looking at the value along $ (x - x_{i-1/2})/t = 0 $ gives the piecewise constant reconstruction value, $ q^n(x_{i-1/2},t) $.
+		
+		
+		\item[Question] What is a similarity solution $ U(x/t) $?
+		\subitem\textbf{Answer} The solution to a conservation is a similarity solution that is a function of $ x/t $ alone and is self-similar at different times.
+		
+		
+		\item[Question] What is meant by a perturbation to the system?
+		\subitem\textbf{Answer} This would involve anything outside of equilibrium. Por ejemplo think of a calm pond and then the perturbation would be a rock thrown into it.
+		
+		
+		\item[Question] What are Hugoniot Loci?
+		\subitem\textbf{Answer} It is the curves associating all possible intermediate states with the left or right state. There exists a one-parameter family of such states which trace out a curve in state space. For the Shallow Water equations the state space (phase plane) is the $ h-hu $ plane. The set of states is called the \textit{Hugoniot locus}. The \textit{entropy condition} then defines which states are physical.
+		
+		``Using the SWEs as the primary example system. Consider the right propagating 2-shock. This shock connects some state $ q_m $ to the right state $ q_r $ from the Riemann data. We will view $ q_r $ as being fixed and determine all possible states \textit{q} that can be connected to $ q_r $ by a 2-shock. We will find that there is a one-parameter family of such states, which trace out a curve in state space. Here the state space (phase plane) is the \textit{h-hu} plane. This set of states is called a \textit{Hugoniot locus}.'' -Leveque, FVM
+		
+							
+		\item[Question] What are Integral Curves?
+		\subitem\textbf{Answer}
+		
+							
+		\item[Question] What are weak waves?
+		\subitem\textbf{Answer}
+		
+		
+					
+		\item[Question]
+		\subitem\textbf{Answer}
+			
+		\item[Question]
+		\subitem\textbf{Answer}
+		
 	\end{itemize}
 
 \end{document}

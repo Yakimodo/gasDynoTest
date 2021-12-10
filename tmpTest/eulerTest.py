@@ -58,9 +58,10 @@ amdq = np.zeros((eqNum, N+1))
 apdq = np.zeros((eqNum, N+1))
 
 #xo = 0.4 #position of initial discontinuity
-q = fl.initialConditions('gasDyno', 'shockTube', xc, 0.3, N, q_zeros) ##ToroPg151_Test1
+#q = fl.initialConditions('gasDyno', 'shockTube', xc, 0.3, N, q_zeros) ##ToroPg151_Test1 
+SHOCKTUBE = 0 #switch to one for plottng reasons
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test2', xc, N, q_zeros)
-#q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, 0.5, N, q_zeros)
+q = fl.initialConditions('gasDyno', 'ToroPg151_Test3', xc, 0.5, N, q_zeros)
 #q = fl.initialConditions('gasDyno', 'ToroPg151_Test4', xc, 0.4, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'ToroPg151_Test5', xc, N, q_zeros)
 #q, u, P = fl.initialConditions('gasDyno', 'BalbasICs', xc, N, q_zeros)
@@ -304,7 +305,7 @@ for t in range(T_begin, T_end+1):
 #    if(t%75 == 0 or t == 1): 
 #    if(t%5 == 0 or t == 1): 
 #    if(0.249 < t*dt < 0.251 or t == 1): ##FOR Toro_Test1---Shock Tube
-    if(0.195 < t*dt < 0.205 or t == 1):#or t%10 == 0): ##FOR Toro_Test1 GodunovMethod---Shock Tube 
+    if(SHOCKTUBE == 1 and 0.195 < t*dt < 0.205 or t == 1 or t%10 == 0): ##FOR Toro_Test1 GodunovMethod---Shock Tube 
 #    if(0.148 < t*dt < 0.152 or t == 1 or t == 10 ): ##FOR Toro_Test2
 #    if(0.011 < t*dt < 0.013 or t == 1 or t%10 == 0): ##FOR Toro_Test3
 #    if(0.034 < t*dt < 0.036 or t == 1 or t%10 == 0): ##FOR Toro_Test4 or Toro_Test5
@@ -326,13 +327,14 @@ for t in range(T_begin, T_end+1):
       plt.subplot(2,2,1)
       ax = plt.gca()
       #sets the ratio to 1
-      ax.set_aspect(1)
       plt.title('Mass Density' )
 #      plt.plot(xc, q[0, :len(xc)], label = 'density', linestyle = 'dotted')
       plt.scatter(xc, q[0, :len(xc)], label = 'density')
       plt.xlim(0,1)
-      plt.ylim(0,1.1)
-      plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
+      if (SHOCKTUBE == 1):
+        ax.set_aspect(1)
+        plt.ylim(0,1.1)
+        plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,2)
       ax = plt.gca()
@@ -342,30 +344,33 @@ for t in range(T_begin, T_end+1):
 #      plt.plot(xc, u[:len(xc)], label = 'velocity', linestyle = 'dotted')# / q[0, :len(xc)])
       plt.scatter(xc, u[:len(xc)], label = 'velocity')# / q[0, :len(xc)])
       plt.xlim(0,1)
-      plt.ylim(-0.1,1.7)
-      plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
+      if (SHOCKTUBE == 1):
+        plt.ylim(-0.1,1.7)
+        plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,3)
       ax = plt.gca()
       #sets the ratio to 1
-      ax.set_aspect(1)
       plt.title('Pressure')
 #      plt.plot(xc, P[:len(xc)], label = 'pressure', linestyle = 'dotted')# / q[0, :len(xc)])
       plt.scatter(xc, P[:len(xc)], label = 'pressure')# / q[0, :len(xc)])
       plt.xlim(0,1)
+      if (SHOCKTUBE == 1):
+        ax.set_aspect(1)
 #      plt.ylim(0,1)
-      plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
+        plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
       plt.subplot(2,2,4)
       ax = plt.gca()
 #      #sets the ratio to 1
-      ax.set_aspect(1./2.)
       plt.title('Internal Energy')
 #      plt.plot(xc, e[:len(xc)], label = 'internal energy', linestyle = 'dotted')
       plt.scatter(xc, e[:len(xc)], label = 'internal energy')
       plt.xlim(0,1)
-      plt.ylim(1.8,3.8)
-      plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
+      if (SHOCKTUBE == 1):
+        ax.set_aspect(1./2.)
+        plt.ylim(1.8,3.8)
+        plt.axvline(x=0.3, color='k', linestyle='--')  #(max(xc)/2.))
 
 #      plt.legend()
 #    plt.title('mass density' )
